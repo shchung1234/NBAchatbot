@@ -18,10 +18,11 @@ ontology = {
 
 
 knowledge = KnowledgeBase()
-knowledge.load_json(ontology)
+knowledge.load_json_file("teams.json")
 df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge)
 
 df.add_system_transition(State.START, State.PROMPT, '"Hi, what do you want to talk about?"')
+df.add_user_transition(State.PROMPT, State.Team, "{}")
 df.set_error_successor(State.PROMPT, State.ERR)
 # TODO: create your own dialogue manager
 
