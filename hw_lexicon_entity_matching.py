@@ -6,7 +6,11 @@ from enum import Enum
 class State(Enum):
     START = 0
     PROMPT = 1
-    ERR = 2
+    TURN1S = 2
+    TURN1U = 3
+    TURN2S = 4
+    TURN2U = 5
+    END = 6
 
 
 # TODO: create the ontology as needed
