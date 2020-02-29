@@ -6,14 +6,19 @@ from enum import Enum
 class State(Enum):
     START = 0
     TURN0 = 1
+    TURN0ERR = 101
     TURN1S = 2
     TURN1U = 3
+    TURN1ERR = 201
     TURN2S = 4
     TURN2U = 5
+    TURN2ERR = 401
     TURN3S = 6
     TURN3U = 7
+    TURN3ERR = 601
     TURN4S = 8
     TURN4U = 9
+    TURN4ERR = 801
     END = 99
 
 
@@ -32,15 +37,20 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
 #turn 0
 df.add_system_transition(State.START, State.TURN0, '"Hi, I am NBA chatbot. I can talk to you about NBA news. Do you have a favorite team or player?"')
 df.add_user_transition(State.TURN0, State.TURN1S, "#ONT(Atlanta Hawks)") #todo change this to whatever the onto label is
-df.set_error_successor(State.PROMPT, State.PROMPTERR)
+df.set_error_successor(State.TURN0, State.TURN0ERR)
+df.add_system_transition(State.TURN0ERR, State.TURN0, "I have never heard of them. What home state are you from?") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
 
 #turn 1
 df.add_system_transition(State.TURN1S, State.TURN1U, "Here is what I know about $player/team.", "<<insert macro here>>", "What do you think about this situation?")
 df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1]") #todo here we could have system detect if user thinks the idea is good or bad
+df.set_error_successor(State.TURN1U, State.TURN1ERR, "I have heard that a lot of people have similar opinions to that")
+df.set_system_transition(State.TURN1ERR, State.TURN2S) #todo this might be wrong
 
 #turn 2
 df.add_system_transition(State.TURN2S, State.TURN2U, "[!I think that is ", "#macro()", "I also heard that " "[#macro2()] ", "What do you think of that?") #todo macro here would be hard coded to always be positive view of the news
 df.add_system_transition(State.TURN2U, State.TURN3S, "[$response2]")
+df.set_error_successor(State.TURN2U, State.TURN2ERR, "That is a pretty interesting take, I have not heard that before")
+df.add_system_transition(State.TURN2ERR, State.TURN3S)
 
 #turn 4
 df.add_system_transition(State.TURN4S, END, "[! I actually have not made a decision about this myself. How about I talk to you in a couple of day about that?")
