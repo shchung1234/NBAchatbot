@@ -52,8 +52,15 @@ df.add_system_transition(State.TURN2U, State.TURN3S, "[$response2]")
 df.set_error_successor(State.TURN2U, State.TURN2ERR, "That is a pretty interesting take, I have not heard that before")
 df.add_system_transition(State.TURN2ERR, State.TURN3S)
 
+#turn3
+df.add_system_transition(State.TURN3S, State.TURN3U, "I agree with your take. This move also definetly impacts the ", "#macro, ", "how big of a change do you think this will be?")
+df.add_user_transition(State.TURN3U, State.TURN4S, "[$response3]")
+df.set_error_successor(State.TURN3U, State.TURN3ERR, "")
+df.add_system_transitionState.TURN3ERR, State.TURN3S) #todo need to fix this error handling, this is temporary
+
+
 #turn 4
-df.add_system_transition(State.TURN4S, END, "[! I actually have not made a decision about this myself. How about I talk to you in a couple of day about that?")
+df.add_system_transition(State.TURN4S, END, "[! I actually have not decided myself how important this move is. How about I talk to you in a couple of day about that?")
 
 
 
