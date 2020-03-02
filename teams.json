@@ -178,7 +178,7 @@
       "Christian Wood",
       "Dwane Casey"
     ],
-    "Golden-State Warriors": [
+    "Golden State Warriors": [
       "Dragan Bender",
       "Ky Bowman",
       "Marquese Chriss",
@@ -253,7 +253,7 @@
       "Ivica Zubac",
       "Doc Rivers"
     ],
-    "Los-Angeles Lakers": [
+    "Los Angeles Lakers": [
       "Kostas Antetokounmpo",
       "Avery Bradley",
       "Devontae Cacok",
@@ -353,7 +353,7 @@
       "Jarred Vanderbilt",
       "Ryan Saunders"
     ],
-    "New-Orleans Pelicans": [
+    "New Orleans Pelicans": [
       "Nickeil Alexander-Walker",
       "Lonzo Ball",
       "Zylan Cheatham",
@@ -373,7 +373,7 @@
       "Zion Williamson",
       "Alvin Gentry"
     ],
-    "New-York Knicks": [
+    "New York Knicks": [
       "Kadeem Allen",
       "RJ Barrett",
       "Ignas Brazdeikis",
@@ -393,7 +393,7 @@
       "Kenny Wooten",
       "Mike Miller"
     ],
-    "Oklahoma-City Thunder": [
+    "Oklahoma City Thunder": [
       "Steven Adams",
       "Deonte Burton",
       "Hamidou Diallo",
@@ -507,7 +507,7 @@
       "Anthony Tolliver",
       "Luke Walton"
     ],
-    "San-Antonio Spurs": [
+    "San Antonio Spurs": [
       "LaMarcus Aldridge",
       "Marco Belinelli",
       "DeMar DeRozan",
@@ -638,7 +638,16 @@
       "Pelicans",
       "NoLa",
       "New York Knicks",
-      "Knicks"
+      "Knicks",
+      "NY",
+      "Oklahoma City Thunder",
+      "Thunder",
+      "OKC",
+      "Orlando Magic",
+      "Orlando",
+      "Magic",
+      ""
+
 
 
     ]
