@@ -1,5 +1,5 @@
 from emora_stdm import KnowledgeBase, DialogueFlow, Macro
-from enum import Enum
+from enum import Enum, auto
 from pip._vendor import requests
 import json
 
@@ -38,7 +38,7 @@ class news(Macro):
         #THIS IS A PRIVATE REPO, BUT IDK IF GITHUB WILL LET THE KEY BE PUSHED, SO I'M GONNA PUT THE KEY INTO GOOGLE DOCS?
         endpoint = args[0].replace(" ", "%20")
         print(endpoint)
-        endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&domains=espn.com&apiKey="
+        endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&domains=espn.com&apiKey=d50b19bb1c7445b588bb694ecc2a119f"
         print(endpoint)
         news = requests.get(endpoint)
         formatted_news = news.json()
@@ -59,13 +59,13 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
 
 #turn 0
 df.add_system_transition(State.START, State.TURN0, '"Hi, I am NBA chatbot. I can talk to you about NBA news. Do you have a favorite player from NBA?"')
-df.add_user_transition(State.TURN0, State.TURN1S1, "$player = #ONT(player)") #todo change this to player name
+df.add_user_transition(State.TURN0, State.TURN1S1, '[$player=#ONT(teams)]') #todo change this to player name
 df.add_user_transition(State.TURN0, State.TURN1S2, "") #gives a name that's not currently in NBA
 df.set_error_successor(State.TURN0, State.TURN0ERR)
 df.add_system_transition(State.TURN0ERR, State.TURN0, "I have never heard of them. Please enter a current player") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
 
 #turn 1
-df.add_system_transition(State.TURN1S1, State.TURN1U, '"Here is what I know about $player. #news($player) What do you think about this situation?"')
+df.add_system_transition(State.TURN1S1, State.TURN1U, '"Here is what I know about" $player "." #news($player) " What do you think about this situation?"')
 df.add_system_transition(State.TURN1S2, State.TURN1U, '"Oh this person is not in NBA right now. Do you have any current NBA player that you want to talk about?"')
 df.add_user_transition(State.TURN1U, State.TURN1S1, "$player = #ONT(player)") # gives player name that is in ontology
 df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1]") #todo here we could have system detect if user thinks the idea is good or bad
