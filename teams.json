@@ -1,4 +1,21 @@
 {
+  "agree": [
+    "yes",
+    "yeah",
+    "yea",
+    "absolutely",
+    "i do",
+    "do",
+    "of course"
+  ],
+  "disagree": [
+    "no",
+    "not really",
+    "nah",
+    "i dont",
+    "don't",
+    "not"
+  ],
   "Atlanta Hawks": [
     "DeAndre' Bembry",
     "Charlie Brown Jr.",
