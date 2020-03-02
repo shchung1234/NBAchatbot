@@ -1,5 +1,5 @@
 from emora_stdm import KnowledgeBase, DialogueFlow, Macro
-from enum import Enum
+from enum import Enum, auto
 from pip._vendor import requests
 import json
 
@@ -37,7 +37,7 @@ class news(Macro):
         #THIS IS A PRIVATE REPO, BUT IDK IF GITHUB WILL LET THE KEY BE PUSHED, SO I'M GONNA PUT THE KEY INTO GOOGLE DOCS?
         endpoint = args[0].replace(" ", "%20")
         print(endpoint)
-        endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&domains=espn.com&apiKey="
+        endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&domains=espn.com&apiKey=d50b19bb1c7445b588bb694ecc2a119f"
         print(endpoint)
         news = requests.get(endpoint)
         formatted_news = news.json()
@@ -63,8 +63,8 @@ df.set_error_successor(State.TURN0, State.TURN0ERR)
 df.add_system_transition(State.TURN0ERR, State.TURN0, "I have never heard of them. Please enter a current player") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
 
 #turn 1
-df.add_system_transition(State.TURN1S, State.TURN1U, '"Here is what I know about $team. What do you think about this situation?"')
-# df.add_system_transition(State.TURN1S, State.TURN1U, '"Here is what I know about $team. #news($team) What do you think about this situation?"')
+# df.add_system_transition(State.TURN1S, State.TURN1U, '"Here is what I know about" $team ". What do you think about this situation?"')
+df.add_system_transition(State.TURN1S, State.TURN1U, '"Here is what I know about" $team "." #news($team) " What do you think about this situation?"')
 df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1]") #todo here we could have system detect if user thinks the idea is good or bad
 
 #### FOR TESTING DELETE AFTER
