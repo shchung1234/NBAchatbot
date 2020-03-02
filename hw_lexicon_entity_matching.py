@@ -6,22 +6,22 @@ import json
 
 # TODO: Update the State enum as needed
 class State(Enum):
-    START = 0
-    TURN0 = 1
-    TURN0ERR = 101
-    TURN1S = 2
-    TURN1U = 3
-    TURN1ERR = 201
-    TURN2S = 4
-    TURN2U = 5
-    TURN2ERR = 401
-    TURN3S = 6
-    TURN3U = 7
-    TURN3ERR = 601
-    TURN4S = 8
-    TURN4U = 9
-    TURN4ERR = 801
-    END = 99
+    START = auto()
+    TURN0 = auto()
+    TURN0ERR = auto()
+    TURN1S = auto()
+    TURN1U = auto()
+    TURN1ERR = auto()
+    TURN2S = auto()
+    TURN2U = auto()
+    TURN2ERR = auto()
+    TURN3S = auto()
+    TURN3U = auto()
+    TURN3ERR = auto()
+    TURN4S = auto()
+    TURN4U = auto()
+    TURN4ERR = auto()
+    END = auto()
 
 
 # TODO: create the ontology as needed
