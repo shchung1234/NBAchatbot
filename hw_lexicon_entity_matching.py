@@ -25,8 +25,7 @@ class State(Enum):
     END = auto()
 
 
-# TODO: create the ontology as needed
-# andrew- isn't ontology gonna be loaded from a json file?
+# ONTOLOGY IS LOADED FROM teams.json
 ontology = {
     "ontology": {
 
@@ -35,21 +34,35 @@ ontology = {
 
 class news(Macro):
     def run (self, ngrams, vars, args):
-        news = requests.get("http://site.api.espn.com/apis/site/v2/sports/basketball/nba/news")
-        print(json.dumps(news.json(), sort_keys=True, indent=4))
-        exit()
-        return
+        #andrew- im just gonna assume that the input is the team name and only the team name, eg "Atlanta Hawks"
+        #THIS IS A PRIVATE REPO, BUT IDK IF GITHUB WILL LET THE KEY BE PUSHED, SO I'M GONNA PUT THE KEY INTO GOOGLE DOCS?
+        endpoint = args[0].replace(" ", "%20")
+        print(endpoint)
+        endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&domains=espn.com&apiKey="
+        print(endpoint)
+        news = requests.get(endpoint)
+        formatted_news = news.json()
+        formatted_news = formatted_news['articles']
+
+        ## THINGS TO RETURN #####
+        title = formatted_news[0]['title']
+        description = formatted_news[0]['description']
+        #########################
+        
+        return title
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
 df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros = {'news':news()})
+
+# THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
 
 #turn 0
 df.add_system_transition(State.START, State.TURN0, '"Hi, I am NBA chatbot. I can talk to you about NBA news. Do you have a favorite player from NBA?"')
 df.add_user_transition(State.TURN0, State.TURN1S1, "$player = #ONT(player)") #todo change this to player name
 df.add_user_transition(State.TURN0, State.TURN1S2, "") #gives a name that's not currently in NBA
 df.set_error_successor(State.TURN0, State.TURN0ERR)
-df.add_system_transition(State.TURN0ERR, State.TURN0, "I have never heard of them. What home state are you from?") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
+df.add_system_transition(State.TURN0ERR, State.TURN0, "I have never heard of them. Please enter a current player") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
 
 #turn 1
 df.add_system_transition(State.TURN1S1, State.TURN1U, '"Here is what I know about $player. #news($player) What do you think about this situation?"')
