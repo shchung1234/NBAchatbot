@@ -24,8 +24,7 @@ class State(Enum):
     END = auto()
 
 
-# TODO: create the ontology as needed
-# andrew- isn't ontology gonna be loaded from a json file?
+# ONTOLOGY IS LOADED FROM teams.json
 ontology = {
     "ontology": {
 
@@ -49,8 +48,7 @@ class news(Macro):
         description = formatted_news[0]['description']
         #########################
         
-        exit()
-        return
+        return title
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
@@ -60,12 +58,12 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
 
 #turn 0
 df.add_system_transition(State.START, State.TURN0, '"Hi, I am NBA chatbot. I can talk to you about NBA news. Do you have a favorite player?"')
-df.add_user_transition(State.TURN0, State.TURN1S, "#ONT(Atlanta Hawks)") #todo change this to whatever the onto label is
+df.add_user_transition(State.TURN0, State.TURN1S, '[$team=#ONT(teams)]')
 df.set_error_successor(State.TURN0, State.TURN0ERR)
-df.add_system_transition(State.TURN0ERR, State.TURN0, "I have never heard of them. What home state are you from?") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
+df.add_system_transition(State.TURN0ERR, State.TURN0, "I have never heard of them. Please enter a current player") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
 
 #turn 1
-df.add_system_transition(State.TURN1S, State.TURN1U, '"Here is what I know about $player/team. #news($player/team) What do you think about this situation?"')
+df.add_system_transition(State.TURN1S, State.TURN1U, '"Here is what I know about $team. #news($team) What do you think about this situation?"')
 df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1]") #todo here we could have system detect if user thinks the idea is good or bad
 df.set_error_successor(State.TURN1U, State.TURN1ERR, "I have heard that a lot of people have similar opinions to that")
 df.set_system_transition(State.TURN1ERR, State.TURN2S) #todo this might be wrong
