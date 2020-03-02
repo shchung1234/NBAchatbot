@@ -6,22 +6,23 @@ import json
 
 # TODO: Update the State enum as needed
 class State(Enum):
-    START = 0
-    TURN0 = 1
-    TURN0ERR = 101
-    TURN1S = 2
-    TURN1U = 3
-    TURN1ERR = 201
-    TURN2S = 4
-    TURN2U = 5
-    TURN2ERR = 401
-    TURN3S = 6
-    TURN3U = 7
-    TURN3ERR = 601
-    TURN4S = 8
-    TURN4U = 9
-    TURN4ERR = 801
-    END = 99
+    START = auto()
+    TURN0 = auto()
+    TURN0ERR = auto()
+    TURN1S1 = auto()
+    TURN1S2 = auto()
+    TURN1U = auto()
+    TURN1ERR = auto()
+    TURN2S = auto()
+    TURN2U = auto()
+    TURN2ERR = auto()
+    TURN3S = auto()
+    TURN3U = auto()
+    TURN3ERR = auto()
+    TURN4S = auto()
+    TURN4U = auto()
+    TURN4ERR = auto()
+    END = auto()
 
 
 # TODO: create the ontology as needed
@@ -44,13 +45,16 @@ knowledge.load_json_file("teams.json")
 df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros = {'news':news()})
 
 #turn 0
-df.add_system_transition(State.START, State.TURN0, '"Hi, I am NBA chatbot. I can talk to you about NBA news. Do you have a favorite team or player?"')
-df.add_user_transition(State.TURN0, State.TURN1S, "#ONT(Atlanta Hawks)") #todo change this to whatever the onto label is
+df.add_system_transition(State.START, State.TURN0, '"Hi, I am NBA chatbot. I can talk to you about NBA news. Do you have a favorite player from NBA?"')
+df.add_user_transition(State.TURN0, State.TURN1S1, "$player = #ONT(player)") #todo change this to player name
+df.add_user_transition(State.TURN0, State.TURN1S2, "") #gives a name that's not currently in NBA
 df.set_error_successor(State.TURN0, State.TURN0ERR)
 df.add_system_transition(State.TURN0ERR, State.TURN0, "I have never heard of them. What home state are you from?") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
 
 #turn 1
-df.add_system_transition(State.TURN1S, State.TURN1U, '"Here is what I know about $player/team. #news($player/team) What do you think about this situation?"')
+df.add_system_transition(State.TURN1S1, State.TURN1U, '"Here is what I know about $player. #news($player) What do you think about this situation?"')
+df.add_system_transition(State.TURN1S2, State.TURN1U, '"Oh this person is not in NBA right now. Do you have any current NBA player that you want to talk about?"')
+df.add_user_transition(State.TURN1U, State.TURN1S1, "$player = #ONT(player)") # gives player name that is in ontology
 df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1]") #todo here we could have system detect if user thinks the idea is good or bad
 df.set_error_successor(State.TURN1U, State.TURN1ERR, "I have heard that a lot of people have similar opinions to that")
 df.set_system_transition(State.TURN1ERR, State.TURN2S) #todo this might be wrong
