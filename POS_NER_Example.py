@@ -114,4 +114,4 @@ df.add_system_transition(State.REC_DESC, State.ASK_CELEB, '[!"Yeah for sure. It 
 df.add_system_transition(State.UNKNOWN_DESC, State.ASK_CELEB, '"You have very interesting ideas about that. So, what other celebrity do you like?"')
 
 if __name__ == "__main__":
-    df.run(debugging=False)
+    df.run(debugging=True)
