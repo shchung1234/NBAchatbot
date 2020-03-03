@@ -81,23 +81,23 @@ df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1]") #todo here we
 
 df.add_system_transition(State.TURN2S, State.TURN2U, '[! "I think this will be good news for " $player  " , who is your favorite team?"]') #todo macro here would be hard coded to always be positive view of the news
 df.add_system_transition(State.TURN2U, State.TURN3S, '[$favoriteTeam=#ONT(teams)]')
-df.set_error_successor(State.TURN2U, State.TURN2ERR, "That is a pretty interesting take, I have not heard that before")
-df.add_system_transition(State.TURN2ERR, State.TURN3S)
+df.set_error_successor(State.TURN2U, State.TURN2ERR) 
+df.add_system_transition(State.TURN2ERR, State.TURN3S, "That is a pretty interesting take, I have not heard that before")
 
 #turn3 df.add_system_transition(State.TURN1S1, State.TURN1U, '"Here is what I know about" $player "." #news($player) " What do you think about this situation?"')
 
 df.add_system_transition(State.TURN3S, State.TURN3U, '"I recently heard the news about how " #news($favoriteTeam) ". Since they are your favorite team, what are your thoughts?"')
 df.add_user_transition(State.TURN3U, State.TURN4S, "[$response2]")
-df.set_error_successor(State.TURN3U, State.TURN3ERR, "")
+df.set_error_successor(State.TURN3U, State.TURN3ERR)
 
-df.add_system_transition(State.TURN3ERR, State.TURN3S) #todo need to fix this error handling, this is temporary
+df.add_system_transition(State.TURN3ERR, State.TURN3S, "REPLACE ME IDK WHAT GOES HERE") #todo need to fix this error handling, this is temporary
 
 
 #turn 4
 df.add_system_transition(State.TURN4S, State.TURN4U, '[! "I really agree with you. This news has really changed my opinion on " $favoriteTeam " How do you think it will impact their playoff prospects?"]')
 df.add_user_transition(State.TURN4U, State.TURN5S, "[$response3]")
 
-df.add_system_transition(State.TURN5S, END, 'I agree with you on that. I guess we will not know for sure until games actually start. We should chat once those games start. TTYL')
+df.add_system_transition(State.TURN5S, State.END, 'I agree with you on that. I guess we will not know for sure until games actually start. We should chat once those games start. TTYL')
 
 
 
