@@ -74,14 +74,14 @@ df.add_system_transition(State.TURN0ERR, State.TURN0, "I don't think that's a pe
 
 #turn 1
 df.add_system_transition(State.TURN1S1, State.TURN1U, r'[!{#news($player)}]')
-df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1=]") #todo here we could have system detect if user thinks the idea is good or bad
+df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1=/[A-Z a-z]*/]") #todo here we could have system detect if user thinks the idea is good or bad
 #df.add_user_transition(State.TURN1U, State.TURN1S1, "$player = #ONT(player)") #gets users opinion about headline 1 ##there might be an error here. trace a correct answer to turn1S1
 #df.set_error_successor(State.TURN1U, State.TURN1ERR, "I have heard that a lot of people have similar opinions to that")
 #df.set_system_transition(State.TURN1ERR, State.TURN2S) #todo this might be wrong
 
 #turn 2
 
-df.add_system_transition(State.TURN2S, State.TURN2U, '[! "I think this will be good news for " $player  " , who is your favorite team?"]') #todo macro here would be hard coded to always be positive view of the news
+df.add_system_transition(State.TURN2S, State.TURN2U, r'[! "I think this will be good news for " $player  " , who is your favorite team?"]') #todo macro here would be hard coded to always be positive view of the news
 df.add_system_transition(State.TURN2U, State.TURN3S, '[$favoriteTeam=#ONT(teams)]')
 df.set_error_successor(State.TURN2U, State.TURN2ERR) 
 df.add_system_transition(State.TURN2ERR, State.TURN3S, "That is a pretty interesting take, I have not heard that before")
