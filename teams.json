@@ -1736,31 +1736,5 @@
       "Washington",
       "Wizards"
     ]
-  },
-  "expressions": {
-    "agree": [
-      "yes",
-      "yeah",
-      "yea",
-      "ya",
-      "yup",
-      "yep",
-      "absolutely",
-      "definitely",
-      "i do",
-      "do",
-      "of course"
-    ],
-  "disagree": [
-    "no",
-    "not really",
-    "nah",
-    "nope",
-    "i dont",
-    "never",
-    "don't",
-    "not"
-    ]
   }
-
 }

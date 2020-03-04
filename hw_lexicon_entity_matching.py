@@ -1,6 +1,6 @@
 from emora_stdm import KnowledgeBase, DialogueFlow, Macro
 from enum import Enum, auto
-# from pip._vendor import requests
+from pip._vendor import requests
 import json
 
 
@@ -38,8 +38,8 @@ class news(Macro):
     def run (self, ngrams, vars, args):
         #andrew- im just gonna assume that the input is the team name and only the team name, eg "Atlanta Hawks"
         #THIS IS A PRIVATE REPO, BUT IDK IF GITHUB WILL LET THE KEY BE PUSHED, SO I'M GONNA PUT THE KEY INTO GOOGLE DOCS?
-        print(args[0])
-        endpoint = args[0].replace(" ", "%20")
+
+        endpoint = vars['player'].replace(" ", "%20")
         print(endpoint)
         endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&domains=espn.com&apiKey=d50b19bb1c7445b588bb694ecc2a119f"
         print(endpoint)
@@ -62,9 +62,9 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
 
 #turn 0
 df.add_system_transition(State.START, State.TURN0, '"Hi, I am NBA chatbot. I can talk to you about NBA news. Do you have a favorite player from NBA?"')
-df.add_user_transition(State.TURN0, State.TURN1S1, '[$player=#ONT(teams)]') #todo might have an error here. need to test inputting a city name
+df.add_user_transition(State.TURN0, State.TURN1S1, '[$player={#ONT(teams)}]') #todo might have an error here. need to test inputting a city name
 df.add_user_transition(State.TURN0, State.TURN1S2, "[! -{#ONT(teams)} {$person=#NER(person)}]") #gives a name that's not currently in NBA
-df.add_system_transition(State.TURN1S2, State.TURN0, r'[! "Oh" $person "is not in the current NBA right now. '
+df.add_system_transition(State.TURN1S2, State.TURN0, r'[! "Oh that person is not in the current NBA right now. '
                                                      r'Do you have any current NBA player that you want to talk about?"]')
 
 
@@ -73,7 +73,7 @@ df.add_system_transition(State.TURN1S2, State.TURN0, r'[! "Oh" $person "is not i
 #df.add_system_transition(State.TURN0ERR, State.TURN0, "I have never heard of them. Please enter a current player") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
 
 #turn 1
-df.add_system_transition(State.TURN1S1, State.TURN1U, r'[! #news($player)]')
+df.add_system_transition(State.TURN1S1, State.TURN1U, r'[! {#news($player)}]')
 df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1]") #todo here we could have system detect if user thinks the idea is good or bad
 #df.add_user_transition(State.TURN1U, State.TURN1S1, "$player = #ONT(player)") #gets users opinion about headline 1 ##there might be an error here. trace a correct answer to turn1S1
 #df.set_error_successor(State.TURN1U, State.TURN1ERR, "I have heard that a lot of people have similar opinions to that")
