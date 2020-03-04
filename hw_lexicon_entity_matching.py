@@ -41,7 +41,7 @@ class news(Macro):
 
         endpoint = vars['player'].replace(" ", "%20")
         print(endpoint)
-        endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&domains=espn.com&apiKey=d50b19bb1c7445b588bb694ecc2a119f"
+        endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&apiKey=d50b19bb1c7445b588bb694ecc2a119f"
         print(endpoint)
         news = requests.get(endpoint)
         formatted_news = news.json()
@@ -51,8 +51,8 @@ class news(Macro):
         title = formatted_news[0]['title']
         description = formatted_news[0]['description']
         #########################
-        
-        return title
+
+        return "I found this recent news headline. {}. It says that {}".format(title, description)
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
@@ -69,12 +69,12 @@ df.add_system_transition(State.TURN1S2, State.TURN0, r'[! "Oh that person is not
 
 
 """this is left over code, might not need error handling if POS works correctly"""
-#df.set_error_successor(State.TURN0, State.TURN0ERR)
-#df.add_system_transition(State.TURN0ERR, State.TURN0, "I have never heard of them. Please enter a current player") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
+df.set_error_successor(State.TURN0, State.TURN0ERR)
+df.add_system_transition(State.TURN0ERR, State.TURN0, "I don't think that's a person. If you don't have a favorite player, we can also talk about teams") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
 
 #turn 1
-df.add_system_transition(State.TURN1S1, State.TURN1U, r'[! {#news($player)}]')
-df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1]") #todo here we could have system detect if user thinks the idea is good or bad
+df.add_system_transition(State.TURN1S1, State.TURN1U, r'[!{#news($player)}]')
+df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1=]") #todo here we could have system detect if user thinks the idea is good or bad
 #df.add_user_transition(State.TURN1U, State.TURN1S1, "$player = #ONT(player)") #gets users opinion about headline 1 ##there might be an error here. trace a correct answer to turn1S1
 #df.set_error_successor(State.TURN1U, State.TURN1ERR, "I have heard that a lot of people have similar opinions to that")
 #df.set_system_transition(State.TURN1ERR, State.TURN2S) #todo this might be wrong
