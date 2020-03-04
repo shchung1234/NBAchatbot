@@ -34,7 +34,7 @@ ontology = {
         }
 }
 
-class news(Macro):
+class newsPlayer(Macro):
     def run (self, ngrams, vars, args):
         #andrew- im just gonna assume that the input is the team name and only the team name, eg "Atlanta Hawks"
         #THIS IS A PRIVATE REPO, BUT IDK IF GITHUB WILL LET THE KEY BE PUSHED, SO I'M GONNA PUT THE KEY INTO GOOGLE DOCS?
@@ -54,9 +54,29 @@ class news(Macro):
 
         return "I found this recent news headline. {}. It says that {}".format(title, description)
 
+class newsTeam(Macro):
+    def run (self, ngrams, vars, args):
+        #andrew- im just gonna assume that the input is the team name and only the team name, eg "Atlanta Hawks"
+        #THIS IS A PRIVATE REPO, BUT IDK IF GITHUB WILL LET THE KEY BE PUSHED, SO I'M GONNA PUT THE KEY INTO GOOGLE DOCS?
+
+        endpoint = vars['favoriteTeam'].replace(" ", "%20") +"%20basketball"
+        print(endpoint)
+        endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&apiKey=d50b19bb1c7445b588bb694ecc2a119f"
+        print(endpoint)
+        news = requests.get(endpoint)
+        formatted_news = news.json()
+        formatted_news = formatted_news['articles']
+
+        ## THINGS TO RETURN #####
+        title = formatted_news[0]['title']
+        description = formatted_news[0]['description']
+        #########################
+
+        return "I found this recent news headline. {}. It says that {}".format(title, description)
+
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
-df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news()})
+df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'newsPlayer': newsPlayer(), 'newsTeam': newsTeam()})
 
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
 
@@ -73,29 +93,28 @@ df.set_error_successor(State.TURN0, State.TURN0ERR)
 df.add_system_transition(State.TURN0ERR, State.TURN0, "I don't think that's a person. If you don't have a favorite player, we can also talk about teams") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
 
 #turn 1
-df.add_system_transition(State.TURN1S1, State.TURN1U, r'[!{#news($player)}]')
-df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1=/[A-Z a-z]*/]") #todo here we could have system detect if user thinks the idea is good or bad
+df.add_system_transition(State.TURN1S1, State.TURN1U, r'[!{#newsPlayer($player)}]')
+df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1=#POS(adj)]") #todo here we could have system detect if user thinks the idea is good or bad
 #df.add_user_transition(State.TURN1U, State.TURN1S1, "$player = #ONT(player)") #gets users opinion about headline 1 ##there might be an error here. trace a correct answer to turn1S1
 #df.set_error_successor(State.TURN1U, State.TURN1ERR, "I have heard that a lot of people have similar opinions to that")
 #df.set_system_transition(State.TURN1ERR, State.TURN2S) #todo this might be wrong
 
 #turn 2
 
-df.add_system_transition(State.TURN2S, State.TURN2U, r'[! "I think this will be good news for " $player  " , who is your favorite team?"]') #todo macro here would be hard coded to always be positive view of the news
-df.add_system_transition(State.TURN2U, State.TURN3S, '[$favoriteTeam=#ONT(teams)]')
+df.add_system_transition(State.TURN2S, State.TURN2U, r'[! "Yea I think that is" $response1 "too. Who is your favorite team?"]') #todo macro here would be hard coded to always be positive view of the news
+df.add_user_transition(State.TURN2U, State.TURN3S, '[$favoriteTeam={#ONT(teams)}]')
 df.set_error_successor(State.TURN2U, State.TURN2ERR) 
 df.add_system_transition(State.TURN2ERR, State.TURN3S, "That is a pretty interesting take, I have not heard that before")
 
 #turn3 df.add_system_transition(State.TURN1S1, State.TURN1U, '"Here is what I know about" $player "." #news($player) " What do you think about this situation?"')
 
-df.add_system_transition(State.TURN3S, State.TURN3U, '"I recently heard the news about how " #news($favoriteTeam) ". Since they are your favorite team, what are your thoughts?"')
-df.add_user_transition(State.TURN3U, State.TURN4S, "[$response2]")
+df.add_system_transition(State.TURN3S, State.TURN3U, r'[!"I recently heard the news about how " #newsTeam($favoriteTeam) ". Since they are your favorite team, what are your thoughts?"]')
+df.add_user_transition(State.TURN3U, State.TURN4S, "[$response2=#POS(adj)]")
 df.set_error_successor(State.TURN3U, State.TURN3ERR)
-
 df.add_system_transition(State.TURN3ERR, State.TURN3S, "REPLACE ME IDK WHAT GOES HERE") #todo need to fix this error handling, this is temporary
 
 #turn 4
-df.add_system_transition(State.TURN4S, State.TURN4U, '[! "I really agree with you. This news has really changed my opinion on " $favoriteTeam " How do you think it will impact their playoff prospects?"]')
+df.add_system_transition(State.TURN4S, State.TURN4U, r'[! "I really agree with you. This news has really changed my opinion on " $favoriteTeam " How do you think it will impact their playoff prospects?"]')
 df.add_user_transition(State.TURN4U, State.TURN5S, "[$response3]")
 
 df.add_system_transition(State.TURN5S, State.END, 'I agree with you on that. I guess we will not know for sure until games actually start. We should chat once those games start. TTYL')
