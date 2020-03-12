@@ -78,34 +78,36 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
 
 #turn 0
-df.add_system_transition(State.START, State.TURN0, '"Hi, I am NBA chatbot. I can talk to you about NBA news. Do you have a favorite player from NBA?"')
-df.add_user_transition(State.TURN0, State.TURN1S1, '[$player={#ONT(teams)}]') #todo might have an error here. need to test inputting a city name
+df.add_system_transition(State.START, State.TURN0, '"Hi, I am NBA chatbot. I can talk to you about NBA news. This includes topics such as trades, injuries, and community events?"')
+df.add_user_transition(State.TURN0, State.TURN1S1, '[$player={#ONT(teams)}]') #todo change ontology here and in the one below too
 df.add_user_transition(State.TURN0, State.TURN1S2, "[! -{#ONT(teams)} {$person=#NER(person)}]") #gives a name that's not currently in NBA
-df.add_system_transition(State.TURN1S2, State.TURN0, r'[! "Oh that person is not in the NBA right now. '
-                                                     r'Do you have any current NBA player that you want to talk about?"]')
+df.add_system_transition(State.TURN1S2, State.TURN0, r'[! "Oh I do not know how to talk about that topic yet. 'r'Do you have any current NBA player that you want to talk about?"]')
 
 
 """this is left over code, might not need error handling if POS works correctly"""
+"""
 df.set_error_successor(State.TURN0, State.TURN0ERR)
 df.add_system_transition(State.TURN0ERR, State.TURN0, "I don't think that's a person. If you don't have a favorite player, we can also talk about teams") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
+"""
+
 
 #turn 1
-df.add_system_transition(State.TURN1S1, State.TURN1U, r'[!{#newsPlayer($player)}]')
-df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1=#POS(adj)]") #todo here we could have system detect if user thinks the idea is good or bad
+df.add_system_transition(State.TURN1S1, State.TURN1U, r'[!"Have you heard the news about", {#newsPlayer($player)}]') #todo need to change this to topic
+df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1=#POS(adj)]") #todo here user says whether or not they heard about the news
 #df.add_user_transition(State.TURN1U, State.TURN1S1, "$player = #ONT(player)") #gets users opinion about headline 1 ##there might be an error here. trace a correct answer to turn1S1
 df.set_error_successor(State.TURN1U, State.TURN1ERR)
-df.add_system_transition(State.TURN1ERR, State.TURN2U, "Hmm yea thats a pretty interesting opinion. Who would you say is your favorite team", ) #todo this might be wrong
+df.add_system_transition(State.TURN1ERR, State.TURN2U, "Knowing news about trade", ) #todo this might be wrong
 
 #turn 2
 
-df.add_system_transition(State.TURN2S, State.TURN2U, r'[! "Yea I think that is" $response1 "too. By the way, do you have a favorite team?"]') #todo macro here would be hard coded to always be positive view of the news
+df.add_system_transition(State.TURN2S, State.TURN2U, r'[! "Which team do you think is benefitting more from this trade? "]')
 df.add_user_transition(State.TURN2U, State.TURN3S, '[$favoriteTeam={#ONT(teams)}]')
 df.set_error_successor(State.TURN2U, State.TURN2ERR) 
-df.add_system_transition(State.TURN2ERR, State.TURN3U, "Yea I dont think ive heard of them. My favorite team is the Atlanta Hawks. I heard theyre doing pretty well this season")
+df.add_system_transition(State.TURN2ERR, State.TURN3U, "Do not know which team is benefiting more")
 
 #turn3 df.add_system_transition(State.TURN1S1, State.TURN1U, '"Here is what I know about" $player "." #news($player) " What do you think about this situation?"')
 
-df.add_system_transition(State.TURN3S, State.TURN3U, r'[! #newsTeam($favoriteTeam)"Since they are your favorite team, what are your thoughts?"]')
+df.add_system_transition(State.TURN3S, State.TURN3U, r'[! #newsTeam($favoriteTeam)"I agree. This will ruin $team for playoffs, they are already so close!"]') #todo should call macro which predicts playoffs
 df.add_user_transition(State.TURN3U, State.TURN4S, "[$response2=#POS(adj)]")
 df.set_error_successor(State.TURN3U, State.TURN3ERR)
 df.add_system_transition(State.TURN3ERR, State.TURN4U, "Cool opinion. I think you should say that at a party next time.") #todo need to fix this error handling, this is temporary
