@@ -107,13 +107,13 @@ df.add_system_transition(State.TURN2ERR, State.TURN3U, "Do not know which team i
 
 #turn3 df.add_system_transition(State.TURN1S1, State.TURN1U, '"Here is what I know about" $player "." #news($player) " What do you think about this situation?"')
 
-df.add_system_transition(State.TURN3S, State.TURN3U, r'[! #newsTeam($favoriteTeam)"I agree. This will ruin $team for playoffs, they are already so close!"]') #todo should call macro which predicts playoffs
+df.add_system_transition(State.TURN3S, State.TURN3U, r'[! #newsTeam($favoriteTeam)"I agree. This will ruin $team for playoffs, they are already so close! Do you think they still have a chance?"]') #todo should call macro which predicts playoffs
 df.add_user_transition(State.TURN3U, State.TURN4S, "[$response2=#POS(adj)]")
 df.set_error_successor(State.TURN3U, State.TURN3ERR)
 df.add_system_transition(State.TURN3ERR, State.TURN4U, "Cool opinion. I think you should say that at a party next time.") #todo need to fix this error handling, this is temporary
 
 #turn 4
-df.add_system_transition(State.TURN4S, State.TURN4U, r'[! "I really agree with you. This news has really changed my opinion on " $favoriteTeam " How do you think it will impact their playoff prospects?"]')
+df.add_system_transition(State.TURN4S, State.TURN4U, r'[! "I really agree/disagree with you. This news has really changed my opinion on " $favoriteTeam] "What about the rest of the playoff picture? "') #todo fix the agree/disagree
 df.add_user_transition(State.TURN4U, State.TURN5S, "[$response3=/[a-z A-Z]+/]")
 df.set_error_successor(State.TURN4U, State.TURN4ERR)
 df.add_system_transition(State.TURN4ERR, State.END, "Yea I guess youre right on that")
