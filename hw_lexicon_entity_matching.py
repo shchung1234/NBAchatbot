@@ -2,6 +2,7 @@ from emora_stdm import KnowledgeBase, DialogueFlow, Macro
 from enum import Enum, auto
 from pip._vendor import requests
 import json
+from sportsreference.nba.schedule import Schedule
 
 
 # TODO: Update the State enum as needed
@@ -37,7 +38,6 @@ ontology = {
 class newsPlayer(Macro):
     def run (self, ngrams, vars, args):
         #andrew- im just gonna assume that the input is the team name and only the team name, eg "Atlanta Hawks"
-        #THIS IS A PRIVATE REPO, BUT IDK IF GITHUB WILL LET THE KEY BE PUSHED, SO I'M GONNA PUT THE KEY INTO GOOGLE DOCS?
 
         endpoint = vars['player'].replace(" ", "%20")
         endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&apiKey=d50b19bb1c7445b588bb694ecc2a119f"
@@ -54,8 +54,6 @@ class newsPlayer(Macro):
 
 class newsTeam(Macro):
     def run (self, ngrams, vars, args):
-        #andrew- im just gonna assume that the input is the team name and only the team name, eg "Atlanta Hawks"
-        #THIS IS A PRIVATE REPO, BUT IDK IF GITHUB WILL LET THE KEY BE PUSHED, SO I'M GONNA PUT THE KEY INTO GOOGLE DOCS?
 
         endpoint = vars['favoriteTeam'].replace(" ", "%20") +"%20basketball"
         endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&apiKey=d50b19bb1c7445b588bb694ecc2a119f"
@@ -67,9 +65,88 @@ class newsTeam(Macro):
         title = formatted_news[0]['title']
         description = formatted_news[0]['description']
         #########################
+        
+        #is this line useful?
         result = ""
 
         return "I found this recent news headline about {}. {}. It says {}".format(vars['favoriteTeam'], title, description)
+
+class teamStats(Macro):
+    def run (self, ngrams, vars, args):
+        #Assume input is team name, all lowercase
+
+        if vars[0] == "Atlanta Hawks" or "Atlanta" or "Hawks":
+            team = 'ATL'
+        elif vars[0] == "Boston Celtics" or "Boston" or "Celtics":
+            team = 'ATL'
+        elif vars[0] == "Brooklyn Nets" or "Brooklyn" or "Nets":
+            team = 'ATL'
+        elif vars[0] =="Charlotte Hornets" or "Charlotte" or "Hornets":
+            team = 'ATL'
+        elif vars[0] =="Chicago Bulls" or "Chicago" or "Bulls":
+            team = 'ATL'
+        elif vars[0] =="Cleveland Cavaliers" or "Cleveland" or "Cavaliers":
+            team = 'ATL'
+        elif vars[0] =="Dallas Mavericks" or "Dallas" or "Mavericks":
+            team = 'ATL'
+        elif vars[0] =="Denver Nuggets" or "Denver" or "Nuggets":
+            team = 'ATL'
+        elif vars[0] =="Detroit Pistons" or "Detroit" or "Pistons":
+            team = 'ATL'
+        elif vars[0] =="Golden State Warriors" or "GSW" or "Warriors":
+            team = 'ATL'
+        elif vars[0] =="Houston Rockets" or "Houston" or "Rockets":
+            team = 'ATL'
+        elif vars[0] =="Indiana Pacers" or "Indiana" or "Pacers":
+            team = 'ATL'
+        elif vars[0] =="LA Clippers" or "Clippers":
+            team = 'ATL'
+        elif vars[0] =="Los Angeles Lakers" or "Lakers":
+            team = 'ATL'
+        elif vars[0] =="Memphis Grizzlies" or "Memphis" or "Grizzlies":
+            team = 'ATL'
+        elif vars[0] =="Miami Heat" or "Miami":
+            team = 'ATL'
+        elif vars[0] =="Milwaukee Bucks" or "Milwaukee" or "Bucks":
+            team = 'ATL'
+        elif vars[0] =="Minnesota Timberwolves" or "Minnesota" or "Timberwolves":
+            team = 'ATL'
+        elif vars[0] =="New Orleans Pelicans" or "Pelicans" or "NoLa":
+            team = 'ATL'
+        elif vars[0] =="New York Knicks" or "Knicks" or "NY":
+            team = 'ATL'
+        elif vars[0] =="Oklahoma City Thunder" or "Thunder" or "OKC":
+            team = 'ATL'
+        elif vars[0] =="Orlando Magic" or "Orlando" or "Magic":
+            team = 'ATL'
+        elif vars[0] =="Phoenix Suns" or "Phoenix" or "Suns":
+            team = 'ATL'
+        elif vars[0] =="Portland Trail Blazers" or "Portland" or "Trail Blazers":
+            team = 'ATL'
+        elif vars[0] =="Sacramento Kings" or "Sacramento" or "Kings":
+            team = 'ATL'
+        elif vars[0] =="San Antonio Spurs" or "San Antonio" or "Spurs":
+            team = 'ATL'
+        elif vars[0] =="Toronto Raptors" or "Toronto" or "Raptors":
+            team = 'ATL'
+        elif vars[0] =="Utah Jazz" or "Utah" or "Jazz":
+            team = 'ATL'
+        elif vars[0] =="Washington Wizards" or "Washington" or "Wizards":
+            team = 'ATL'
+        else:
+            #error handling? idk if needed
+            return "I didn't get that"
+
+        wins = 0
+        losses = 0
+        teamSchedule = Schedule(team)
+        for game in teamSchedule:
+            if game.result == 'Win':
+                wins += 1
+            else:
+                losses += 1
+
+        return "The {} have a total of {} wins and {} losses", vars[0], wins, losses
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
