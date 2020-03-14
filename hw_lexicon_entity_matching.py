@@ -184,19 +184,19 @@ df.add_system_transition(State.TURN2ERR, State.TURN3U, "Do not know which team i
 
 #turn3 df.add_system_transition(State.TURN1S1, State.TURN1U, '"Here is what I know about" $player "." #news($player) " What do you think about this situation?"')
 
-df.add_system_transition(State.TURN3S, State.TURN3U, r'[! #newsTeam($favoriteTeam)"I agree. This will ruin $team for playoffs, they are already so close! Do you think they still have a chance?"]') #todo should call macro which predicts playoffs
+df.add_system_transition(State.TURN3S, State.TURN3U, r'[! #teamStats($favoriteTeam) ". Hopefully this will boost their wins, what do you think? "]')
 df.add_user_transition(State.TURN3U, State.TURN4S, "[$response2=#POS(adj)]")
 df.set_error_successor(State.TURN3U, State.TURN3ERR)
-df.add_system_transition(State.TURN3ERR, State.TURN4U, "Cool opinion. I think you should say that at a party next time.") #todo need to fix this error handling, this is temporary
+df.add_system_transition(State.TURN3ERR, State.TURN4U, "Do not know if it will boost W-L record.")
 
 #turn 4
-df.add_system_transition(State.TURN4S, State.TURN4U, r'[! "I really agree/disagree with you. This news has really changed my opinion on " $favoriteTeam] "What about the rest of the playoff picture? "') #todo fix the agree/disagree
-df.add_user_transition(State.TURN4U, State.TURN5S, "[$response3=/[a-z A-Z]+/]")
+df.add_system_transition(State.TURN4S, State.TURN4U, r'[! "If this ends up being a good thing, it could impact the playoff picture. What are your predictions? "]')
+df.add_user_transition(State.TURN4U, State.TURN5S, "[$response3=/[a-z A-Z]+/]") #todo wtf is this
 df.set_error_successor(State.TURN4U, State.TURN4ERR)
-df.add_system_transition(State.TURN4ERR, State.END, "Yea I guess youre right on that")
+df.add_system_transition(State.TURN4ERR, State.TURN4S, "Do not have a playoff prediction")
 
-df.add_system_transition(State.TURN5S, State.END, 'I agree with you on that. But, ultimately, we will not know for sure until games start. We should chat once those games start. TTYL')
-
+df.add_system_transition(State.TURN5S, State.TURN5U, r'[! "I guess that is a possibility. We will not know until playoffs actually start. Will you be free to chat then?"]')
+df.add_user_transition(State.TURN5U, State.END, '[$watching={#ONT(yesno)}]')
 
 
 
