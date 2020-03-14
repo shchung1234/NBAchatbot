@@ -14,7 +14,9 @@ class State(Enum):
     TURN1S2 = auto()
     TURN1U = auto()
     TURN1ERR = auto()
-    TURN2S = auto()
+    TURN2S_Agree = auto()
+    TURN2S_Disagree = auto()
+    TURN2S_Emotion = auto()
     TURN2U = auto()
     TURN2ERR = auto()
     TURN3S = auto()
@@ -189,17 +191,20 @@ df.add_system_transition(State.TURN0ERR, State.TURN0, "I don't think that's a pe
 
 #turn 1
 df.add_system_transition(State.TURN1S1, State.TURN1U, r'[!"Have you heard the most recent news:" {#news()}]') #todo need to change this to topic
-df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1=#POS(adj)]") #todo here user says whether or not they heard about the news
+df.add_user_transition(State.TURN1U, State.TURN2S_Emotion, "[$response1=#POS(adj)]") #todo here user says whether or not they heard about the news
+df.add_user_transition(State.TURN1U, State.TURN2S_Agree, '[#ONT(agree)]')
+df.add_user_transition(State.TURN1U, State.TURN2S_Disagree, '[$ONT(disagree)]')
 #df.add_user_transition(State.TURN1U, State.TURN1S1, "$player = #ONT(player)") #gets users opinion about headline 1 ##there might be an error here. trace a correct answer to turn1S1
 df.set_error_successor(State.TURN1U, State.TURN1ERR)
-df.add_system_transition(State.TURN1ERR, State.TURN2U, "Knowing news about trade", ) #todo this might be wrong
+df.add_system_transition(State.TURN1ERR, State.TURN2U, r'[! Oh okay, but I do want to know which team you think is benefitting more from this trade.]' ) #todo this might be wrong
 
 #turn 2
-
-df.add_system_transition(State.TURN2S, State.TURN2U, r'[! "Which team do you think is benefitting more from this trade? "]')
+df.add_system_transition(State.TURN2S_Emotion, State.TURN2U, r'[! "Yea, it is pretty" $response1 ". Which team do you think is benefitting more from this trade?"]')
+df.add_system_transition(State.TURN2S_Agree, State.TURN2U, r'[! "Cool, so since youve seen this news, which tema do you think will benefit more from this trade?"]')
+df.add_system_transition(State.TURN2S_Disagree, State.TURN2U, r'[! "Okay, no worries! Thats what Im here for! So which team do you think this benefits?"]')
 df.add_user_transition(State.TURN2U, State.TURN3S, '[$favoriteTeam={#ONT(teams)}]')
 df.set_error_successor(State.TURN2U, State.TURN2ERR) 
-df.add_system_transition(State.TURN2ERR, State.TURN3U, "Do not know which team is benefiting more")
+df.add_system_transition(State.TURN2ERR, State.TURN3U, r'[! "Sorry, which team is that again?"]')
 
 #turn3 df.add_system_transition(State.TURN1S1, State.TURN1U, '"Here is what I know about" $player "." #news($player) " What do you think about this situation?"')
 
