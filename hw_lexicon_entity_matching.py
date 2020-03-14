@@ -165,7 +165,7 @@ class teamStats(Macro):
             else:
                 losses += 1
 
-        return "The {} have a total of {} wins and {} losses", vars[0], wins, losses
+        return "The {} have a total of {} wins and {} losses".format(vars['favoriteTeam'], wins, losses)
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
