@@ -89,7 +89,6 @@ df.add_user_transition(State.TURN0, State.TURN1S2, "[! -{#ONT(teams)} {$person=#
 df.set_error_successor(State.TURN0, State.TURN0ERR)
 df.add_system_transition(State.TURN0ERR, State.TURN0, "I don't think that's a person. If you don't have a favorite player, we can also talk about teams") #todo this turn to, what state seems rather abrupt, see if there is a way to make it more smooth
 """
-#turn 0-1
 
 
 #turn 1
