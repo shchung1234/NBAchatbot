@@ -14,7 +14,9 @@ class State(Enum):
     TURN1S2 = auto()
     TURN1U = auto()
     TURN1ERR = auto()
-    TURN2S = auto()
+    TURN2S_Agree = auto()
+    TURN2S_Disagree = auto()
+    TURN2S_Emotion = auto()
     TURN2U = auto()
     TURN2ERR = auto()
     TURN3S = auto()
@@ -26,6 +28,7 @@ class State(Enum):
     TURN5U = auto()
     TURN5S = auto()
     END = auto()
+    EARLYEND = auto()
 
 
 # ONTOLOGY IS LOADED FROM teams.json
@@ -34,6 +37,22 @@ ontology = {
 
         }
 }
+class news(Macro):
+    def run (self, ngrams, vars, args):
+        #andrew- im just gonna assume that the input is the team name and only the team name, eg "Atlanta Hawks"
+
+        endpoint = "Lakers sign guard dion waiters".replace(" ", "%20")
+        endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&apiKey=d50b19bb1c7445b588bb694ecc2a119f"
+        news = requests.get(endpoint)
+        formatted_news = news.json()
+        formatted_news = formatted_news['articles']
+
+        ## THINGS TO RETURN #####
+        title = formatted_news[0]['title']
+        description = formatted_news[0]['description']
+        #########################
+
+        return "{}".format(description)
 
 class newsPlayer(Macro):
     def run (self, ngrams, vars, args):
@@ -150,15 +169,17 @@ class teamStats(Macro):
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
-df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'newsPlayer': newsPlayer(), 'newsTeam': newsTeam()})
+df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam()})
 
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
 
 #turn 0
-df.add_system_transition(State.START, State.TURN0, '"Hi, I am NBA chatbot. I can talk to you about NBA news. This includes topics such as trades, injuries, and community events?"')
-df.add_user_transition(State.TURN0, State.TURN1S1, '[$player={#ONT(teams)}]') #todo change ontology here and in the one below too
-df.add_user_transition(State.TURN0, State.TURN1S2, "[! -{#ONT(teams)} {$person=#NER(person)}]") #gives a name that's not currently in NBA
-df.add_system_transition(State.TURN1S2, State.TURN0, r'[! "Oh I do not know how to talk about that topic yet. 'r'Do you have any current NBA player that you want to talk about?"]')
+df.add_system_transition(State.START, State.TURN0, '"Hi, I am NBA chatbot. I can talk to you about NBA news. For now, this only includes news about trades. Would you like to talk about trades"')
+df.add_user_transition(State.TURN0, State.TURN1S1, '[#ONT(agree)]') #todo change ontology here and in the one below too
+df.add_user_transition(State.TURN0, State.TURN1S2, "[#ONT(disagree)]") #gives a name that's not currently in NBA
+df.set_error_successor(State.TURN0, State.TURN0ERR)
+df.add_system_transition(State.TURN0ERR, State.TURN0, r'[! "I couldnt quite get that. So is that a yes or a no to talking about NBA trades?"]')
+df.add_system_transition(State.TURN1S2, State.EARLYEND, r'[! "Oh, thats a shame. I cant really talk about other news right now unfortunately. Maybe next time we can talk some more"]')
 
 
 """this is left over code, might not need error handling if POS works correctly"""
@@ -169,18 +190,21 @@ df.add_system_transition(State.TURN0ERR, State.TURN0, "I don't think that's a pe
 
 
 #turn 1
-df.add_system_transition(State.TURN1S1, State.TURN1U, r'[!"Have you heard the news about", {#newsPlayer($player)}]') #todo need to change this to topic
-df.add_user_transition(State.TURN1U, State.TURN2S, "[$response1=#POS(adj)]") #todo here user says whether or not they heard about the news
+df.add_system_transition(State.TURN1S1, State.TURN1U, r'[!"Have you heard the most recent news:" {#news()}]') #todo need to change this to topic
+df.add_user_transition(State.TURN1U, State.TURN2S_Emotion, "[$response1=#POS(adj)]") #todo here user says whether or not they heard about the news
+df.add_user_transition(State.TURN1U, State.TURN2S_Agree, '[#ONT(agree)]')
+df.add_user_transition(State.TURN1U, State.TURN2S_Disagree, '[$ONT(disagree)]')
 #df.add_user_transition(State.TURN1U, State.TURN1S1, "$player = #ONT(player)") #gets users opinion about headline 1 ##there might be an error here. trace a correct answer to turn1S1
 df.set_error_successor(State.TURN1U, State.TURN1ERR)
-df.add_system_transition(State.TURN1ERR, State.TURN2U, "Knowing news about trade", ) #todo this might be wrong
+df.add_system_transition(State.TURN1ERR, State.TURN2U, r'[! Oh okay, but I do want to know which team you think is benefitting more from this trade.]' ) #todo this might be wrong
 
 #turn 2
-
-df.add_system_transition(State.TURN2S, State.TURN2U, r'[! "Which team do you think is benefitting more from this trade? "]')
+df.add_system_transition(State.TURN2S_Emotion, State.TURN2U, r'[! "Yea, it is pretty" $response1 ". Which team do you think is benefitting more from this trade?"]')
+df.add_system_transition(State.TURN2S_Agree, State.TURN2U, r'[! "Cool, so since youve seen this news, which tema do you think will benefit more from this trade?"]')
+df.add_system_transition(State.TURN2S_Disagree, State.TURN2U, r'[! "Okay, no worries! Thats what Im here for! So which team do you think this benefits?"]')
 df.add_user_transition(State.TURN2U, State.TURN3S, '[$favoriteTeam={#ONT(teams)}]')
 df.set_error_successor(State.TURN2U, State.TURN2ERR) 
-df.add_system_transition(State.TURN2ERR, State.TURN3U, "Do not know which team is benefiting more")
+df.add_system_transition(State.TURN2ERR, State.TURN3U, r'[! "Sorry, which team is that again?"]')
 
 #turn3 df.add_system_transition(State.TURN1S1, State.TURN1U, '"Here is what I know about" $player "." #news($player) " What do you think about this situation?"')
 
@@ -202,4 +226,4 @@ df.add_user_transition(State.TURN5U, State.END, '[$watching={#ONT(yesno)}]')
 
 
 if __name__ == '__main__':
-    df.run(debugging=False)
+    df.run(debugging=True)

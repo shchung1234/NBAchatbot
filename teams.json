@@ -1735,6 +1735,29 @@
       "Washington Wizards",
       "Washington",
       "Wizards"
+    ],
+    "agree": [
+      "yes",
+      "yeah",
+      "yea",
+      "absolutely",
+      "definitely",
+      "okay",
+      "k",
+      "i do",
+      "do",
+      "of course",
+      "sure"
+    ],
+    "disagree": [
+      "no",
+      "not really",
+      "nah",
+      "nope",
+      "i dont",
+      "dont",
+      "not",
+      "not sure"
     ]
   }
 }
