@@ -138,7 +138,7 @@ class teamStats(Macro):
             team = 'OKC'
         elif vars['favoriteTeam'] =="Orlando Magic" or "Orlando" or "Magic":
             team = 'ORL'
-        elif vars['favoriteTeam'] =="Philadelphia SeventySixers" or "Philly" or "SeventySixers":
+        elif vars['favoriteTeam'] =="Philadelphia SeventySixers" or "Philly" or "SeventySixers" or "76ers":
             team = 'PHI'
         elif vars['favoriteTeam'] =="Phoenix Suns" or "Phoenix" or "Suns":
             team = 'PHX'
