@@ -97,61 +97,63 @@ class teamStats(Macro):
         if vars['favoriteTeam'] == "Atlanta Hawks" or "Atlanta" or "Hawks":
             team = 'ATL'
         elif vars['favoriteTeam'] == "Boston Celtics" or "Boston" or "Celtics":
-            team = 'ATL'
+            team = 'BOS'
         elif vars['favoriteTeam'] == "Brooklyn Nets" or "Brooklyn" or "Nets":
-            team = 'ATL'
+            team = 'BKN'
         elif vars['favoriteTeam'] =="Charlotte Hornets" or "Charlotte" or "Hornets":
-            team = 'ATL'
+            team = 'CHA'
         elif vars['favoriteTeam'] =="Chicago Bulls" or "Chicago" or "Bulls":
-            team = 'ATL'
+            team = 'CHI'
         elif vars['favoriteTeam'] =="Cleveland Cavaliers" or "Cleveland" or "Cavaliers":
-            team = 'ATL'
+            team = 'CLE'
         elif vars['favoriteTeam'] =="Dallas Mavericks" or "Dallas" or "Mavericks":
-            team = 'ATL'
+            team = 'DAL'
         elif vars['favoriteTeam'] =="Denver Nuggets" or "Denver" or "Nuggets":
-            team = 'ATL'
+            team = 'DEN'
         elif vars['favoriteTeam'] =="Detroit Pistons" or "Detroit" or "Pistons":
-            team = 'ATL'
+            team = 'DET'
         elif vars['favoriteTeam'] =="Golden State Warriors" or "GSW" or "Warriors":
-            team = 'ATL'
+            team = 'GSW'
         elif vars['favoriteTeam'] =="Houston Rockets" or "Houston" or "Rockets":
-            team = 'ATL'
+            team = 'HOU'
         elif vars['favoriteTeam'] =="Indiana Pacers" or "Indiana" or "Pacers":
-            team = 'ATL'
+            team = 'IND'
         elif vars['favoriteTeam'] =="LA Clippers" or "Clippers":
-            team = 'ATL'
+            team = 'LAC'
         elif vars['favoriteTeam'] =="Los Angeles Lakers" or "Lakers":
-            team = 'ATL'
+            team = 'LAL'
         elif vars['favoriteTeam'] =="Memphis Grizzlies" or "Memphis" or "Grizzlies":
-            team = 'ATL'
+            team = 'MEM'
         elif vars['favoriteTeam'] =="Miami Heat" or "Miami":
-            team = 'ATL'
+            team = 'MIA'
         elif vars['favoriteTeam'] =="Milwaukee Bucks" or "Milwaukee" or "Bucks":
-            team = 'ATL'
+            team = 'MIL'
         elif vars['favoriteTeam'] =="Minnesota Timberwolves" or "Minnesota" or "Timberwolves":
-            team = 'ATL'
+            team = 'MIN'
         elif vars['favoriteTeam'] =="New Orleans Pelicans" or "Pelicans" or "NoLa":
-            team = 'ATL'
+            team = 'NOP'
         elif vars['favoriteTeam'] =="New York Knicks" or "Knicks" or "NY":
-            team = 'ATL'
+            team = 'NYK'
         elif vars['favoriteTeam'] =="Oklahoma City Thunder" or "Thunder" or "OKC":
-            team = 'ATL'
+            team = 'OKC'
         elif vars['favoriteTeam'] =="Orlando Magic" or "Orlando" or "Magic":
-            team = 'ATL'
+            team = 'ORL'
+        elif vars['favoriteTeam'] =="Philadelphia SeventySixers" or "Philly" or "SeventySixers" or "76ers":
+            team = 'PHI'
         elif vars['favoriteTeam'] =="Phoenix Suns" or "Phoenix" or "Suns":
-            team = 'ATL'
+            team = 'PHX'
         elif vars['favoriteTeam'] =="Portland Trail Blazers" or "Portland" or "Trail Blazers":
-            team = 'ATL'
+            team = 'POR'
         elif vars['favoriteTeam'] =="Sacramento Kings" or "Sacramento" or "Kings":
-            team = 'ATL'
+            team = 'SAC'
         elif vars['favoriteTeam'] =="San Antonio Spurs" or "San Antonio" or "Spurs":
-            team = 'ATL'
+            team = 'SAS'
         elif vars['favoriteTeam'] =="Toronto Raptors" or "Toronto" or "Raptors":
-            team = 'ATL'
+            team = 'TOR'
         elif vars['favoriteTeam'] =="Utah Jazz" or "Utah" or "Jazz":
-            team = 'ATL'
+            team = 'UTA'
         elif vars['favoriteTeam'] =="Washington Wizards" or "Washington" or "Wizards":
-            team = 'ATL'
+            team = 'WAS'
         else:
             #error handling? idk if needed
             return "I didn't get that"
