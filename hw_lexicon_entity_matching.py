@@ -1,6 +1,6 @@
 from emora_stdm import KnowledgeBase, DialogueFlow, Macro
 from enum import Enum, auto
-from pip._vendor import requests
+import requests
 import json
 from sportsreference.nba.schedule import Schedule
 
