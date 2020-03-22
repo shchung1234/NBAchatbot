@@ -176,7 +176,7 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
 
 #turn 0
 df.add_system_transition(State.START, State.TURN0, '"Hi I’m NBA chatbot. I can talk to you about trades, injuries, drafts, or all-stars. Which of these would you like to talk about?"')
-df.add_user_transition(State.TURN0, State.TURNTRADE1S, '[#ONT(agree)]') #todo change ontology here to trades
+df.add_user_transition(State.TURN0, State.TURNTRADE1S, '[#ONT(trades)]') #todo change ontology here to trades
 df.set_error_successor(State.TURN0, State.TURN0ERR)
 df.add_system_transition(State.TURN0ERR, State.TURN0, r'[! "I do not know how to talk about that yet"]')
 #df.add_system_transition(State.TURNTRADE1S2, State.EARLYEND, r'[! "Oh, thats a shame. I cant really talk about other news right now unfortunately. Maybe next time we can talk some more"]')
@@ -185,12 +185,12 @@ df.add_system_transition(State.TURN0ERR, State.TURN0, r'[! "I do not know how to
 #turn 1
 df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE1U, r'[!"Speaking of trades, I found this most recent trade for <<player>> between the <team a> and <team b>. Are you interested? If not, we can also talk about injuries, drafts, or all-stars. " {#news()}]') #todo input news Macro here
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
-df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE0, '[$ONT(disagree)]') #todo here is where user can change topic
+df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE0, '[#ONT(disagree)]') #todo here is where user can change topic
 df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1ERR)
 df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Do not know if I want to talk about trades or about something else"]' )
 
 #turn 2
-df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "Personally I think this will help" #worse team macro ". Do you think it will?"]')
+df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "Personally I think this will help" #worseTeam() ". Do you think it will?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE2AS, '[{#ONT(disagree)}]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S, '[{#ONT(agree)}]')
 df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
