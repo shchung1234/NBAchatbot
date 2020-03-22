@@ -1,8 +1,8 @@
 from emora_stdm import KnowledgeBase, DialogueFlow, Macro
 from enum import Enum, auto
-from pip._vendor import requests
+#from pip._vendor import requests
 import json
-from sportsreference.nba.schedule import Schedule
+#from sportsreference.nba.schedule import Schedule
 
 
 # TODO: Update the State enum as needed
@@ -13,10 +13,10 @@ class State(Enum):
     TURNTRADE1S = auto()
     TURNTRADE1U = auto()
     TURNTRADE1ERR = auto()
-    TURNTRADE2S_Agree = auto()
-    TURNTRADE2S_Disagree = auto()
-    TURNTRADE2S_Emotion = auto()
+    TURNTRADE2S = auto()
     TURNTRADE2U = auto()
+    TURNTRADE2AS = auto()
+    TURNTRADE2AU = auto()
     TURNTRADE2ERR = auto()
     TURNTRADE3S = auto()
     TURNTRADE3U = auto()
