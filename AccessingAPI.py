@@ -9,17 +9,20 @@ trade = trades[0]['TRANSACTION_DESCRIPTION']
 receivingTeam = trade.split('received')[0]
 givingTeam = trade.split('from ')[1]
 givingTeam = givingTeam[:-1]
-player = trade.split('received')[1]
+player = trade.split('received ')[1]
 player = player.split('from')[0]
+
 playerList = player.split(' ')
-role = player[0]
-player = player.join(playerList)
+role = playerList[0]
+playerList.pop(0)
+player = ' '.join(playerList)
 
 print(trade)
 print(receivingTeam)
 print(givingTeam)
 print(player)
-        
+print(role)
+print("I found this most recent trade for {} between the {} and {}".format(player, givingTeam, receivingTeam))
 
 # wins = 0
 # losses = 0

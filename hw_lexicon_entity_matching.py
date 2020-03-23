@@ -36,6 +36,12 @@ ontology = {
 
         }
 }
+
+#GLOBAL VARS????
+receivingTeam = str()
+givingTeam = str()
+player = str()
+
 class news(Macro):
     def run (self, ngrams, vars, args):
         #andrew- im just gonna assume that the input is the team name and only the team name, eg "Atlanta Hawks"
@@ -173,9 +179,25 @@ class tradeNews(Macro):
         response = requests.get("https://stats.nba.com/js/data/playermovement/NBA_Player_Movement.json")
         test = response.json()
         trades = [x for x in test['NBA_Player_Movement']['rows'] if x['Transaction_Type'] == 'Trade']
-        trade = trades[0]['']
+        trade = trades[0]['TRANSACTION_DESCRIPTION']
+        receivingTeam = trade.split('received')[0]
+        givingTeam = trade.split('from ')[1]
+        givingTeam = givingTeam[:-1]
+        player = trade.split('received ')[1]
+        player = player.split('from')[0]
 
-        return "I found this most recent trade for {} between the {} and {}"
+        playerList = player.split(' ')
+        role = playerList[0]
+        playerList.pop(0)
+        player = ' '.join(playerList)
+        
+        # print(trade)
+        # print(receivingTeam)
+        # print(givingTeam)
+        # print(player)
+        # print(role)
+
+        return "I found this most recent trade for {} between the {} and {}".format(player, givingTeam, receivingTeam)
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
