@@ -2,17 +2,36 @@ import requests
 import json
 from sportsreference.nba.schedule import Schedule
 
-wins = 0
-losses = 0
-teamSchedule = Schedule('HOU')
-for game in teamSchedule:
-    if game.result == 'Win':
-        wins += 1
-    else:
-        losses += 1
+response = requests.get("https://stats.nba.com/js/data/playermovement/NBA_Player_Movement.json")
+test = response.json()
+trades = [x for x in test['NBA_Player_Movement']['rows'] if x['Transaction_Type'] == 'Trade']
+trade = trades[0]['TRANSACTION_DESCRIPTION']
+receivingTeam = trade.split('received')[0]
+givingTeam = trade.split('from ')[1]
+givingTeam = givingTeam[:-1]
+player = trade.split('received')[1]
+player = player.split('from')[0]
+playerList = player.split(' ')
+role = player[0]
+player = player.join(playerList)
 
-print(wins)
-print(losses)
+print(trade)
+print(receivingTeam)
+print(givingTeam)
+print(player)
+        
+
+# wins = 0
+# losses = 0
+# teamSchedule = Schedule('HOU')
+# for game in teamSchedule:
+#     if game.result == 'Win':
+#         wins += 1
+#     else:
+#         losses += 1
+
+# print(wins)
+# print(losses)
 
 # input = "Atlanta Hawks"
 # endpoint = input.replace(" ", "%20")
