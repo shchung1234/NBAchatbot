@@ -470,7 +470,7 @@
       "Monte Morris",
       "Jamal Murray",
       "Mason Plumlee",
-      "Michael Porter Jr.",
+      "Michael Porter Jr.", 
       "Noah Vonleh",
       "Michael Malone"
     ],
@@ -1758,6 +1758,18 @@
       "dont",
       "not",
       "not sure"
+    ],
+    "topics": [
+      "trades",
+      "injuries",
+      "all-stars",
+      "all stars",
+      "draft",
+      "drafts"
+    ],
+    "trades": [
+      "trade",
+      "trades"
     ]
   }
 }
