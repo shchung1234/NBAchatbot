@@ -3,6 +3,7 @@ from enum import Enum, auto
 import requests
 import json
 from sportsreference.nba.schedule import Schedule
+from sportsreference.nba.roster import Player
 
 
 # TODO: Update the State enum as needed
@@ -199,9 +200,31 @@ class tradeNews(Macro):
 
         return "I found this most recent trade for {} between the {} and {}".format(player, givingTeam, receivingTeam)
 
+class playerRating(Macro):
+    def run (self, ngrams, vars, args):
+        n = vars['playername'].split()
+        s = ""
+        if (len(n[1]) >= 5):    #edge case for names with shorter than 5 characters/jr. resolved
+            for i in range(5):
+                s += n[1][i]
+        else:
+            for i in range(len(n[1])):
+                s += n[1][i]
+        for i in range(2):
+            s += n[0][i]
+        s += "01"
+        playerid = s.lower()
+
+        player = Player(playerid)
+        PER = player.player_efficiency_rating
+        if (PER > 18): return "good player"
+        else: return "bad player"
+
+
+
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
-df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(), 'teamStats': teamStats()})
+df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(), 'teamStats': teamStats(), 'playerRating' : playerRating()})
 
 #########################
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
