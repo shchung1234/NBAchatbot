@@ -200,6 +200,96 @@ class tradeNews(Macro):
 
         return "I found this most recent trade for {} between the {} and {}".format(player, givingTeam, receivingTeam)
 
+class worseTeam(Macro):
+    def run (self, ngrams, vars, args):
+
+        receiving_giving = [receivingTeam, givingTeam]
+        receive_give_codes = []
+        for team in receiving_giving:
+            if team == "Atlanta Hawks" or "Atlanta" or "Hawks":
+                receive_give_codes.append('ATL')
+            elif team == "Boston Celtics" or "Boston" or "Celtics":
+                receive_give_codes.append('BOS')
+            elif team == "Brooklyn Nets" or "Brooklyn" or "Nets":
+                receive_give_codes.append('BKN')
+            elif team =="Charlotte Hornets" or "Charlotte" or "Hornets":
+                receive_give_codes.append('CHA')
+            elif team =="Chicago Bulls" or "Chicago" or "Bulls":
+                receive_give_codes.append('CHI')
+            elif team =="Cleveland Cavaliers" or "Cleveland" or "Cavaliers":
+                receive_give_codes.append('CLE')
+            elif team =="Dallas Mavericks" or "Dallas" or "Mavericks":
+                receive_give_codes.append('DAL')
+            elif team =="Denver Nuggets" or "Denver" or "Nuggets":
+                receive_give_codes.append('DEN')
+            elif team =="Detroit Pistons" or "Detroit" or "Pistons":
+                receive_give_codes.append('DET')
+            elif team =="Golden State Warriors" or "GSW" or "Warriors":
+                receive_give_codes.append('GSW')
+            elif team =="Houston Rockets" or "Houston" or "Rockets":
+                receive_give_codes.append('HOU')
+            elif team =="Indiana Pacers" or "Indiana" or "Pacers":
+                receive_give_codes.append('IND')
+            elif team =="LA Clippers" or "Clippers":
+                receive_give_codes.append('LAC')
+            elif team =="Los Angeles Lakers" or "Lakers":
+                receive_give_codes.append('LAL')
+            elif team =="Memphis Grizzlies" or "Memphis" or "Grizzlies":
+                receive_give_codes.append('MEM')
+            elif team =="Miami Heat" or "Miami":
+                receive_give_codes.append('MIA')
+            elif team =="Milwaukee Bucks" or "Milwaukee" or "Bucks":
+                receive_give_codes.append('MIL')
+            elif team =="Minnesota Timberwolves" or "Minnesota" or "Timberwolves":
+                receive_give_codes.append('MIN')
+            elif team =="New Orleans Pelicans" or "Pelicans" or "NoLa":
+                receive_give_codes.append('NOP')
+            elif team =="New York Knicks" or "Knicks" or "NY":
+                receive_give_codes.append('NYK')
+            elif team =="Oklahoma City Thunder" or "Thunder" or "OKC":
+                receive_give_codes.append('OKC')
+            elif team =="Orlando Magic" or "Orlando" or "Magic":
+                receive_give_codes.append('ORL')
+            elif team =="Philadelphia SeventySixers" or "Philly" or "SeventySixers" or "76ers":
+                receive_give_codes.append('PHI')
+            elif team =="Phoenix Suns" or "Phoenix" or "Suns":
+                receive_give_codes.append('PHX')
+            elif team =="Portland Trail Blazers" or "Portland" or "Trail Blazers":
+                receive_give_codes.append('POR')
+            elif team =="Sacramento Kings" or "Sacramento" or "Kings":
+                receive_give_codes.append('SAC')
+            elif team =="San Antonio Spurs" or "San Antonio" or "Spurs":
+                receive_give_codes.append('SAS')
+            elif team =="Toronto Raptors" or "Toronto" or "Raptors":
+                receive_give_codes.append('TOR')
+            elif team =="Utah Jazz" or "Utah" or "Jazz":
+                receive_give_codes.append('UTA')
+            elif team =="Washington Wizards" or "Washington" or "Wizards":
+                receive_give_codes.append('WAS')
+            else:
+                receive_give_codes.append('')
+
+        win_loss = list()
+
+        for team in receive_give_codes:
+            wins = 0
+            losses = 0
+            teamSchedule = Schedule(team)
+            for game in teamSchedule:
+                if game.result == 'Win':
+                    wins += 1
+                else:
+                    losses += 1
+            win_loss.append(wins/losses)
+
+        for x,y in zip(win_loss, win_loss[1:]):
+            if x > y:
+                return givingTeam
+            elif x < y:
+                return receivingTeam
+            else:
+                return givingTeam
+
 class playerRating(Macro):
     def run (self, ngrams, vars, args):
         n = vars['playername'].split()
@@ -219,8 +309,7 @@ class playerRating(Macro):
         PER = player.player_efficiency_rating
         if (PER > 18): return "good player"
         else: return "bad player"
-
-
+        
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
