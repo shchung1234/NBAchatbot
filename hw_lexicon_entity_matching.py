@@ -192,11 +192,11 @@ class tradeNews(Macro):
         playerList.pop(0)
         player = ' '.join(playerList)
         
-        # print(trade)
-        # print(receivingTeam)
-        # print(givingTeam)
-        # print(player)
-        # print(role)
+        print(trade)
+        print('recieving team', receivingTeam)
+        print(givingTeam, givingTeam)
+        print(player)
+        print(role)
 
         return "I found this most recent trade for {} between the {} and {}".format(player, givingTeam, receivingTeam)
 
@@ -309,11 +309,171 @@ class playerRating(Macro):
         PER = player.player_efficiency_rating
         if (PER > 18): return "good player"
         else: return "bad player"
-        
+
+
+#returns name of team which has better W/L ratio
+class betterTeam(Macro):
+    def run (self, ngrams, vars, args):
+        if vars[receivingTeam] == "Atlanta Hawks" or "Atlanta" or "Hawks":
+            teama = 'ATL'
+        elif vars[receivingTeam] == "Boston Celtics" or "Boston" or "Celtics":
+            teama = 'BOS'
+        elif vars[receivingTeam] == "Brooklyn Nets" or "Brooklyn" or "Nets":
+            teama = 'BKN'
+        elif vars[receivingTeam] =="Charlotte Hornets" or "Charlotte" or "Hornets":
+            teama = 'CHA'
+        elif vars[receivingTeam] =="Chicago Bulls" or "Chicago" or "Bulls":
+            teama = 'CHI'
+        elif vars[receivingTeam] =="Cleveland Cavaliers" or "Cleveland" or "Cavaliers":
+            teama = 'CLE'
+        elif vars[receivingTeam] =="Dallas Mavericks" or "Dallas" or "Mavericks":
+            teama = 'DAL'
+        elif vars[receivingTeam] =="Denver Nuggets" or "Denver" or "Nuggets":
+            teama = 'DEN'
+        elif vars[receivingTeam] =="Detroit Pistons" or "Detroit" or "Pistons":
+            teama = 'DET'
+        elif vars[receivingTeam] =="Golden State Warriors" or "GSW" or "Warriors":
+            teama = 'GSW'
+        elif vars[receivingTeam] =="Houston Rockets" or "Houston" or "Rockets":
+            teama = 'HOU'
+        elif vars[receivingTeam] =="Indiana Pacers" or "Indiana" or "Pacers":
+            teama = 'IND'
+        elif vars[receivingTeam] =="LA Clippers" or "Clippers":
+            teama = 'LAC'
+        elif vars[receivingTeam] =="Los Angeles Lakers" or "Lakers":
+            teama = 'LAL'
+        elif vars[receivingTeam] =="Memphis Grizzlies" or "Memphis" or "Grizzlies":
+            teama = 'MEM'
+        elif vars[receivingTeam] =="Miami Heat" or "Miami":
+            teama = 'MIA'
+        elif vars[receivingTeam] =="Milwaukee Bucks" or "Milwaukee" or "Bucks":
+            teama = 'MIL'
+        elif vars[receivingTeam] =="Minnesota Timberwolves" or "Minnesota" or "Timberwolves":
+            teama = 'MIN'
+        elif vars[receivingTeam] =="New Orleans Pelicans" or "Pelicans" or "NoLa":
+            teama = 'NOP'
+        elif vars[receivingTeam] =="New York Knicks" or "Knicks" or "NY":
+            teama = 'NYK'
+        elif vars[receivingTeam] =="Oklahoma City Thunder" or "Thunder" or "OKC":
+            teama = 'OKC'
+        elif vars[receivingTeam] =="Orlando Magic" or "Orlando" or "Magic":
+            teama = 'ORL'
+        elif vars[receivingTeam] =="Philadelphia SeventySixers" or "Philly" or "SeventySixers" or "76ers":
+            teama = 'PHI'
+        elif vars[receivingTeam] =="Phoenix Suns" or "Phoenix" or "Suns":
+            teama = 'PHX'
+        elif vars[receivingTeam] =="Portland Trail Blazers" or "Portland" or "Trail Blazers":
+            teama = 'POR'
+        elif vars[receivingTeam] =="Sacramento Kings" or "Sacramento" or "Kings":
+            teama = 'SAC'
+        elif vars[receivingTeam] =="San Antonio Spurs" or "San Antonio" or "Spurs":
+            teama = 'SAS'
+        elif vars[receivingTeam] =="Toronto Raptors" or "Toronto" or "Raptors":
+            teama = 'TOR'
+        elif vars[receivingTeam] =="Utah Jazz" or "Utah" or "Jazz":
+            teama = 'UTA'
+        elif vars[receivingTeam] =="Washington Wizards" or "Washington" or "Wizards":
+            teama = 'WAS'
+        else:
+            #error handling? idk if needed
+            return "I didn't get that"
+
+        teamAWins = 0
+        teamALosses = 0
+        teamSchedule = Schedule(teama)
+        for game in teamSchedule:
+            if game.result == 'Win':
+                teamAWins += 1
+            else:
+                teamALosses += 1
+        teamARatio = teamAWins/teamALosses
+
+        if vars[givingTeam] == "Atlanta Hawks" or "Atlanta" or "Hawks":
+            teamb = 'ATL'
+        elif vars[givingTeam] == "Boston Celtics" or "Boston" or "Celtics":
+            teamb = 'BOS'
+        elif vars[givingTeam] == "Brooklyn Nets" or "Brooklyn" or "Nets":
+            teamb = 'BKN'
+        elif vars[givingTeam] =="Charlotte Hornets" or "Charlotte" or "Hornets":
+            teamb = 'CHA'
+        elif vars[givingTeam] =="Chicago Bulls" or "Chicago" or "Bulls":
+            teamb = 'CHI'
+        elif vars[givingTeam] =="Cleveland Cavaliers" or "Cleveland" or "Cavaliers":
+            teamb = 'CLE'
+        elif vars[givingTeam] =="Dallas Mavericks" or "Dallas" or "Mavericks":
+            teamb = 'DAL'
+        elif vars[givingTeam] =="Denver Nuggets" or "Denver" or "Nuggets":
+            teamb = 'DEN'
+        elif vars[givingTeam] =="Detroit Pistons" or "Detroit" or "Pistons":
+            teamb = 'DET'
+        elif vars[givingTeam] =="Golden State Warriors" or "GSW" or "Warriors":
+            teamb = 'GSW'
+        elif vars[givingTeam] =="Houston Rockets" or "Houston" or "Rockets":
+            teamb = 'HOU'
+        elif vars[givingTeam] =="Indiana Pacers" or "Indiana" or "Pacers":
+            teamb = 'IND'
+        elif vars[givingTeam] =="LA Clippers" or "Clippers":
+            teamb = 'LAC'
+        elif vars[givingTeam] =="Los Angeles Lakers" or "Lakers":
+            teamb = 'LAL'
+        elif vars[givingTeam] =="Memphis Grizzlies" or "Memphis" or "Grizzlies":
+            teamb = 'MEM'
+        elif vars[givingTeam] =="Miami Heat" or "Miami":
+            teamb = 'MIA'
+        elif vars[givingTeam] =="Milwaukee Bucks" or "Milwaukee" or "Bucks":
+            teamb = 'MIL'
+        elif vars[givingTeam] =="Minnesota Timberwolves" or "Minnesota" or "Timberwolves":
+            teamb = 'MIN'
+        elif vars[givingTeam] =="New Orleans Pelicans" or "Pelicans" or "NoLa":
+            teamb = 'NOP'
+        elif vars[givingTeam] =="New York Knicks" or "Knicks" or "NY":
+            teamb = 'NYK'
+        elif vars[givingTeam] =="Oklahoma City Thunder" or "Thunder" or "OKC":
+            teamb = 'OKC'
+        elif vars[givingTeam] =="Orlando Magic" or "Orlando" or "Magic":
+            teamb = 'ORL'
+        elif vars[givingTeam] =="Philadelphia SeventySixers" or "Philly" or "SeventySixers" or "76ers":
+            teamb = 'PHI'
+        elif vars[givingTeam] =="Phoenix Suns" or "Phoenix" or "Suns":
+            teamb = 'PHX'
+        elif vars[givingTeam] =="Portland Trail Blazers" or "Portland" or "Trail Blazers":
+            teamb = 'POR'
+        elif vars[givingTeam] =="Sacramento Kings" or "Sacramento" or "Kings":
+            teamb = 'SAC'
+        elif vars[givingTeam] =="San Antonio Spurs" or "San Antonio" or "Spurs":
+            teamb = 'SAS'
+        elif vars[givingTeam] =="Toronto Raptors" or "Toronto" or "Raptors":
+            teamb = 'TOR'
+        elif vars[givingTeam] =="Utah Jazz" or "Utah" or "Jazz":
+            teamb = 'UTA'
+        elif vars[givingTeam] =="Washington Wizards" or "Washington" or "Wizards":
+            teamb = 'WAS'
+        else:
+            #error handling? idk if needed
+            return "I didn't get that"
+
+        teamBWins = 0
+        teamBLosses = 0
+        teamSchedule = Schedule(teamb)
+        for game in teamSchedule:
+            if game.result == 'Win':
+                teamBWins += 1
+            else:
+                teamBLosses += 1
+        teamBRatio = teamBWins/teamBLosses
+
+        if teamBRatio >= teamARatio:
+            return "The better team is {} ".format(vars[givingTeam])
+
+        else:
+            return "The better team is {} ".format(vars[receivingTeam]) #todo receivingTeams might need ''
+
+
+
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
-df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(), 'teamStats': teamStats(), 'playerRating' : playerRating()})
+df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(), 'teamStats': teamStats(), 'playerRating' : playerRating(), 'tradeNews':tradeNews(), 'betterTeam': betterTeam()})
 
 #########################
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
@@ -328,14 +488,14 @@ df.add_system_transition(State.TURN0ERR, State.TURN0, r'[! "I do not know how to
 
 
 #turn 1
-df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE1U, r'[!"Speaking of trades, I found this most recent trade for <<player>> between the <team a> and <team b>. Are you interested? If not, we can also talk about injuries, drafts, or all-stars. " {#news()}]') #todo input news Macro here
+df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE1U, r'[!{#tradeNews()} ". If this trade does not interest you we can also talk about all-stars, injuries, or the draft"]') #todo input news Macro here
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE1U, State.TURN0, '[#ONT(disagree)]')
 df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1ERR)
 df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Do not know if I want to talk about trades or about something else"]' )
 
 #turn 2
-df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "Personally I think this will help" #worseTeam() ". Do you think it will?"]')
+df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "Personally I think this will help" #betterTeam() ". Do you think it will?"]') #todo change this back to worseTeam
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE2AS, '[{#ONT(disagree)}]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S, '[{#ONT(agree)}]')
 df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
