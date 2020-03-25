@@ -194,7 +194,7 @@ class tradeNews(Macro):
         
         print(trade)
         print('recieving team', receivingTeam)
-        print(givingTeam, givingTeam)
+        print('givingTeam', givingTeam)
         print(player)
         print(role)
 
@@ -203,74 +203,85 @@ class tradeNews(Macro):
 class worseTeam(Macro):
     def run (self, ngrams, vars, args):
 
+        response = requests.get("https://stats.nba.com/js/data/playermovement/NBA_Player_Movement.json")
+        test = response.json()
+        trades = [x for x in test['NBA_Player_Movement']['rows'] if x['Transaction_Type'] == 'Trade']
+        trade = trades[0]['TRANSACTION_DESCRIPTION']
+        receivingTeam = trade.split('received')[0]
+        givingTeam = trade.split('from ')[1]
+        givingTeam = givingTeam[:-1]
+        print('givingTeam', givingTeam)
+
         receiving_giving = [receivingTeam, givingTeam]
         receive_give_codes = []
+        print('recieving_giving at beginning', receiving_giving)
         for team in receiving_giving:
-            if team == "Atlanta Hawks" or "Atlanta" or "Hawks":
+            if team in ["Atlanta Hawks", "Atlanta", "Hawks"]:
                 receive_give_codes.append('ATL')
-            elif team == "Boston Celtics" or "Boston" or "Celtics":
+            elif team in ["Boston Celtics", "Boston", "Celtics"]:
                 receive_give_codes.append('BOS')
-            elif team == "Brooklyn Nets" or "Brooklyn" or "Nets":
+            elif team in ["Brooklyn Nets", "Brooklyn", "Nets"]:
                 receive_give_codes.append('BKN')
-            elif team =="Charlotte Hornets" or "Charlotte" or "Hornets":
+            elif team in ["Charlotte Hornets", "Charlotte",  "Hornets"]:
                 receive_give_codes.append('CHA')
-            elif team =="Chicago Bulls" or "Chicago" or "Bulls":
+            elif team in ["Chicago Bulls", "Chicago", "Bulls"]:
                 receive_give_codes.append('CHI')
-            elif team =="Cleveland Cavaliers" or "Cleveland" or "Cavaliers":
+            elif team in ["Cleveland Cavaliers", "Cleveland", "Cavaliers"]:
                 receive_give_codes.append('CLE')
-            elif team =="Dallas Mavericks" or "Dallas" or "Mavericks":
+            elif team in ["Dallas Mavericks", "Dallas", "Mavericks"]:
                 receive_give_codes.append('DAL')
-            elif team =="Denver Nuggets" or "Denver" or "Nuggets":
+            elif team in ["Denver Nuggets", "Denver", "Nuggets"]:
                 receive_give_codes.append('DEN')
-            elif team =="Detroit Pistons" or "Detroit" or "Pistons":
+            elif team in ["Detroit Pistons", "Detroit", "Pistons"]:
                 receive_give_codes.append('DET')
-            elif team =="Golden State Warriors" or "GSW" or "Warriors":
+            elif team in ["Golden State Warriors", "GSW", "Warriors"]:
                 receive_give_codes.append('GSW')
-            elif team =="Houston Rockets" or "Houston" or "Rockets":
+            elif team in ["Houston Rockets", "Houston", "Rockets"]:
                 receive_give_codes.append('HOU')
-            elif team =="Indiana Pacers" or "Indiana" or "Pacers":
+            elif team in ["Indiana Pacers", "Indiana", "Pacers"]:
                 receive_give_codes.append('IND')
-            elif team =="LA Clippers" or "Clippers":
+            elif team in ["LA Clippers", "Clippers"]:
                 receive_give_codes.append('LAC')
-            elif team =="Los Angeles Lakers" or "Lakers":
+            elif team in ["Los Angeles Lakers", "Lakers"]:
                 receive_give_codes.append('LAL')
-            elif team =="Memphis Grizzlies" or "Memphis" or "Grizzlies":
+            elif team in ["Memphis Grizzlies", "Memphis", "Grizzlies"]:
                 receive_give_codes.append('MEM')
-            elif team =="Miami Heat" or "Miami":
+            elif team in ["Miami Heat", "Miami"]:
                 receive_give_codes.append('MIA')
-            elif team =="Milwaukee Bucks" or "Milwaukee" or "Bucks":
+            elif team in ["Milwaukee Bucks", "Milwaukee", "Bucks"]:
                 receive_give_codes.append('MIL')
-            elif team =="Minnesota Timberwolves" or "Minnesota" or "Timberwolves":
+            elif team in ["Minnesota Timberwolves", "Minnesota", "Timberwolves"]:
                 receive_give_codes.append('MIN')
-            elif team =="New Orleans Pelicans" or "Pelicans" or "NoLa":
+            elif team in ["New Orleans Pelicans", "Pelicans", "NoLa"]:
                 receive_give_codes.append('NOP')
-            elif team =="New York Knicks" or "Knicks" or "NY":
+            elif team in ["New York Knicks", "Knicks", "NY"]:
                 receive_give_codes.append('NYK')
-            elif team =="Oklahoma City Thunder" or "Thunder" or "OKC":
+            elif team in ["Oklahoma City Thunder", "Thunder", "OKC"]:
                 receive_give_codes.append('OKC')
-            elif team =="Orlando Magic" or "Orlando" or "Magic":
+            elif team in ["Orlando Magic", "Orlando", "Magic"]:
                 receive_give_codes.append('ORL')
-            elif team =="Philadelphia SeventySixers" or "Philly" or "SeventySixers" or "76ers":
+            elif team in ["Philadelphia SeventySixers", "Philly", "SeventySixers", "76ers"]:
                 receive_give_codes.append('PHI')
-            elif team =="Phoenix Suns" or "Phoenix" or "Suns":
+            elif team in ["Phoenix Suns", "Phoenix", "Suns"]:
                 receive_give_codes.append('PHX')
-            elif team =="Portland Trail Blazers" or "Portland" or "Trail Blazers":
+            elif team in ["Portland Trail Blazers", "Portland", "Trail Blazers"]:
                 receive_give_codes.append('POR')
-            elif team =="Sacramento Kings" or "Sacramento" or "Kings":
+            elif team in ["Sacramento Kings", "Sacramento", "Kings"]:
                 receive_give_codes.append('SAC')
-            elif team =="San Antonio Spurs" or "San Antonio" or "Spurs":
+            elif team in ["San Antonio Spurs", "San Antonio", "Spurs"]:
                 receive_give_codes.append('SAS')
-            elif team =="Toronto Raptors" or "Toronto" or "Raptors":
+            elif team in ["Toronto Raptors", "Toronto", "Raptors"]:
                 receive_give_codes.append('TOR')
-            elif team =="Utah Jazz" or "Utah" or "Jazz":
+            elif team in ["Utah Jazz", "Utah", "Jazz"]:
                 receive_give_codes.append('UTA')
-            elif team =="Washington Wizards" or "Washington" or "Wizards":
+            elif team in ["Washington Wizards", "Washington", "Wizards"]:
                 receive_give_codes.append('WAS')
             else:
                 receive_give_codes.append('')
 
         win_loss = list()
 
+        print('recieve_give_codes', receive_give_codes)
         for team in receive_give_codes:
             wins = 0
             losses = 0
@@ -283,12 +294,11 @@ class worseTeam(Macro):
             win_loss.append(wins/losses)
 
         for x,y in zip(win_loss, win_loss[1:]):
-            if x > y:
-                return givingTeam
-            elif x < y:
-                return receivingTeam
+            if x >= y:
+                return "the worse team is {} ".format(givingTeam)
             else:
-                return givingTeam
+                return "the worse team is {} ".format(receivingTeam)
+
 
 class playerRating(Macro):
     def run (self, ngrams, vars, args):
@@ -312,168 +322,11 @@ class playerRating(Macro):
 
 
 #returns name of team which has better W/L ratio
-class betterTeam(Macro):
-    def run (self, ngrams, vars, args):
-        if vars[receivingTeam] == "Atlanta Hawks" or "Atlanta" or "Hawks":
-            teama = 'ATL'
-        elif vars[receivingTeam] == "Boston Celtics" or "Boston" or "Celtics":
-            teama = 'BOS'
-        elif vars[receivingTeam] == "Brooklyn Nets" or "Brooklyn" or "Nets":
-            teama = 'BKN'
-        elif vars[receivingTeam] =="Charlotte Hornets" or "Charlotte" or "Hornets":
-            teama = 'CHA'
-        elif vars[receivingTeam] =="Chicago Bulls" or "Chicago" or "Bulls":
-            teama = 'CHI'
-        elif vars[receivingTeam] =="Cleveland Cavaliers" or "Cleveland" or "Cavaliers":
-            teama = 'CLE'
-        elif vars[receivingTeam] =="Dallas Mavericks" or "Dallas" or "Mavericks":
-            teama = 'DAL'
-        elif vars[receivingTeam] =="Denver Nuggets" or "Denver" or "Nuggets":
-            teama = 'DEN'
-        elif vars[receivingTeam] =="Detroit Pistons" or "Detroit" or "Pistons":
-            teama = 'DET'
-        elif vars[receivingTeam] =="Golden State Warriors" or "GSW" or "Warriors":
-            teama = 'GSW'
-        elif vars[receivingTeam] =="Houston Rockets" or "Houston" or "Rockets":
-            teama = 'HOU'
-        elif vars[receivingTeam] =="Indiana Pacers" or "Indiana" or "Pacers":
-            teama = 'IND'
-        elif vars[receivingTeam] =="LA Clippers" or "Clippers":
-            teama = 'LAC'
-        elif vars[receivingTeam] =="Los Angeles Lakers" or "Lakers":
-            teama = 'LAL'
-        elif vars[receivingTeam] =="Memphis Grizzlies" or "Memphis" or "Grizzlies":
-            teama = 'MEM'
-        elif vars[receivingTeam] =="Miami Heat" or "Miami":
-            teama = 'MIA'
-        elif vars[receivingTeam] =="Milwaukee Bucks" or "Milwaukee" or "Bucks":
-            teama = 'MIL'
-        elif vars[receivingTeam] =="Minnesota Timberwolves" or "Minnesota" or "Timberwolves":
-            teama = 'MIN'
-        elif vars[receivingTeam] =="New Orleans Pelicans" or "Pelicans" or "NoLa":
-            teama = 'NOP'
-        elif vars[receivingTeam] =="New York Knicks" or "Knicks" or "NY":
-            teama = 'NYK'
-        elif vars[receivingTeam] =="Oklahoma City Thunder" or "Thunder" or "OKC":
-            teama = 'OKC'
-        elif vars[receivingTeam] =="Orlando Magic" or "Orlando" or "Magic":
-            teama = 'ORL'
-        elif vars[receivingTeam] =="Philadelphia SeventySixers" or "Philly" or "SeventySixers" or "76ers":
-            teama = 'PHI'
-        elif vars[receivingTeam] =="Phoenix Suns" or "Phoenix" or "Suns":
-            teama = 'PHX'
-        elif vars[receivingTeam] =="Portland Trail Blazers" or "Portland" or "Trail Blazers":
-            teama = 'POR'
-        elif vars[receivingTeam] =="Sacramento Kings" or "Sacramento" or "Kings":
-            teama = 'SAC'
-        elif vars[receivingTeam] =="San Antonio Spurs" or "San Antonio" or "Spurs":
-            teama = 'SAS'
-        elif vars[receivingTeam] =="Toronto Raptors" or "Toronto" or "Raptors":
-            teama = 'TOR'
-        elif vars[receivingTeam] =="Utah Jazz" or "Utah" or "Jazz":
-            teama = 'UTA'
-        elif vars[receivingTeam] =="Washington Wizards" or "Washington" or "Wizards":
-            teama = 'WAS'
-        else:
-            #error handling? idk if needed
-            return "I didn't get that"
-
-        teamAWins = 0
-        teamALosses = 0
-        teamSchedule = Schedule(teama)
-        for game in teamSchedule:
-            if game.result == 'Win':
-                teamAWins += 1
-            else:
-                teamALosses += 1
-        teamARatio = teamAWins/teamALosses
-
-        if vars[givingTeam] == "Atlanta Hawks" or "Atlanta" or "Hawks":
-            teamb = 'ATL'
-        elif vars[givingTeam] == "Boston Celtics" or "Boston" or "Celtics":
-            teamb = 'BOS'
-        elif vars[givingTeam] == "Brooklyn Nets" or "Brooklyn" or "Nets":
-            teamb = 'BKN'
-        elif vars[givingTeam] =="Charlotte Hornets" or "Charlotte" or "Hornets":
-            teamb = 'CHA'
-        elif vars[givingTeam] =="Chicago Bulls" or "Chicago" or "Bulls":
-            teamb = 'CHI'
-        elif vars[givingTeam] =="Cleveland Cavaliers" or "Cleveland" or "Cavaliers":
-            teamb = 'CLE'
-        elif vars[givingTeam] =="Dallas Mavericks" or "Dallas" or "Mavericks":
-            teamb = 'DAL'
-        elif vars[givingTeam] =="Denver Nuggets" or "Denver" or "Nuggets":
-            teamb = 'DEN'
-        elif vars[givingTeam] =="Detroit Pistons" or "Detroit" or "Pistons":
-            teamb = 'DET'
-        elif vars[givingTeam] =="Golden State Warriors" or "GSW" or "Warriors":
-            teamb = 'GSW'
-        elif vars[givingTeam] =="Houston Rockets" or "Houston" or "Rockets":
-            teamb = 'HOU'
-        elif vars[givingTeam] =="Indiana Pacers" or "Indiana" or "Pacers":
-            teamb = 'IND'
-        elif vars[givingTeam] =="LA Clippers" or "Clippers":
-            teamb = 'LAC'
-        elif vars[givingTeam] =="Los Angeles Lakers" or "Lakers":
-            teamb = 'LAL'
-        elif vars[givingTeam] =="Memphis Grizzlies" or "Memphis" or "Grizzlies":
-            teamb = 'MEM'
-        elif vars[givingTeam] =="Miami Heat" or "Miami":
-            teamb = 'MIA'
-        elif vars[givingTeam] =="Milwaukee Bucks" or "Milwaukee" or "Bucks":
-            teamb = 'MIL'
-        elif vars[givingTeam] =="Minnesota Timberwolves" or "Minnesota" or "Timberwolves":
-            teamb = 'MIN'
-        elif vars[givingTeam] =="New Orleans Pelicans" or "Pelicans" or "NoLa":
-            teamb = 'NOP'
-        elif vars[givingTeam] =="New York Knicks" or "Knicks" or "NY":
-            teamb = 'NYK'
-        elif vars[givingTeam] =="Oklahoma City Thunder" or "Thunder" or "OKC":
-            teamb = 'OKC'
-        elif vars[givingTeam] =="Orlando Magic" or "Orlando" or "Magic":
-            teamb = 'ORL'
-        elif vars[givingTeam] =="Philadelphia SeventySixers" or "Philly" or "SeventySixers" or "76ers":
-            teamb = 'PHI'
-        elif vars[givingTeam] =="Phoenix Suns" or "Phoenix" or "Suns":
-            teamb = 'PHX'
-        elif vars[givingTeam] =="Portland Trail Blazers" or "Portland" or "Trail Blazers":
-            teamb = 'POR'
-        elif vars[givingTeam] =="Sacramento Kings" or "Sacramento" or "Kings":
-            teamb = 'SAC'
-        elif vars[givingTeam] =="San Antonio Spurs" or "San Antonio" or "Spurs":
-            teamb = 'SAS'
-        elif vars[givingTeam] =="Toronto Raptors" or "Toronto" or "Raptors":
-            teamb = 'TOR'
-        elif vars[givingTeam] =="Utah Jazz" or "Utah" or "Jazz":
-            teamb = 'UTA'
-        elif vars[givingTeam] =="Washington Wizards" or "Washington" or "Wizards":
-            teamb = 'WAS'
-        else:
-            #error handling? idk if needed
-            return "I didn't get that"
-
-        teamBWins = 0
-        teamBLosses = 0
-        teamSchedule = Schedule(teamb)
-        for game in teamSchedule:
-            if game.result == 'Win':
-                teamBWins += 1
-            else:
-                teamBLosses += 1
-        teamBRatio = teamBWins/teamBLosses
-
-        if teamBRatio >= teamARatio:
-            return "The better team is {} ".format(vars[givingTeam])
-
-        else:
-            return "The better team is {} ".format(vars[receivingTeam]) #todo receivingTeams might need ''
-
-
 
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
-df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(), 'teamStats': teamStats(), 'playerRating' : playerRating(), 'tradeNews':tradeNews(), 'betterTeam': betterTeam()})
+df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(), 'teamStats': teamStats(), 'playerRating' : playerRating(), 'worseTeam' : worseTeam(), 'tradeNews':tradeNews()})
 
 #########################
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
@@ -495,7 +348,7 @@ df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1ERR)
 df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Do not know if I want to talk about trades or about something else"]' )
 
 #turn 2
-df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "Personally I think this will help" #betterTeam() ". Do you think it will?"]') #todo change this back to worseTeam
+df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "Personally I think this will help" #worseTeam() ". Do you think it will?"]') #todo change this back to worseTeam
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE2AS, '[{#ONT(disagree)}]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S, '[{#ONT(agree)}]')
 df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
