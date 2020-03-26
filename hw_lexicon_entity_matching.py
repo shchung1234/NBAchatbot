@@ -11,6 +11,8 @@ class State(Enum):
     START = auto()
     TURN0 = auto()
     TURN0S = auto()
+    TURN0DK1S = auto()
+    TURN0DK1U = auto()
     TURN0ERR = auto()
     TURNTRADE1S = auto()
     TURNTRADE1U = auto()
@@ -21,13 +23,16 @@ class State(Enum):
     TURNTRADE2U = auto()
     TURNTRADE2AS = auto()
     TURNTRADE2AU = auto()
+    TURNTRADE2DK1S = auto()
     TURNTRADE2ERR = auto()
     TURNTRADE3S1 = auto()
     TURNTRADE3S2 = auto()
     TURNTRADE3U = auto()
+    TURNTRADE3DK1S = auto()
     TURNTRADE3ERR = auto()
     TURNTRADE4S = auto()
     TURNTRADE4U = auto()
+    TURNTRADE4DK1S = auto()
     TURNTRADE4ERR = auto()
     TURNTRADE5U = auto()
     TURNTRADE5S = auto()
@@ -265,10 +270,27 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
 ##########################
 
+# natex expressions
+dont_know = '[{' \
+            'dont know,do not know,unsure,maybe,[not,{sure,certain}],hard to say,no idea,uncertain,i guess,[!no {opinion,opinions,idea,ideas,thought,thoughts,knowledge}],' \
+            '[{dont,do not}, have, {opinion,opinions,idea,ideas,thought,thoughts,knowledge}],' \
+            '[!{cant,cannot,dont} {think,remember,recall}]' \
+            '}]'
+
+possible_results = '[{' \
+                   'better,worse,crush,destroy,change,effect,difference,improve,adjust,adapt' \
+                   '}]'
+
 #turn 0
 df.add_system_transition(State.START, State.TURN0, '"Hi I’m NBA chatbot. I can talk to you about trades, injuries, drafts, or all-stars. Which of these would you like to talk about?"')
 df.add_user_transition(State.TURN0, State.TURNTRADE1S, '[#ONT(trades)]')
 df.add_user_transition(State.TURN0, State.TURN0S, '[#ONT(offtopics)]')
+
+df.add_user_transition(State.TURN0, State.TURN0DK1S, dont_know) # dont knows section
+df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if you dont know, I can just talk about trades! Is that okay?"]')
+df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S, "[#ONT(agree)]")
+df.set_error_successor(State.TURN0DK1U, State.TURN0ERR)
+
 df.add_system_transition(State.TURN0S, State.TURN0, r'[! "I do not know how to talk about that yet"]')
 df.set_error_successor(State.TURN0, State.TURN0ERR)
 df.add_system_transition(State.TURN0ERR, State.TURN0, r'[! "Honestly, I really just wanna talk about trades. Just please say you wanna talk about trades."]')
@@ -282,13 +304,15 @@ df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE1BS, '[#ONT(disagree)]'
 df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about all-stars, injuries, the draft, or stop talking. Which would you prefer?"]')
 df.add_user_transition(State.TURNTRADE1BU, State.END, '[/[a-z A-Z]+/]')
 df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1ERR)
-df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Lets just talk about this one. These are my two favorite teams right now!"]' )
+df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE1U, r'[! "Lets just talk about this one. These are my two favorite teams right now! Is that okay?"]' )
 
 #turn 2
 
 df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "When I watch " $player ", " #playerRating() " What do you think about " $player "?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S1, "[$response2=#POS(adj)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S2, "[$response2=#POS(verb)]")
+df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE2DK1S, dont_know) # dont knows
+df.add_system_transition(State.TURNTRADE2DK1S, State.TURNTRADE3U, r'[! "Its okay if youre not sure! I actually think that " #goodBadTrade() ". Do you agree?"]')
 df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
 df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "I dont know why you made that comment about " $player ". I still think that " '
                                                                  r'#goodBadTrade() ". Do you agree?"]')
@@ -298,14 +322,20 @@ df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "I dont kn
 df.add_system_transition(State.TURNTRADE3S1, State.TURNTRADE3U, r'[! "My robot uncle thinks " $player " is " $response2 "too. But we cant forget about the teams" #teamStats() ", and I think that " #goodBadTrade() ". Do you agree?"]')
 df.add_system_transition(State.TURNTRADE3S2, State.TURNTRADE3U, r'[! "I think hes a good leader, but ultimately " #goodBadTrade() ". Do you agree?"]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, '[#ONT(agree)]')
+
+df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE3DK1S, dont_know) # dont knows
+df.add_system_transition(State.TURNTRADE3DK1S, State.TURNTRADE4U, r'[! "Youre not sure? Thats okay, since its hard to tell. How do you think this trade will affect the playoffs?"]')
 df.set_error_successor(State.TURNTRADE3U, State.TURNTRADE3ERR)
 df.add_system_transition(State.TURNTRADE3ERR, State.TURNTRADE4U, r'[! "Nah fam youre wrong, im right. How do you think this affects the playoff tho"]')
 
 #turn 4
 df.add_system_transition(State.TURNTRADE4S, State.TURNTRADE4U, r'[! "How do you think this trade will affect the playoffs? "]')
-df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE5S, "[$response4=/[a-z A-Z]+/]")
+df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE5S, possible_results)
+
+df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE4DK1S, dont_know)
+df.add_system_transition(State.TURNTRADE4DK1S, State.TURNTRADE5U, r'[! "Honestly, youre probably right to be unsure as we wont know until playoffs actually start. Do you want to chat about playoffs or another topic?"]')
 df.set_error_successor(State.TURNTRADE4U, State.TURNTRADE4ERR)
-df.add_system_transition(State.TURNTRADE4ERR, State.TURNTRADE4S, r'[! "Bruh actually what? No but for real fam how do you think this will affect the playoffs?"]')
+df.add_system_transition(State.TURNTRADE4ERR, State.TURNTRADE4S, r'[! "Haha, youre funny, but how do you think actually think this will affect the playoffs?"]')
 
 df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess that is a possibility. We will not know until playoffs actually start. Do you want to chat about playoffs or another topic?"]')
 df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]')
