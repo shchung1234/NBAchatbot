@@ -220,14 +220,14 @@ class tradeNews(Macro):
         #print(player)
         #print(role)
 
-        return "I found this most recent trade for {} between the {} and {}".format(player, givingTeam, receivingTeam)
+        return "I found this most recent trade news that {} from {} is going to {}".format(player, givingTeam, receivingTeam)
 
 class goodBadTrade(Macro):
     def run (self, ngrams, vars, args):
         if vars['goodBadPlayer'] == 'good':
-            return "This is a good trade for the {}".format(vars['receivingTeam'])
+            return "this is a good trade for the {}".format(vars['receivingTeam'])
         else:
-            return "This is a bad trade for the {}".format(vars['receivingTeam'])
+            return "this is a bad trade for the {}".format(vars['receivingTeam'])
 
 
 
@@ -245,15 +245,14 @@ class playerRating(Macro):
             s += n[0][i]
         s += "01"
         playerid = s.lower()
-
         player = Player(playerid)
         PER = player.player_efficiency_rating
         if (PER > 18):
             vars['goodBadPlayer'] = 'good'
-            return "good player. I think this trade will go great"
+            return "I get the impression that he is efficient and good player. With more opportunities, he may be even better. I think this trade will go great."
         else:
             vars['goodBadPlayer'] = 'bad'
-            return "bad player. I don't have high hopes for this trade"
+            return "I don't get the impression that he is good. This could just be me, but he doesn't seem too efficient."
 
 
 knowledge = KnowledgeBase()
@@ -287,7 +286,7 @@ df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Lets just
 
 #turn 2
 
-df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "When I watch " $player ", I feel like he is a " #playerRating() ". What do you think about " $player "?"]')
+df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "When I watch " $player ", " #playerRating() " What do you think about " $player "?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S1, "[$response2=#POS(adj)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S2, "[$response2=#POS(verb)]")
 df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
