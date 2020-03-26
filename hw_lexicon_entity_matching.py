@@ -14,6 +14,8 @@ class State(Enum):
     TURNTRADE1S = auto()
     TURNTRADE1U = auto()
     TURNTRADE1ERR = auto()
+    TURNTRADE1BS = auto()
+    TURNTRADE1BU = auto()
     TURNTRADE2S = auto()
     TURNTRADE2U = auto()
     TURNTRADE2AS = auto()
@@ -98,67 +100,81 @@ class newsTeam(Macro):
 
 class teamStats(Macro):
     def run (self, ngrams, vars, args):
+        response = requests.get("https://stats.nba.com/js/data/playermovement/NBA_Player_Movement.json")
+        test = response.json()
+        trades = [x for x in test['NBA_Player_Movement']['rows'] if x['Transaction_Type'] == 'Trade']
+        trade = trades[0]['TRANSACTION_DESCRIPTION']
+        receivingTeam = trade.split(' received')[0]
+        givingTeam = trade.split('from ')[1]
+        givingTeam = givingTeam[:-1]
+        player = trade.split('received ')[1]
+        player = player.split('from')[0]
+
+        playerList = player.split(' ')
+        role = playerList[0]
+        playerList.pop(0)
+        player = ' '.join(playerList)
         #Assume input is team name, all lowercase
 
-        if vars['favoriteTeam'] == "Atlanta Hawks" or "Atlanta" or "Hawks":
+        if vars['receivingTeam'] == "Atlanta Hawks" or "Atlanta" or "Hawks":
             team = 'ATL'
-        elif vars['favoriteTeam'] == "Boston Celtics" or "Boston" or "Celtics":
+        elif vars['receivingTeam'] == "Boston Celtics" or "Boston" or "Celtics":
             team = 'BOS'
-        elif vars['favoriteTeam'] == "Brooklyn Nets" or "Brooklyn" or "Nets":
+        elif vars['receivingTeam'] == "Brooklyn Nets" or "Brooklyn" or "Nets":
             team = 'BKN'
-        elif vars['favoriteTeam'] =="Charlotte Hornets" or "Charlotte" or "Hornets":
+        elif vars['receivingTeam'] =="Charlotte Hornets" or "Charlotte" or "Hornets":
             team = 'CHA'
-        elif vars['favoriteTeam'] =="Chicago Bulls" or "Chicago" or "Bulls":
+        elif vars['receivingTeam'] =="Chicago Bulls" or "Chicago" or "Bulls":
             team = 'CHI'
-        elif vars['favoriteTeam'] =="Cleveland Cavaliers" or "Cleveland" or "Cavaliers":
+        elif vars['receivingTeam'] =="Cleveland Cavaliers" or "Cleveland" or "Cavaliers":
             team = 'CLE'
-        elif vars['favoriteTeam'] =="Dallas Mavericks" or "Dallas" or "Mavericks":
+        elif vars['receivingTeam'] =="Dallas Mavericks" or "Dallas" or "Mavericks":
             team = 'DAL'
-        elif vars['favoriteTeam'] =="Denver Nuggets" or "Denver" or "Nuggets":
+        elif vars['receivingTeam'] =="Denver Nuggets" or "Denver" or "Nuggets":
             team = 'DEN'
-        elif vars['favoriteTeam'] =="Detroit Pistons" or "Detroit" or "Pistons":
+        elif vars['receivingTeam'] =="Detroit Pistons" or "Detroit" or "Pistons":
             team = 'DET'
-        elif vars['favoriteTeam'] =="Golden State Warriors" or "GSW" or "Warriors":
+        elif vars['receivingTeam'] =="Golden State Warriors" or "GSW" or "Warriors":
             team = 'GSW'
-        elif vars['favoriteTeam'] =="Houston Rockets" or "Houston" or "Rockets":
+        elif vars['receivingTeam'] =="Houston Rockets" or "Houston" or "Rockets":
             team = 'HOU'
-        elif vars['favoriteTeam'] =="Indiana Pacers" or "Indiana" or "Pacers":
+        elif vars['receivingTeam'] =="Indiana Pacers" or "Indiana" or "Pacers":
             team = 'IND'
-        elif vars['favoriteTeam'] =="LA Clippers" or "Clippers":
+        elif vars['receivingTeam'] =="LA Clippers" or "Clippers":
             team = 'LAC'
-        elif vars['favoriteTeam'] =="Los Angeles Lakers" or "Lakers":
+        elif vars['receivingTeam'] =="Los Angeles Lakers" or "Lakers":
             team = 'LAL'
-        elif vars['favoriteTeam'] =="Memphis Grizzlies" or "Memphis" or "Grizzlies":
+        elif vars['receivingTeam'] =="Memphis Grizzlies" or "Memphis" or "Grizzlies":
             team = 'MEM'
-        elif vars['favoriteTeam'] =="Miami Heat" or "Miami":
+        elif vars['receivingTeam'] =="Miami Heat" or "Miami":
             team = 'MIA'
-        elif vars['favoriteTeam'] =="Milwaukee Bucks" or "Milwaukee" or "Bucks":
+        elif vars['receivingTeam'] =="Milwaukee Bucks" or "Milwaukee" or "Bucks":
             team = 'MIL'
-        elif vars['favoriteTeam'] =="Minnesota Timberwolves" or "Minnesota" or "Timberwolves":
+        elif vars['receivingTeam'] =="Minnesota Timberwolves" or "Minnesota" or "Timberwolves":
             team = 'MIN'
-        elif vars['favoriteTeam'] =="New Orleans Pelicans" or "Pelicans" or "NoLa":
+        elif vars['receivingTeam'] =="New Orleans Pelicans" or "Pelicans" or "NoLa":
             team = 'NOP'
-        elif vars['favoriteTeam'] =="New York Knicks" or "Knicks" or "NY":
+        elif vars['receivingTeam'] =="New York Knicks" or "Knicks" or "NY":
             team = 'NYK'
-        elif vars['favoriteTeam'] =="Oklahoma City Thunder" or "Thunder" or "OKC":
+        elif vars['receivingTeam'] =="Oklahoma City Thunder" or "Thunder" or "OKC":
             team = 'OKC'
-        elif vars['favoriteTeam'] =="Orlando Magic" or "Orlando" or "Magic":
+        elif vars['receivingTeam'] =="Orlando Magic" or "Orlando" or "Magic":
             team = 'ORL'
-        elif vars['favoriteTeam'] =="Philadelphia SeventySixers" or "Philly" or "SeventySixers" or "76ers":
+        elif vars['receivingTeam'] =="Philadelphia SeventySixers" or "Philly" or "SeventySixers" or "76ers":
             team = 'PHI'
-        elif vars['favoriteTeam'] =="Phoenix Suns" or "Phoenix" or "Suns":
+        elif vars['receivingTeam'] =="Phoenix Suns" or "Phoenix" or "Suns":
             team = 'PHX'
-        elif vars['favoriteTeam'] =="Portland Trail Blazers" or "Portland" or "Trail Blazers":
+        elif vars['receivingTeam'] =="Portland Trail Blazers" or "Portland" or "Trail Blazers":
             team = 'POR'
-        elif vars['favoriteTeam'] =="Sacramento Kings" or "Sacramento" or "Kings":
+        elif vars['receivingTeam'] =="Sacramento Kings" or "Sacramento" or "Kings":
             team = 'SAC'
-        elif vars['favoriteTeam'] =="San Antonio Spurs" or "San Antonio" or "Spurs":
+        elif vars['receivingTeam'] =="San Antonio Spurs" or "San Antonio" or "Spurs":
             team = 'SAS'
-        elif vars['favoriteTeam'] =="Toronto Raptors" or "Toronto" or "Raptors":
+        elif vars['receivingTeam'] =="Toronto Raptors" or "Toronto" or "Raptors":
             team = 'TOR'
-        elif vars['favoriteTeam'] =="Utah Jazz" or "Utah" or "Jazz":
+        elif vars['receivingTeam'] =="Utah Jazz" or "Utah" or "Jazz":
             team = 'UTA'
-        elif vars['favoriteTeam'] =="Washington Wizards" or "Washington" or "Wizards":
+        elif vars['receivingTeam'] =="Washington Wizards" or "Washington" or "Wizards":
             team = 'WAS'
         else:
             #error handling? idk if needed
@@ -173,7 +189,7 @@ class teamStats(Macro):
             else:
                 losses += 1
 
-        return "The {} have a total of {} wins and {} losses".format(vars['favoriteTeam'], wins, losses)
+        return "The {} have a total of {} wins and {} losses".format(vars['worseTeam'], wins, losses)
 
 class tradeNews(Macro):
     def run (self, ngrams, vars, args):
@@ -191,12 +207,16 @@ class tradeNews(Macro):
         role = playerList[0]
         playerList.pop(0)
         player = ' '.join(playerList)
+
+        vars['receivingTeam'] = receivingTeam
+        vars['givingTeam'] = givingTeam
+        vars['player'] = player
         
-        print(trade)
-        print('recieving team', receivingTeam)
-        print('givingTeam', givingTeam)
-        print(player)
-        print(role)
+        #print(trade)
+        #print('recieving team', receivingTeam)
+        #print('givingTeam', givingTeam)
+        #print(player)
+        #print(role)
 
         return "I found this most recent trade for {} between the {} and {}".format(player, givingTeam, receivingTeam)
 
@@ -296,14 +316,16 @@ class worseTeam(Macro):
         # y is the giving team
         for x,y in zip(win_loss, win_loss[1:]):
             if x >= y: # if receiving team has the better W-L ratio, then the giving team is the worse team
+                vars['worseTeam'] = givingTeam
                 return "{}".format(givingTeam)
             else:
+                vars['worseTeam'] = receivingTeam
                 return "{}".format(receivingTeam)
 
 
 class playerRating(Macro):
     def run (self, ngrams, vars, args):
-        n = vars['playername'].split()
+        n = vars['player'].split()
         s = ""
         if (len(n[1]) >= 5):    #edge case for names with shorter than 5 characters/jr. resolved
             for i in range(5):
@@ -318,8 +340,8 @@ class playerRating(Macro):
 
         player = Player(playerid)
         PER = player.player_efficiency_rating
-        if (PER > 18): return "good player"
-        else: return "bad player"
+        if (PER > 18): return "good player. I think this trade will go great"
+        else: return "bad player. I don't have high hopes for this trade"
 
 
 #returns name of team which has better W/L ratio
@@ -434,30 +456,40 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
 #turn 0
 df.add_system_transition(State.START, State.TURN0, '"Hi I’m NBA chatbot. I can talk to you about trades, injuries, drafts, or all-stars. Which of these would you like to talk about?"')
 df.add_user_transition(State.TURN0, State.TURNTRADE1S, '[#ONT(trades)]')
-df.set_error_successor(State.TURN0, State.TURN0ERR)
+df.set_error_successor(State.TURN0, State.TURN0ERR) #todo test if we want category which is NOT trades
 df.add_system_transition(State.TURN0ERR, State.TURN0, r'[! "I do not know how to talk about that yet"]')
 #df.add_system_transition(State.TURNTRADE1S2, State.EARLYEND, r'[! "Oh, thats a shame. I cant really talk about other news right now unfortunately. Maybe next time we can talk some more"]')
 
 
 #turn 1
-df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE1U, r'[!{#tradeNews()} ". If this trade does not interest you we can also talk about all-stars, injuries, or the draft"]') #todo input news Macro here
+df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE1U, r'[!{#tradeNews()} ". Do you want to talk aobut this trade?"]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
-df.add_user_transition(State.TURNTRADE1U, State.TURN0, '[#ONT(disagree)]')
+df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE1BS, '[#ONT(disagree)]')
+df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about all-stars, injuries, the draft, or stop talking. Which would you prefer?"]')
+df.add_user_transition(State.TURNTRADE1BU, State.END, '[/[a-z A-Z]+/]')
 df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1ERR)
 df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Do not know if I want to talk about trades or about something else"]' )
 
 #turn 2
-df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "Personally I think this will help" #worseTeam() ". Do you think it will?"]') #todo change this back to worseTeam
+
+if player is good and receivingTeam is worseTeam:
+    print('This helps the worseTeam')
+
+if player is bad and receivingTeam is worseTeam:
+    print('This helps the givingTeam')
+
+
+df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! #teamStats() "Personally I think this will help" #worseTeam() ". Do you think it will?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE2AS, '[{#ONT(disagree)}]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S, '[{#ONT(agree)}]')
 df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
 df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "Do not know if it will help the worse team"]')
 
 #turn 3
-df.add_system_transition(State.TURNTRADE3S, State.TURNTRADE3U, r'[! #teamStats($worseTeam) ". But when I watch " $player ", I fell like they are a " $goodBadPlayer ". Hopefully this will boost the wins of " $worseTeam ". What do you think?"]')
+df.add_system_transition(State.TURNTRADE3S, State.TURNTRADE3U, r'[! ". When I watch " $player ", I feel like they are a " #playerRating() ". What do you think about " $player "?"]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, "[$response2=#POS(adj)]")
 df.set_error_successor(State.TURNTRADE3U, State.TURNTRADE3ERR)
-df.add_system_transition(State.TURNTRADE3ERR, State.TURNTRADE4U, "Do not know if it will boost W-L record.")
+df.add_system_transition(State.TURNTRADE3ERR, State.TURNTRADE4U, "Do not know if it will boost win loss record.")
 
 #turn 4
 df.add_system_transition(State.TURNTRADE4S, State.TURNTRADE4U, r'[! "If this ends up being a good thing, it could change the playoff picture. Do you think it will? "]')
@@ -472,4 +504,4 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 
 
 if __name__ == '__main__':
-    df.run(debugging=False)
+    df.run(debugging=True)
