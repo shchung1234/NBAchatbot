@@ -189,7 +189,7 @@ class teamStats(Macro):
             else:
                 losses += 1
 
-        return "The {} have a total of {} wins and {} losses".format(vars['worseTeam'], wins, losses)
+        return "The {} are currently {} and {} ".format(vars['receivingTeam'], wins, losses)
 
 class tradeNews(Macro):
     def run (self, ngrams, vars, args):
@@ -220,107 +220,13 @@ class tradeNews(Macro):
 
         return "I found this most recent trade for {} between the {} and {}".format(player, givingTeam, receivingTeam)
 
-class worseTeam(Macro):
+class goodBadTrade(Macro):
     def run (self, ngrams, vars, args):
+        if vars['goodBadPlayer'] == 'good':
+            return "This is a good trade for the {}".format(vars['receivingTeam'])
+        else:
+            return "This is a bad trade for the {}".format(vars['receivingTeam'])
 
-        response = requests.get("https://stats.nba.com/js/data/playermovement/NBA_Player_Movement.json")
-        test = response.json()
-        trades = [x for x in test['NBA_Player_Movement']['rows'] if x['Transaction_Type'] == 'Trade']
-        trade = trades[0]['TRANSACTION_DESCRIPTION']
-        receivingTeam = trade.split(' received')[0]
-        givingTeam = trade.split('from ')[1]
-        givingTeam = givingTeam[:-1]
-        print('givingTeam', givingTeam)
-
-        receiving_giving = [receivingTeam, givingTeam]
-        receive_give_codes = []
-        for team in receiving_giving:
-            if team in ["Atlanta Hawks", "Atlanta", "Hawks"]:
-                receive_give_codes.append('ATL')
-            elif team in ["Boston Celtics", "Boston", "Celtics"]:
-                receive_give_codes.append('BOS')
-            elif team in ["Brooklyn Nets", "Brooklyn", "Nets"]:
-                receive_give_codes.append('BKN')
-            elif team in ["Charlotte Hornets", "Charlotte",  "Hornets"]:
-                receive_give_codes.append('CHA')
-            elif team in ["Chicago Bulls", "Chicago", "Bulls"]:
-                receive_give_codes.append('CHI')
-            elif team in ["Cleveland Cavaliers", "Cleveland", "Cavaliers"]:
-                receive_give_codes.append('CLE')
-            elif team in ["Dallas Mavericks", "Dallas", "Mavericks"]:
-                receive_give_codes.append('DAL')
-            elif team in ["Denver Nuggets", "Denver", "Nuggets"]:
-                receive_give_codes.append('DEN')
-            elif team in ["Detroit Pistons", "Detroit", "Pistons"]:
-                receive_give_codes.append('DET')
-            elif team in ["Golden State Warriors", "GSW", "Warriors"]:
-                receive_give_codes.append('GSW')
-            elif team in ["Houston Rockets", "Houston", "Rockets"]:
-                receive_give_codes.append('HOU')
-            elif team in ["Indiana Pacers", "Indiana", "Pacers"]:
-                receive_give_codes.append('IND')
-            elif team in ["LA Clippers", "Clippers"]:
-                receive_give_codes.append('LAC')
-            elif team in ["Los Angeles Lakers", "Lakers"]:
-                receive_give_codes.append('LAL')
-            elif team in ["Memphis Grizzlies", "Memphis", "Grizzlies"]:
-                receive_give_codes.append('MEM')
-            elif team in ["Miami Heat", "Miami"]:
-                receive_give_codes.append('MIA')
-            elif team in ["Milwaukee Bucks", "Milwaukee", "Bucks"]:
-                receive_give_codes.append('MIL')
-            elif team in ["Minnesota Timberwolves", "Minnesota", "Timberwolves"]:
-                receive_give_codes.append('MIN')
-            elif team in ["New Orleans Pelicans", "Pelicans", "NoLa"]:
-                receive_give_codes.append('NOP')
-            elif team in ["New York Knicks", "Knicks", "NY"]:
-                receive_give_codes.append('NYK')
-            elif team in ["Oklahoma City Thunder", "Thunder", "OKC"]:
-                receive_give_codes.append('OKC')
-            elif team in ["Orlando Magic", "Orlando", "Magic"]:
-                receive_give_codes.append('ORL')
-            elif team in ["Philadelphia SeventySixers", "Philly", "SeventySixers", "76ers"]:
-                receive_give_codes.append('PHI')
-            elif team in ["Phoenix Suns", "Phoenix", "Suns"]:
-                receive_give_codes.append('PHX')
-            elif team in ["Portland Trail Blazers", "Portland", "Trail Blazers"]:
-                receive_give_codes.append('POR')
-            elif team in ["Sacramento Kings", "Sacramento", "Kings"]:
-                receive_give_codes.append('SAC')
-            elif team in ["San Antonio Spurs", "San Antonio", "Spurs"]:
-                receive_give_codes.append('SAS')
-            elif team in ["Toronto Raptors", "Toronto", "Raptors"]:
-                receive_give_codes.append('TOR')
-            elif team in ["Utah Jazz", "Utah", "Jazz"]:
-                receive_give_codes.append('UTA')
-            elif team in ["Washington Wizards", "Washington", "Wizards"]:
-                receive_give_codes.append('WAS')
-            else:
-                receive_give_codes.append('')
-
-        win_loss = list()
-
-        print('recieve_give_codes', receive_give_codes)
-        for team in receive_give_codes:
-            wins = 0
-            losses = 0
-            teamSchedule = Schedule(team)
-            for game in teamSchedule:
-                if game.result == 'Win':
-                    wins += 1
-                else:
-                    losses += 1
-            win_loss.append(wins/losses)
-
-        # x is the receiving team
-        # y is the giving team
-        for x,y in zip(win_loss, win_loss[1:]):
-            if x >= y: # if receiving team has the better W-L ratio, then the giving team is the worse team
-                vars['worseTeam'] = givingTeam
-                return "{}".format(givingTeam)
-            else:
-                vars['worseTeam'] = receivingTeam
-                return "{}".format(receivingTeam)
 
 
 class playerRating(Macro):
@@ -340,8 +246,12 @@ class playerRating(Macro):
 
         player = Player(playerid)
         PER = player.player_efficiency_rating
-        if (PER > 18): return "good player. I think this trade will go great"
-        else: return "bad player. I don't have high hopes for this trade"
+        if (PER > 18):
+            vars['goodBadPlayer'] = 'good'
+            return "good player. I think this trade will go great"
+        else:
+            vars['goodBadPlayer'] = 'bad'
+            return "bad player. I don't have high hopes for this trade"
 
 
 #returns name of team which has better W/L ratio
@@ -447,7 +357,7 @@ class betterTeam(Macro):
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
-df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(), 'teamStats': teamStats(), 'playerRating' : playerRating(), 'worseTeam' : worseTeam(), 'tradeNews':tradeNews()})
+df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(), 'teamStats': teamStats(), 'playerRating' : playerRating(), 'goodBadTrade' : goodBadTrade(), 'tradeNews':tradeNews()})
 
 #########################
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
@@ -472,28 +382,35 @@ df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Do not kn
 
 #turn 2
 
+"""
 if player is good and receivingTeam is worseTeam:
     print('This helps the worseTeam')
 
 if player is bad and receivingTeam is worseTeam:
     print('This helps the givingTeam')
+"""
 
-
-df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! #teamStats() "Personally I think this will help" #worseTeam() ". Do you think it will?"]')
+"""
+df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! #teamStats() "Personally I think this will help" goodBadTrade() ". Do you think it will?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE2AS, '[{#ONT(disagree)}]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S, '[{#ONT(agree)}]')
 df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
 df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "Do not know if it will help the worse team"]')
+"""
 
-#turn 3
-df.add_system_transition(State.TURNTRADE3S, State.TURNTRADE3U, r'[! ". When I watch " $player ", I feel like they are a " #playerRating() ". What do you think about " $player "?"]')
-df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, "[$response2=#POS(adj)]")
+df.add_system_transition(State.TURNTRADE3S, State.TURNTRADE3U, r'[! #teamStats() "Personally I think this will help" goodBadTrade() ". Do you think it will?"]')
+df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, '[$response3=/[a-z A-Z]+/]]')
 df.set_error_successor(State.TURNTRADE3U, State.TURNTRADE3ERR)
-df.add_system_transition(State.TURNTRADE3ERR, State.TURNTRADE4U, "Do not know if it will boost win loss record.")
+df.add_system_transition(State.TURNTRADE3ERR, State.TURNTRADE4U, r'[! "Do not know if it will help the worse team"]')
+#turn 3
+df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! ". When I watch " $player ", I feel like they are a " #playerRating() ". What do you think about " $player "?"]')
+df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S, "[$response2=#POS(adj)]")
+df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
+df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, "Do not know if it will boost win loss record.")
 
 #turn 4
 df.add_system_transition(State.TURNTRADE4S, State.TURNTRADE4U, r'[! "If this ends up being a good thing, it could change the playoff picture. Do you think it will? "]')
-df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE5S, "[$response3=/[a-z A-Z]+/]")
+df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE5S, "[$response4=/[a-z A-Z]+/]")
 df.set_error_successor(State.TURNTRADE4U, State.TURNTRADE4ERR)
 df.add_system_transition(State.TURNTRADE4ERR, State.TURNTRADE4S, "Do not have a playoff prediction")
 
