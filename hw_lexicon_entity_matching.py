@@ -31,6 +31,7 @@ class State(Enum):
     TURNTRADE3DK1S = auto()
     TURNTRADE3ERR = auto()
     TURNTRADE4S = auto()
+    TURNTRADE4S1 = auto()
     TURNTRADE4U = auto()
     TURNTRADE4DK1S = auto()
     TURNTRADE4ERR = auto()
@@ -278,7 +279,7 @@ dont_know = '[{' \
             '}]'
 
 possible_results = '[{' \
-                   'better,worse,crush,destroy,change,effect,difference,improve,adjust,adapt' \
+                   'better,worse,obliterate,crush,destroy,change,effect,difference,improve,adjust,adapt,implications' \
                    '}]'
 
 #turn 0
@@ -322,13 +323,15 @@ df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "I dont kn
 df.add_system_transition(State.TURNTRADE3S1, State.TURNTRADE3U, r'[! "My robot uncle thinks " $player " is " $response2 "too. But we cant forget about the teams" #teamStats() ", and I think that " #goodBadTrade() ". Do you agree?"]')
 df.add_system_transition(State.TURNTRADE3S2, State.TURNTRADE3U, r'[! "I think hes a good leader, but ultimately " #goodBadTrade() ". Do you agree?"]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, '[#ONT(agree)]')
+df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S1, '[#ONT(disagree)]')
 
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE3DK1S, dont_know) # dont knows
 df.add_system_transition(State.TURNTRADE3DK1S, State.TURNTRADE4U, r'[! "Youre not sure? Thats okay, since its hard to tell. How do you think this trade will affect the playoffs?"]')
 df.set_error_successor(State.TURNTRADE3U, State.TURNTRADE3ERR)
-df.add_system_transition(State.TURNTRADE3ERR, State.TURNTRADE4U, r'[! "Nah fam youre wrong, im right. How do you think this affects the playoff tho"]')
+df.add_system_transition(State.TURNTRADE3ERR, State.TURNTRADE4U, r'[! "That is certainly an opinion haha. Playoffs are happening soon though! How do you think this trade affects the playoff?"]')
 
 #turn 4
+df.add_system_transition(State.TURNTRADE4S1, State.TURNTRADE4U, r'[! "I highly disagree with you, but its okay. Anyway, how do you think this affects the playoff?"]')
 df.add_system_transition(State.TURNTRADE4S, State.TURNTRADE4U, r'[! "How do you think this trade will affect the playoffs? "]')
 df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE5S, possible_results)
 
@@ -344,4 +347,4 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 
 
 if __name__ == '__main__':
-    df.run(debugging=True)
+    df.run(debugging=False)
