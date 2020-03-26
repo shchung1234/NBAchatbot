@@ -287,7 +287,7 @@ df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Lets just
 
 #turn 2
 
-df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "When I watch " $player ", I feel like they are a " #playerRating() ". What do you think about " $player "?"]')
+df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "When I watch " $player ", I feel like he is a " #playerRating() ". What do you think about " $player "?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S1, "[$response2=#POS(adj)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S2, "[$response2=#POS(verb)]")
 df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
