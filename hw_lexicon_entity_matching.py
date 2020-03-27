@@ -331,7 +331,7 @@ df.set_error_successor(State.TURNTRADE3U, State.TURNTRADE3ERR)
 df.add_system_transition(State.TURNTRADE3ERR, State.TURNTRADE4U, r'[! "That is certainly an opinion haha. Playoffs are happening soon though! How do you think this trade affects the playoff?"]')
 
 #turn 4
-df.add_system_transition(State.TURNTRADE4S1, State.TURNTRADE4U, r'[! "I highly disagree with you, but its okay. Anyway, how do you think this affects the playoff?"]')
+df.add_system_transition(State.TURNTRADE4S1, State.TURNTRADE4U, r'[! "Interesting perspective. Anyway, how do you think this affects the playoff?"]')
 df.add_system_transition(State.TURNTRADE4S, State.TURNTRADE4U, r'[! "How do you think this trade will affect the playoffs? "]')
 df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE5S, possible_results)
 
