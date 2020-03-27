@@ -279,7 +279,7 @@ dont_know = '[{' \
             '}]'
 
 possible_results = '[{' \
-                   'better,worse,obliterate,crush,destroy,change,effect,difference,improve,adjust,adapt,implications' \
+                   'better,worse,obliterate,crush,destroy,change,effect,difference,improve,adjust,adapt,implications,good,bad,weird' \
                    '}]'
 
 #turn 0
@@ -321,7 +321,7 @@ df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "I dont kn
 #turn 3
 
 df.add_system_transition(State.TURNTRADE3S1, State.TURNTRADE3U, r'[! "My robot uncle thinks " $player " is " $response2 "too. But we cant forget about the teams" #teamStats() ", and I think that " #goodBadTrade() ". Do you agree?"]')
-df.add_system_transition(State.TURNTRADE3S2, State.TURNTRADE3U, r'[! "I think hes a good leader, but ultimately " #goodBadTrade() ". Do you agree?"]')
+df.add_system_transition(State.TURNTRADE3S2, State.TURNTRADE3U, r'[! "Ultimately, " #goodBadTrade() ". Do you agree?"]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, '[#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S1, '[#ONT(disagree)]')
 
