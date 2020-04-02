@@ -37,6 +37,17 @@ class State(Enum):
     TURNTRADE4ERR = auto()
     TURNTRADE5U = auto()
     TURNTRADE5S = auto()
+    TURNPF1S = auto()
+    TURNPF1U = auto()
+    TURNPF1ERR = auto()
+    TURNPF2AS = auto()
+    TURNPF2BS = auto()
+    TURNPF2U = auto()
+    TURNPF2ERR = auto()
+    TURNPF3AS = auto()
+    TURNPF3BS = auto()
+    TURNPF3U = auto()
+    TURNPF3ERR = auto()
     END = auto()
     EARLYEND = auto()
 
@@ -308,7 +319,6 @@ df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1ERR)
 df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Okay, I mean " $player " is really interesting, and I really want to talk about him. " #playerRating() " What do you think about him?"]' )
 
 #turn 2
-
 df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "When I watch " $player ", " #playerRating() " What do you think about " $player "?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S1, "[$response2=#POS(adj)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S2, "[$response2=#POS(verb)]")
@@ -343,7 +353,9 @@ df.add_system_transition(State.TURNTRADE4ERR, State.TURNTRADE5S, r'[! "Haha, you
 df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess that is a possibility. We will not know until playoffs actually start. Do you want to chat about playoffs or another topic?"]')
 df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]')
 
-
+df.add_system_transition(State.TURNPF1S, State.TURNPF1U, r'[!  "The NBA season has been shutdown because of COVID. If we played playoffs based off the current standings, who do you think would win?"]')
+df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, )
+df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, )
 
 
 if __name__ == '__main__':
