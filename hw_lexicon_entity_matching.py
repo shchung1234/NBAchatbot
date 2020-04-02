@@ -293,6 +293,7 @@ possible_results = '[{' \
                    'better,worse,obliterate,crush,destroy,change,effect,difference,improve,adjust,adapt,implications,good,bad,weird' \
                    '}]'
 
+"""trade turns"""
 #turn 0
 df.add_system_transition(State.START, State.TURN0, '"Hi I’m NBA chatbot. I can talk to you about trades, injuries, drafts, or all-stars. Which of these would you like to talk about?"')
 df.add_user_transition(State.TURN0, State.TURNTRADE1S, '[#ONT(trades)]')
@@ -353,9 +354,16 @@ df.add_system_transition(State.TURNTRADE4ERR, State.TURNTRADE5S, r'[! "Haha, you
 df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess that is a possibility. We will not know until playoffs actually start. Do you want to chat about playoffs or another topic?"]')
 df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]')
 
+"""playoffs turns"""
+#turn 1
 df.add_system_transition(State.TURNPF1S, State.TURNPF1U, r'[!  "The NBA season has been shutdown because of COVID. If we played playoffs based off the current standings, who do you think would win?"]')
-df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, )
-df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, )
+df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
+df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[#ONT(teams)]') #todo need to make ontology of only teams which are in playoffs and one of not in playoffs to catch errors
+
+#turn 2 #todo pick back up here when editing again
+df.add_system_transition(State.TURNPF2AS, r'[! "Why do you think " $teama " will win? Do you think there is a player that is integral to the team?" ]')
+df.add_system_transition(State.TURNPF2BS, )
+
 
 
 if __name__ == '__main__':
