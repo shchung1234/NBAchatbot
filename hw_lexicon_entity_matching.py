@@ -1,7 +1,6 @@
 from emora_stdm import KnowledgeBase, DialogueFlow, Macro
 from enum import Enum, auto
 import requests
-import json
 from sportsreference.nba.schedule import Schedule
 from sportsreference.nba.roster import Player
 
@@ -356,7 +355,7 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 
 """playoffs turns"""
 #turn 1
-df.add_system_transition(State.TURNPF1S, State.TURNPF1U, r'[!  "The NBA season has been shutdown because of COVID. If we played playoffs based off the current standings, who do you think would win?"]')
+df.add_system_transition(State.TURNPF1S, State.TURNPF1U, r'[!  "The NBA season has been shutdown because of COVID. If we played playoffs based off the current standings, which team do you think would win?"]')
 df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
 df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[#ONT(teams)]') #todo need to make ontology of only teams which are in playoffs and one of not in playoffs to catch errors
 
