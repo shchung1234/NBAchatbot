@@ -245,8 +245,22 @@ class goodBadTrade(Macro):
         else:
             return "this is a bad trade for the {}".format(vars['receivingTeam'])
 
+class botFavTeam(Macro):
+    def run (self, ngrams, vars, args):
+        if vars['favUserTeam'] in 'Los Angeles Clippers' or vars['favUserTeam'] in 'LA Clippers':
+            vars['favSysTeam'] = 'Bucks'
+            vars['favSysPlayer'] = 'INSERT BUCKS PLAYER HERE'
+            return
+        
+        if vars['favUserTeam'] in 'Milwaukee Bucks':
+            vars['favSysTeam'] = 'Clippers'
+            vars['favSysPlayer'] = 'INSERT Clippers PLAYER HERE'
+            return
 
-
+        vars['favSysTeam'] = 'Clippers'
+        vars['favSysPlayer'] = 'INSERT Clippers PLAYER HERE'
+        return
+        
 class playerRating(Macro):
     def run (self, ngrams, vars, args):
         n = vars['player'].split()
@@ -269,6 +283,24 @@ class playerRating(Macro):
         else:
             vars['goodBadPlayer'] = 'bad'
             return "I don't get the impression that he is good. This could just be me, but he doesn't seem too efficient."
+
+class comparePlayers(Macro):
+    def run (self, ngrams, vars, args):
+        n = vars['favUserPlayer'].split()
+        s = ""
+        if (len(n[1]) >= 5):    #edge case for names with shorter than 5 characters/jr. resolved
+            for i in range(5):
+                s += n[1][i]
+        else:
+            for i in range(len(n[1])):
+                s += n[1][i]
+        for i in range(2):
+            s += n[0][i]
+        s += "01"
+        playerid = s.lower()
+        player = Player(playerid)
+        PER = player.player_efficiency_rating
+        ##### IDK WHAT STATS WE WANT FROM SPORTSREFERENCE BC POINTS/GAME, ASSISTS/GAME, REBOUNDS/GAME don't exist
 
 
 knowledge = KnowledgeBase()
@@ -357,7 +389,7 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 #turn 1
 df.add_system_transition(State.TURNPF1S, State.TURNPF1U, r'[!  "The NBA season has been shutdown because of COVID. If we played playoffs based off the current standings, which team do you think would win?"]')
 df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
-df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[#ONT(teams)]') #todo need to make ontology of only teams which are in playoffs and one of not in playoffs to catch errors
+df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$favUserTeam={#ONT(teams)}]') #todo need to make ontology of only teams which are in playoffs and one of not in playoffs to catch errors
 
 #turn 2 #todo pick back up here when editing again
 df.add_system_transition(State.TURNPF2AS, r'[! "Why do you think " $teama " will win? Do you think there is a player that is integral to the team?" ]')
