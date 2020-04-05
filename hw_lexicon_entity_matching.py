@@ -250,15 +250,18 @@ class botFavTeam(Macro):
         if vars['favUserTeam'] in 'Los Angeles Clippers' or vars['favUserTeam'] in 'LA Clippers':
             vars['favSysTeam'] = 'Bucks'
             vars['favSysPlayer'] = 'INSERT BUCKS PLAYER HERE'
+            ##WE CAN ALSO INCLUDE STATS OF PLAYER
             return
         
         if vars['favUserTeam'] in 'Milwaukee Bucks':
             vars['favSysTeam'] = 'Clippers'
             vars['favSysPlayer'] = 'INSERT Clippers PLAYER HERE'
+            ##WE CAN ALSO INCLUDE STATS OF PLAYER
             return
 
         vars['favSysTeam'] = 'Clippers'
         vars['favSysPlayer'] = 'INSERT Clippers PLAYER HERE'
+        ##WE CAN ALSO INCLUDE STATS OF PLAYER
         return
         
 class playerRating(Macro):
