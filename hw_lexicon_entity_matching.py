@@ -302,6 +302,8 @@ class comparePlayers(Macro):
         PER = player.player_efficiency_rating
         ##### IDK WHAT STATS WE WANT FROM SPORTSREFERENCE BC POINTS/GAME, ASSISTS/GAME, REBOUNDS/GAME don't exist
 
+        ## COMPARE WITH HARDCODED STATS OF SYSTEM's FAV PLAYER
+
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
