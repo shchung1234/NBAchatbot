@@ -7,6 +7,7 @@ from sportsreference.nba.roster import Player
 
 # TODO: Update the State enum as needed
 class State(Enum):
+  #states for trade conversation
     START = auto()
     TURN0 = auto()
     TURN0S = auto()
@@ -36,16 +37,23 @@ class State(Enum):
     TURNTRADE4ERR = auto()
     TURNTRADE5U = auto()
     TURNTRADE5S = auto()
+    
+    #states for playoff conversation
     TURNPF1S = auto()
     TURNPF1U = auto()
     TURNPF1ERR = auto()
     TURNPF2AS = auto()
-    TURNPF2BS = auto()
     TURNPF2AU = auto()
+    TURNPF2BS = auto()
+    TURNPF2BS1 = auto()
+    TURNPF2BU = auto()
     TURNPF2ERR = auto()
     TURNPF3AS = auto()
     TURNPF3BS = auto()
+    TURNPF3CS = auto()
+    TURNPF3DS = auto()
     TURNPF3AU = auto()
+    TURNPF3U = auto()
     TURNPF3ERR = auto()
     TURNPF4S = auto()
     TURNPF5S = auto()
@@ -377,7 +385,11 @@ df.add_system_transition(State.TURNPF4S, State.TURNPF5S, r'[! "That is a good op
 df.add_system_transition(State.TURNPF2AS, r'[! "Why do you think " $teama " will win? Do you think there is a player that is integral to the team?" ]')
 df.add_system_transition(State.TURNPF2BS, )
 
-
+# Playoff Turn 3
+df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! "Why do you think" $teamA "will win?"]')
+df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '/[a-z A-z]*/') # picks up anything for now
+df.add_system_transition(State.TURNPF2BS1, )
+df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #playerEval "Personally I think that ]')
 
 if __name__ == '__main__':
     df.run(debugging=True)
