@@ -370,7 +370,9 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 #turn 1
 df.add_system_transition(State.TURNPF1S, State.TURNPF1U, r'[!  "The NBA season has been shutdown because of COVID. If we played playoffs based off the current standings, which team do you think would win?"]')
 df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
-df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[#ONT(teams)]') #todo need to make ontology of only teams which are in playoffs and one of not in playoffs to catch errors
+df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$teamA = #ONT(playoffTeams)]')
+df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, '[#ONT(nonplayoffTeams)]')
+df.set_error_successor(State.TURNPF1U)
 
 #idk scenario
 df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! "It is okay to be unsure because predictability of playoffs is difficult without more date. I think that " $teamB " can win. Do you agree?" ]')
@@ -384,10 +386,6 @@ df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #pull 
 df.add_system_transition(State.TURNPF4S, State.TURNPF5S, r'[! "That is a good opinion. Personally, I think " $teamB "will win because of " $teamBPlayerName "."') #todo redo the naming here of turnpf5s
 
 
-#turn 2 #todo pick back up here when editing again
-df.add_system_transition(State.TURNPF2AS, r'[! "Why do you think " $teama " will win? Do you think there is a player that is integral to the team?" ]')
-df.add_system_transition(State.TURNPF2BS, )
-
 # Playoff Turn 2 (not idk scenario)
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! "Why do you think" $teamA "will win?"]')
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale=[#ONT(rationale)]]') # hopefully we can pick up rationales
@@ -395,7 +393,7 @@ df.error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
 df.add_system_transition(State.TURNPF2BU_ERR2, r'[! "Thats fair. Personally, I think that" $teamB "has the best chance of winning because of" $teamBplayername]')
 
 df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Do you think theres a player that is integral to their team?"]')
-df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, "[$teamAplayer=[#ONT(teams)]]")
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, "[$teamAplayer=[#ONT(playoffTeams)]]") #todo make ontology for players who are in and not in playoffs
 df.error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR2)
 
 #TODO:Need to see if we can get the team b player name and team name when we dont run the macro
