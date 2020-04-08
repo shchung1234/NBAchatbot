@@ -46,14 +46,11 @@ class State(Enum):
     TURNPF2AU = auto()
     TURNPF2BS = auto()
     TURNPF2BS1 = auto()
-<<<<<<< HEAD
     TURNPF2BU1 = auto()
-=======
     TURNPF2BU = auto()
     TURNPF2ERR = auto()
     TURNPF3AS = auto()
     TURNPF3BS = auto()
->>>>>>> d80de147bbcd7990a89145dffaa8fb01d7c7d451
     TURNPF3CS = auto()
     TURNPF3DS = auto()
     TURNPF3AU = auto()
