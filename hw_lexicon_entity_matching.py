@@ -40,6 +40,7 @@ class State(Enum):
     TURNPF2BS = auto()
     TURNPF2BU = auto()
     TURNPF2BS1 = auto()
+    TURNPF2BU1 = auto()
     TURNPF3CS = auto()
     TURNPF3DS = auto()
     TURNPF3U = auto()
@@ -353,7 +354,7 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 # Playoff Turn 3
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! "Why do you think" $teamA "will win?"]')
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '/[a-z A-z]*/') # picks up anything for now
-df.add_system_transition(State.TURNPF2BS1, )
+df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, )
 df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #playerEval "Personally I think that ]')
 
 if __name__ == '__main__':
