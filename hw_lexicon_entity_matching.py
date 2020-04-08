@@ -49,6 +49,8 @@ class State(Enum):
     TURNPF2BU1 = auto()
     TURNPF2BU = auto()
     TURNPF2ERR = auto()
+    TURNPF2BU_ERR1 = auto()
+    TURNPF2BU_ERR2= auto();
     TURNPF3AS = auto()
     TURNPF3BS = auto()
     TURNPF3CS = auto()
@@ -386,11 +388,21 @@ df.add_system_transition(State.TURNPF4S, State.TURNPF5S, r'[! "That is a good op
 df.add_system_transition(State.TURNPF2AS, r'[! "Why do you think " $teama " will win? Do you think there is a player that is integral to the team?" ]')
 df.add_system_transition(State.TURNPF2BS, )
 
-# Playoff Turn 3
+# Playoff Turn 2 (not idk scenario)
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! "Why do you think" $teamA "will win?"]')
-df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '/[a-z A-z]*/') # picks up anything for now
-df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, )
-df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #playerEval "Personally I think that ]')
+df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale=[#ONT(rationale)]]') # hopefully we can pick up rationales
+df.error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
+df.add_system_transition(State.TURNPF2BU_ERR2, r'[! "Thats fair. Personally, I think that" $teamB "has the best chance of winning because of" $teamBplayername]')
+
+df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Do you think theres a player that is integral to their team?"]')
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, "[$teamAplayer=[#ONT(teams)]]")
+df.error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR2)
+
+#TODO:Need to see if we can get the team b player name and team name when we dont run the macro
+df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF3CS, r'[! "Thats fair. Personally, I think that" $teamB "has the best chance of winning because of" $teamBplayername]')
+
+# Playoff Turn 3
+df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #playerEval "Personally, I think that" $teamB "has the best chance of winning because of" $teamBplayername]')
 
 if __name__ == '__main__':
     df.run(debugging=True)
