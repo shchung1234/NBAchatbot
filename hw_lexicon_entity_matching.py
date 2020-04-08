@@ -262,23 +262,25 @@ class goodBadTrade(Macro):
 
 class botFavTeam(Macro):
     def run (self, ngrams, vars, args):
-        if vars['favUserTeam'] and vars['favUserTeam'] in 'Los Angeles Clippers' or vars['favUserTeam'] in 'LA Clippers':
-            vars['favSysTeam'] = 'Bucks'
-            vars['favSysPlayer'] = 'Giannis Antetokounmpo'
-            vars['favSysPlayerPER'] = 31.71
-            vars['favSysPlayerPTS'] = 29.6
-            vars['favSysPlayerREB'] = 13.7
-            vars['favSysPlayerAST'] = 5.8
-            return
-        
-        if vars['favUserTeam'] and vars['favUserTeam'] in 'Milwaukee Bucks':
-            vars['favSysTeam'] = 'Clippers'
-            vars['favSysPlayer'] = 'Kawhi Leonard'
-            vars['favSysPlayerPER'] = 26.76
-            vars['favSysPlayerPTS'] = 26.9
-            vars['favSysPlayerREB'] = 7.3
-            vars['favSysPlayerAST'] = 5.0
-            return
+        if 'favUserTeam' in vars:
+            if vars['favUserTeam'] in 'Los Angeles Clippers' or vars['favUserTeam'] in 'LA Clippers' or vars['favUserTeam'] in 'Clippers':
+                vars['favSysTeam'] = 'Bucks'
+                vars['favSysPlayer'] = 'Giannis Antetokounmpo'
+                vars['favSysPlayerPER'] = 31.71
+                vars['favSysPlayerPTS'] = 29.6
+                vars['favSysPlayerREB'] = 13.7
+                vars['favSysPlayerAST'] = 5.8
+                return
+
+        if 'favUserTeam' in vars:
+            if vars['favUserTeam'] in 'Milwaukee Bucks' or vars['favUserTeam'] in 'Bucks':
+                vars['favSysTeam'] = 'Clippers'
+                vars['favSysPlayer'] = 'Kawhi Leonard'
+                vars['favSysPlayerPER'] = 26.76
+                vars['favSysPlayerPTS'] = 26.9
+                vars['favSysPlayerREB'] = 7.3
+                vars['favSysPlayerAST'] = 5.0
+                return
 
         vars['favSysTeam'] = 'Clippers'
         vars['favSysPlayer'] = 'Kawhi Leonard'
@@ -341,7 +343,8 @@ knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
 df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(),
                                                                                                   'teamStats': teamStats(), 'playerRating' : playerRating(),
-                                                                                                  'goodBadTrade' : goodBadTrade(), 'tradeNews':tradeNews()})
+                                                                                                  'goodBadTrade' : goodBadTrade(), 'tradeNews':tradeNews(),
+                                                                                                  'botFavTeam': botFavTeam()})
 
 #########################
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
@@ -361,7 +364,7 @@ possible_results = '[{' \
 """trade turns"""
 #turn 0
 df.add_system_transition(State.START, State.TURN0, '"Hi I’m NBA chatbot. I can talk to you about trades, injuries, drafts, or all-stars. Which of these would you like to talk about?"')
-df.add_user_transition(State.TURN0, State.TURNPF1U, '[#ONT(trades)]') #todo once submitting, change back to correct turn, temporarily changed to test playoff module
+df.add_user_transition(State.TURN0, State.TURNPF1S, '[#ONT(trades)]') #todo once submitting, change back to correct turn, temporarily changed to test playoff module
 df.add_user_transition(State.TURN0, State.TURN0S, '[#ONT(offtopics)]')
 
 df.add_user_transition(State.TURN0, State.TURN0DK1S, dont_know) # dont knows section
@@ -421,16 +424,16 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 
 """playoffs turns"""
 #turn 1
-df.add_system_transition(State.TURNPF1S, State.TURNPF1U, r'[!  "The NBA season has been shutdown because of COVID. If we played playoffs based off the current standings, which team do you think would win?"]')
-#df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
-df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, '[#ONT(nonplayoffTeams)]')
-df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$teamA = #ONT(playoffTeams)]')
+df.add_system_transition(State.TURNPF1S, State.TURNPF1U, r'[! "The NBA season has been shutdown because of COVID. If we played playoffs based off the current standings, which team do you think would win?"]')
+df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
+#df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, '[#ONT(nonplayoffTeams)]')
+df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$favUserTeam=#ONT(playoffTeams)]')
 df.set_error_successor(State.TURNPF1U, State.TURNPF1ERR)
 df.add_system_transition(State.TURNPF1ERR, State.TURNPF2AS, 'Picking userTeam')
 
 
 #idk scenario #todo declare err states
-df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam "It is okay to be unsure because predictability of playoffs is difficult without more date. I think that " $favSysTeam " can win. Do you agree?" ]')
+df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam "It is okay to be unsure because predictability of playoffs is difficult without more date. I think that " $favSysTeam " can win. Do you agree?"]')
 df.add_user_transition(State.TURNPF2AU, State.TURNPF3AS, '[$response3 = {#ONT(agree)}')
 df.add_user_transition(State.TURNPF2AU, State.TURNPF3BS, '[$response3 = {#ONT(disagree)}')
 df.set_error_successor(State.TURNPF2AU, State.TURNPF2AERR)
