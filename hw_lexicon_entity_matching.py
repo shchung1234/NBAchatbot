@@ -264,7 +264,7 @@ class goodBadTrade(Macro):
 class botFavTeam(Macro):
     def run (self, ngrams, vars, args):
         if 'favUserTeam' in vars:
-            if vars['favUserTeam'] in 'Los Angeles Clippers' or vars['favUserTeam'] in 'LA Clippers' or vars['favUserTeam'] in 'Clippers':
+            if vars['favUserTeam'] in 'los angeles clippers' or vars['favUserTeam'] in 'lA clippers' or vars['favUserTeam'] in 'clippers':
                 vars['favSysTeam'] = 'Bucks'
                 vars['favSysPlayer'] = 'Giannis Antetokounmpo'
                 vars['favSysPlayerPER'] = 31.71
@@ -274,7 +274,7 @@ class botFavTeam(Macro):
                 return
 
         if 'favUserTeam' in vars:
-            if vars['favUserTeam'] in 'Milwaukee Bucks' or vars['favUserTeam'] in 'Bucks':
+            if vars['favUserTeam'] in 'milwaukee bucks' or vars['favUserTeam'] in 'bucks' or vars['favUserTeam'] in 'milwaukee':
                 vars['favSysTeam'] = 'Clippers'
                 vars['favSysPlayer'] = 'Kawhi Leonard'
                 vars['favSysPlayerPER'] = 26.76
