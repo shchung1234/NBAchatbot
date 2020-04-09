@@ -441,10 +441,10 @@ df.add_user_transition(State.TURNPF2AU, State.TURNPF3BS, '[#ONT(disagree)]')
 df.set_error_successor(State.TURNPF2AU, State.TURNPF2AERR)
 df.add_system_transition(State.TURNPF2AERR, State.TURNPF3AS, 'uncertain about playoff team')
 
-df.add_system_transition(State.TURNPF3AS, State.TURNPF3AU, r'[! "I always love meeting other fans of " $favSysTeam " Why do you think " $favSysTeam " is going to win?"')
-df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Why do you think " $favSysTeam " will not win? "')
+df.add_system_transition(State.TURNPF3AS, State.TURNPF3AU, r'[! "I always love meeting other fans of " $favSysTeam " Why do you think " $favSysTeam " is going to win?"]')
+df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Why do you think " $favSysTeam " will not win?"]')
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #pull any response here
-df.add_system_transition(State.TURNPF4S, State.TURNPF5S, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer "."') #todo redo the naming here of turnpf5s
+df.add_system_transition(State.TURNPF4S, State.TURNPF5S, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer "."]') #todo redo the naming here of turnpf5s
 #df.set_error_successor(State.TURNPF3AU, State.TURNPF3AERR)
 #df.add_system_transition(State.TURNPF3AERR, State.TURN)
 
