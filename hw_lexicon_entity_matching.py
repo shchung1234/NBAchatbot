@@ -434,7 +434,7 @@ df.add_system_transition(State.TURNPF1ERR, State.TURNPF2AS, 'Picking userTeam')
 
 
 #idk scenario #todo declare err states
-df.add_system_transition(State.TURNPF2CSS, State.TURNPF2AU, r'[! #botFavTeam "I dont think that team will be in the playoffs. But you know, I think that " $favSysTeam " can win. Do you agree?"]')
+df.add_system_transition(State.TURNPF2CS, State.TURNPF2AU, r'[! #botFavTeam "I dont think that team will be in the playoffs. But you know, I think that " $favSysTeam " can win. Do you agree?"]')
 df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam "It is okay to be unsure because predictability of playoffs is difficult without more data. I think that " $favSysTeam " can win. Do you agree?"]')
 df.add_user_transition(State.TURNPF2AU, State.TURNPF3AS, '[$response3 = {#ONT(agree)}')
 df.add_user_transition(State.TURNPF2AU, State.TURNPF3BS, '[$response3 = {#ONT(disagree)}')
