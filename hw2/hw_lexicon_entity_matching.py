@@ -37,6 +37,11 @@ class State(Enum):
     TURNTRADE4ERR = auto()
     TURNTRADE5U = auto()
     TURNTRADE5S = auto()
+    TURNTRADE5U_ERR = auto()
+    TURNTRADE6AS = auto()
+    TURNTRADE6BS = auto()
+    TURNTRADE6BU = auto()
+    TURNTRADE6BU_ERR = auto()
     TURNPF1S = auto()
     END = auto()
     EARLYEND = auto()
@@ -227,7 +232,7 @@ class tradeNews(Macro):
         #print(player)
         #print(role)
 
-        return "I found this most recent trade news that {} from {} is going to {}".format(player, givingTeam, receivingTeam)
+        return "{} from {} is going to {}".format(player, givingTeam, receivingTeam)
 
 class goodBadTrade(Macro):
     def run (self, ngrams, vars, args):
@@ -283,7 +288,7 @@ dont_know = '[{' \
             '}]'
 
 possible_results = '[{' \
-                   'better,worse,obliterate,crush,destroy,change,effect,difference,improve,adjust,adapt,implications,good,bad,weird' \
+                   'win,lose,better,worse,obliterate,crush,destroy,change,effect,difference,improve,adjust,adapt,implications,good,bad,weird' \
                    '}]'
 
 playoffs = '[{'\
@@ -310,7 +315,7 @@ end = '[{'\
 
 
 #turn 1
-df.add_system_transition(State.START, State.TURNTRADE1U, r'[!"Hi I’m NBA chatbot." {#tradeNews()} ". Do you want to talk about this trade or no?"]')
+df.add_system_transition(State.START, State.TURNTRADE1U, r'[!"Hi I’m NBA chatbot." I found this interesting trade article that says that {#tradeNews()} ". Do you want to talk about this trade?"]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE1U, State.END, '[#ONT(disagree)]') #todo currently set up to end, maybe can let user select a different trade to discuss
 #df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about playoffs or stop talking. Which would you prefer?"]')
@@ -350,11 +355,22 @@ df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE5S, possible_results)
 df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE4DK1S, dont_know)
 df.add_system_transition(State.TURNTRADE4DK1S, State.TURNTRADE5U, r'[! "Honestly, youre probably right to be unsure as we wont know until playoffs actually start. Do you want to chat about playoffs or stop talking?"]')
 df.set_error_successor(State.TURNTRADE4U, State.TURNTRADE4ERR)
-df.add_system_transition(State.TURNTRADE4ERR, State.TURNTRADE5S, r'[! "Haha, youre funny, but ultimately I guess we wont know until later when playoffs start."]')
+df.add_system_transition(State.TURNTRADE4ERR, State.TURNTRADE5U, r'[! "Haha, youre funny, but ultimately I guess we wont know until later when playoffs start. Would you like to talk about another trade?"]')
 
-df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess that is a possibility. We will not know until playoffs actually start. Do you want to chat about playoffs or stop talking?"]')
-df.add_user_transition(State.TURNTRADE5U, State.END, end)
-df.add_user_transition(State.TURNTRADE5U, State.TURNPF1S, playoffs)
+df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess that is a possibility. We will not know until playoffs actually start. Do you want to chat about another trade?"]')
+
+df.add_user_transition(State.TURNTRADE5U, State.TURNTRADE6AS, "[#ONT(agree)]")
+df.add_system_transition(State.TURNTRADE6AS, State.TURNTRADE1U, r'[! "Okay! I found" {another,this other,a new} {trade news, article} "that says that" #tradeNews() "Does that sound interesting?"]')
+
+df.add_user_transition(State.TURNTRADE5U, State.TURNTRADE6BS, "[#ONT(disagree)]")
+df.set_error_successor(State.TURNTRADE5U, State.TURNTRADE5U_ERR)
+df.add_system_transition(State.TURNTRADE5U_ERR, State.TURNTRADE6BU, r'[! "Okay, in that case would you like to talk about playoffs or would you like to stop talking?"]')
+
+df.add_system_transition(State.TURNTRADE6BS, State.TURNTRADE6BU, r'[! "Okay, in that case would you like to talk about playoffs or would you like to stop talking?"]')
+df.set_error_successor(State.TURNTRADE6BU, State.TURNTRADE6BU_ERR)
+df.add_system_transition(State.TURNTRADE6BU_ERR, State.END, r'[! "In that case, I will take my leave for now"]')
+df.add_user_transition(State.TURNTRADE6BU, State.END, end)
+df.add_user_transition(State.TURNTRADE6BU, State.TURNPF1S, playoffs)
 
 df.add_system_transition(State.TURNPF1S, State.END, r'[!  "You are currently accessing a module which will be deployed as a part of the project. I cannot talk about playoffs right now."]')
 
