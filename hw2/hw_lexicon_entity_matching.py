@@ -15,6 +15,7 @@ class State(Enum):
     TURN0DK1U = auto()
     TURN0ERR = auto()
     TURNTRADE1S = auto()
+    TURNTRADE1S2 = auto()
     TURNTRADE1U = auto()
     TURNTRADE1ERR = auto()
     TURNTRADE1BS = auto()
@@ -68,7 +69,6 @@ class news(Macro):
         news = requests.get(endpoint)
         formatted_news = news.json()
         formatted_news = formatted_news['articles']
-
         ## THINGS TO RETURN #####
         title = formatted_news[0]['title']
         description = formatted_news[0]['description']
@@ -205,12 +205,13 @@ class teamStats(Macro):
 
         return "The {} are currently {} and {} ".format(vars['receivingTeam'], wins, losses)
 
+
 class tradeNews(Macro):
-    def run (self, ngrams, vars, args):
-        response = requests.get("https://stats.nba.com/js/data/playermovement/NBA_Player_Movement.json")
-        test = response.json()
-        trades = [x for x in test['NBA_Player_Movement']['rows'] if x['Transaction_Type'] == 'Trade']
-        trade = trades[0]['TRANSACTION_DESCRIPTION']
+    def run(self, ngrams, vars, args):
+        with open('trades.json') as f:
+            data = json.load(f)
+        trades = data['trades']
+        trade = trades[randrange(55)]['TRANSACTION_DESCRIPTION']
         receivingTeam = trade.split(' received')[0]
         givingTeam = trade.split('from ')[1]
         givingTeam = givingTeam[:-1]
@@ -225,14 +226,14 @@ class tradeNews(Macro):
         vars['receivingTeam'] = receivingTeam
         vars['givingTeam'] = givingTeam
         vars['player'] = player
-        
-        #print(trade)
-        #print('recieving team', receivingTeam)
-        #print('givingTeam', givingTeam)
-        #print(player)
-        #print(role)
 
-        return "{} from {} is going to {}".format(player, givingTeam, receivingTeam)
+        # print(trade)
+        # print('recieving team', receivingTeam)
+        # print('givingTeam', givingTeam)
+        # print(player)
+        # print(role)
+
+        return "I heard that {} from {} went to {} this season".format(player, givingTeam, receivingTeam)
 
 class goodBadTrade(Macro):
     def run (self, ngrams, vars, args):
@@ -258,35 +259,63 @@ class playerRating(Macro):
         s += "01"
         playerid = s.lower()
         player = Player(playerid)
-        PER = player.player_efficiency_rating
-        DEF_REB = player.defensive_rebound_percentage
-        OFF_REB = player.offensive_rebound_percentage
-        BLK = player.block_percentage
+        position = player.position
+        exp = player.games_played
+        #career stats: average points/rebounds/blocks/etc per 40 minutes
+        C_REB = player.total_rebounds/player.minutes_played*40
+        C_PTS = player.points/player.minutes_played*40
+        C_AST = player.assists/player.minutes_played*40
+        # current year stats: average points/rebounds/blocks/etc per 40 minutes
+        player = player('2019-20')
+        REB = player.total_rebounds / player.minutes_played * 40
+        BLK = player.shots_blocked / player.minutes_played * 40
+        PTS = player.points / player.minutes_played * 40
         FLD_GOAL = player.field_goal_percentage
-        STL = player.steal_percentage
         THR_PT = player.three_point_percentage
-
-        print(PER)
-        if (PER > 18):
+        #TW_PT = player.two_point_percentage
+        AST = player.assists / player.minutes_played * 40
+        PER = player.player_efficiency_rating
+        str = ''
+        if (PER > 17):
             vars['goodBadPlayer'] = 'good'
-            if DEF_REB > 5 or OFF_REB > 2:
-                return "This trade will be good I think. He'll definitely be able to leverage his skills at rebounding the ball."
-            elif BLK > 3.69 or STL >= 1.09:
-                return "He is incredible on defense, and I think this trade will make him only better."
-            elif FLD_GOAL > 50 or THR_PT > 39:
-                return "He is a ridiculous shooter, and he can only get better with time!"
+            if (exp < 246):
+                str = str + "As an unexperienced player, I think " + player.name
+                if (C_PTS >= 16 or C_AST >= 5 or C_REB >= 9):
+                    str += " had a great career so far."
+            elif (exp < 500):
+                str = str + "As a player who have some experience, I think " + player.name
+                if (C_PTS >= 16 or C_AST >= 5 or C_REB >= 9):
+                    str += " had a great career so far."
             else:
-                return "I get the impression that he is efficient and good player. With more opportunities, he may be even better. I think this trade will go great."
+                str = str + "As a veteran player, I think " + player.name
+                if (C_PTS >= 16 or C_AST >= 5 or C_REB >= 9):
+                    str += " is one of exceptional players that ever played the game."
+                else:
+                    str += " had a stable career."
+            if (REB > 4 and PTS > 10 and AST > 5):
+                str = str + vars['receivingTeam'] + ", " + "I think he became the core of the team. And his points, rebounds, and assists reflect that."
+            elif (REB > 7):
+                str = str + "With his rebounding skills, I think the team has really benefited from receiving " + player.name + "."
+            elif (PTS > 12):
+                str = str + "He has been scoring really well making a good contribution to " + vars['receivingTeam']
+            elif (AST > 5):
+                str = str + "His distribution of ball has really lifted " + vars['receivingTeam']
+            else:
+                str += "He has been making stable contribution to the team even though his stats don't stand out."
+            str += "And I think his contribution could have stood out more if NBA was not cancelled with pendamic crisis."
+            return str
         else:
             vars['goodBadPlayer'] = 'bad'
-            if DEF_REB <= 3.89 or OFF_REB <= 0.96:
-                return "I don't think he is that good at rebounding."
-            elif BLK > 0.48 or STL <= 0.88:
-                return "Hes honestly pretty bad on defense."
-            elif FLD_GOAL < 45 or THR_PT > 38.3:
-                return "He's just not a really good shooter."
-            else:
-                return "I don't get the impression that he is good. This could just be me, but he doesn't seem too efficient."
+            if (PTS <= 12):
+                str += "I don't see much contribution he is making to the team especially with scoring"
+            elif (position == "C" or position == "PF" and REB <= 4):
+                str += "He's not a good rebounder for his position"
+            elif (position == "PG" and AST <= 3):
+                str += "He is not that great with his assists to make a contribution to the team"
+            str += "I just don't see how his weaknesses would get better."
+            if (player.minutes_played/player.games_played < 2):
+                str += "Besides, who is this player anyways? because I've never heard of him."
+            return str
 
 
 knowledge = KnowledgeBase()
@@ -321,34 +350,34 @@ end = '[{'\
 
 #turn 0
 
-#df.add_system_transition(State.START, State.TURN0, '"Hi I’m NBA chatbot. I can talk to you about trades or playoffs. Which of these would you like to talk about?"')
-#df.add_user_transition(State.TURN0, State.TURNTRADE1S, '[#ONT(trades)]')
-#df.add_user_transition(State.TURN0, State.TURN0S, '[#ONT(offtopics)]')
+df.add_system_transition(State.START, State.TURN0, '"Hi I’m NBA chatbot. I can talk to you about trades or playoffs. Which of these would you like to talk about?"')
+df.add_user_transition(State.TURN0, State.TURNTRADE1S, '[#ONT(trades)]')
+df.add_user_transition(State.TURN0, State.TURN0S, '[#ONT(offtopics)]')
 
-#df.add_user_transition(State.TURN0, State.TURN0DK1S, dont_know) # dont knows section
-#df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if you dont know, I can just talk about trades! Is that okay?"]')
-#df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S, "[#ONT(agree)]")
-#df.set_error_successor(State.TURN0DK1U, State.TURN0ERR)
+df.add_user_transition(State.TURN0, State.TURN0DK1S, dont_know) # dont knows section
+df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if you dont know, I can just talk about trades! Is that okay?"]')
+df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S, "[#ONT(agree)]")
+df.set_error_successor(State.TURN0DK1U, State.TURN0ERR)
 
-#df.add_system_transition(State.TURN0S, State.TURN0, r'[! "I do not know how to talk about that yet"]')
-#df.set_error_successor(State.TURN0, State.TURN0ERR)
-#df.add_system_transition(State.TURN0ERR, State.TURNTRADE1U, r'[! "Honestly, Im only really good at talking about trades right now. If thats okay then listen to this! " #tradeNews() ". Doesnt that sound interesting?"]')
-#df.add_system_transition(State.TURNTRADE1S2, State.EARLYEND, r'[! "Oh, thats a shame. I cant really talk about other news right now unfortunately. Maybe next time we can talk some more"]')
+df.add_system_transition(State.TURN0S, State.TURN0, r'[! "I do not know how to talk about that yet"]')
+df.set_error_successor(State.TURN0, State.TURN0ERR)
+df.add_system_transition(State.TURN0ERR, State.TURNTRADE1U, r'[! "Honestly, Im only really good at talking about trades right now. If thats okay then listen to this! " #tradeNews() ". Doesnt that sound interesting?"]')
+df.add_system_transition(State.TURNTRADE1S2, State.EARLYEND, r'[! "Oh, thats a shame. I cant really talk about other news right now unfortunately. Maybe next time we can talk some more"]')
 
 
 #turn 1
 df.add_system_transition(State.START, State.TURNTRADE1U, r'[!"Hi I’m NBA chatbot." I found this interesting trade article that says that {#tradeNews()} ". Do you want to talk about this trade?"]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE1U, State.END, '[#ONT(disagree)]') #todo currently set up to end, maybe can let user select a different trade to discuss
-#df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about playoffs or stop talking. Which would you prefer?"]')
-#df.add_user_transition(State.TURNTRADE1BU, State.TURNPF1S, playoffs)
-#df.add_user_transition(State.TURNTRADE1BU, State.END, '[/[a-z A-Z]+/]')
+df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about playoffs or stop talking. Which would you prefer?"]') #
+df.add_user_transition(State.TURNTRADE1BU, State.TURNPF1S, playoffs)#
+df.add_user_transition(State.TURNTRADE1BU, State.END, '[/[a-z A-Z]+/]')#
 df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1ERR)
-df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Okay, I mean " $player " is really interesting, and I really want to talk about him. " #playerRating() " What do you think about him?"]' )
+df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Okay, I mean this trade would be interesting to talk about. " #playerRating() " What do you think about him?"]' )
 
 #turn 2
 
-df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "When I watch " $player ", " #playerRating() " What do you think about " $player "?"]')
+df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "Lets talk about " $player ", " #playerRating() " What is your opinon about " $player "?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S1, "[$response2=#POS(adj)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S2, "[$response2=#POS(verb)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE2DK1S, dont_know) # dont knows
