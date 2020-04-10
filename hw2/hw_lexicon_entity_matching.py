@@ -11,6 +11,7 @@ class State(Enum):
     START = auto()
     TURN0 = auto()
     TURN0S = auto()
+    TURNTRADE1AS = auto()
     TURN0DK1S = auto()
     TURN0DK1U = auto()
     TURN0ERR = auto()
@@ -232,7 +233,7 @@ class tradeNews(Macro):
         #print(player)
         #print(role)
 
-        return "{} from {} is going to {}".format(player, givingTeam, receivingTeam)
+        return "{} from {} went to {}".format(player, givingTeam, receivingTeam)
 
 class goodBadTrade(Macro):
     def run (self, ngrams, vars, args):
@@ -337,9 +338,11 @@ end = '[{'\
 
 
 #turn 1
-df.add_system_transition(State.START, State.TURNTRADE1U, r'[!"Hi I’m NBA chatbot." I found this interesting trade article that says that {#tradeNews()} ". Do you want to talk about this trade?"]')
+df.add_system_transition(State.START, State.TURNTRADE1U, r'[!"Hi I’m NBA chatbot. I heard that " {#tradeNews()} "this season. Do you want to talk about this trade?"]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
-df.add_user_transition(State.TURNTRADE1U, State.END, '[#ONT(disagree)]') #todo currently set up to end, maybe can let user select a different trade to discuss
+df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE1AS, '[#ONT(disagree)]') #goes to talk about a different trade
+df.add_system_transition(State.TURNTRADE1AS, State.TURNTRADE , )
+df.add_user_transition(State.TURNTRADE1U, State.END, end) #terminates conversation
 #df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about playoffs or stop talking. Which would you prefer?"]')
 #df.add_user_transition(State.TURNTRADE1BU, State.TURNPF1S, playoffs)
 #df.add_user_transition(State.TURNTRADE1BU, State.END, '[/[a-z A-Z]+/]')
