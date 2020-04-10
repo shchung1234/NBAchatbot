@@ -215,7 +215,7 @@ class tradeNews(Macro):
         with open('trades.json') as f:
             data = json.load(f)
         trades = data['trades']
-        trade = trades[randrange(55)]['TRANSACTION_DESCRIPTION']
+        trade = trades[randrange(53)]['TRANSACTION_DESCRIPTION']
         receivingTeam = trade.split(' received')[0]
         givingTeam = trade.split('from ')[1]
         givingTeam = givingTeam[:-1]
