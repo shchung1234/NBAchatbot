@@ -37,6 +37,12 @@ class State(Enum):
     TURNTRADE4ERR = auto()
     TURNTRADE5U = auto()
     TURNTRADE5S = auto()
+    TURNTRADE5U_ERR = auto()
+    TURNTRADE6AS = auto()
+    TURNTRADE6BS = auto()
+    TURNTRADE6BU = auto()
+    TURNTRADE6BU_ERR = auto()
+    TURNPF1S = auto()
     END = auto()
     EARLYEND = auto()
 
@@ -226,7 +232,7 @@ class tradeNews(Macro):
         #print(player)
         #print(role)
 
-        return "I found this most recent trade news that {} from {} is going to {}".format(player, givingTeam, receivingTeam)
+        return "{} from {} is going to {}".format(player, givingTeam, receivingTeam)
 
 class goodBadTrade(Macro):
     def run (self, ngrams, vars, args):
@@ -267,6 +273,9 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
                                                                                                   'teamStats': teamStats(), 'playerRating' : playerRating(),
                                                                                                   'goodBadTrade' : goodBadTrade(), 'tradeNews':tradeNews()})
 
+
+
+
 #########################
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
 ##########################
@@ -279,31 +288,39 @@ dont_know = '[{' \
             '}]'
 
 possible_results = '[{' \
-                   'better,worse,obliterate,crush,destroy,change,effect,difference,improve,adjust,adapt,implications,good,bad,weird' \
+                   'win,lose,better,worse,obliterate,crush,destroy,change,effect,difference,improve,adjust,adapt,implications,good,bad,weird' \
                    '}]'
 
+playoffs = '[{'\
+        'playoff, playoffs''}]'
+
+end = '[{'\
+    'end, stop, terminate, cease''}]'
+
 #turn 0
-df.add_system_transition(State.START, State.TURN0, '"Hi I’m NBA chatbot. I can talk to you about trades, injuries, drafts, or all-stars. Which of these would you like to talk about?"')
-df.add_user_transition(State.TURN0, State.TURNTRADE1S, '[#ONT(trades)]')
-df.add_user_transition(State.TURN0, State.TURN0S, '[#ONT(offtopics)]')
 
-df.add_user_transition(State.TURN0, State.TURN0DK1S, dont_know) # dont knows section
-df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if you dont know, I can just talk about trades! Is that okay?"]')
-df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S, "[#ONT(agree)]")
-df.set_error_successor(State.TURN0DK1U, State.TURN0ERR)
+#df.add_system_transition(State.START, State.TURN0, '"Hi I’m NBA chatbot. I can talk to you about trades or playoffs. Which of these would you like to talk about?"')
+#df.add_user_transition(State.TURN0, State.TURNTRADE1S, '[#ONT(trades)]')
+#df.add_user_transition(State.TURN0, State.TURN0S, '[#ONT(offtopics)]')
 
-df.add_system_transition(State.TURN0S, State.TURN0, r'[! "I do not know how to talk about that yet"]')
-df.set_error_successor(State.TURN0, State.TURN0ERR)
-df.add_system_transition(State.TURN0ERR, State.TURNTRADE1U, r'[! "Honestly, Im only really good at talking about trades right now. If thats okay then listen to this! " #tradeNews() ". Doesnt that sound interesting?"]')
+#df.add_user_transition(State.TURN0, State.TURN0DK1S, dont_know) # dont knows section
+#df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if you dont know, I can just talk about trades! Is that okay?"]')
+#df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S, "[#ONT(agree)]")
+#df.set_error_successor(State.TURN0DK1U, State.TURN0ERR)
+
+#df.add_system_transition(State.TURN0S, State.TURN0, r'[! "I do not know how to talk about that yet"]')
+#df.set_error_successor(State.TURN0, State.TURN0ERR)
+#df.add_system_transition(State.TURN0ERR, State.TURNTRADE1U, r'[! "Honestly, Im only really good at talking about trades right now. If thats okay then listen to this! " #tradeNews() ". Doesnt that sound interesting?"]')
 #df.add_system_transition(State.TURNTRADE1S2, State.EARLYEND, r'[! "Oh, thats a shame. I cant really talk about other news right now unfortunately. Maybe next time we can talk some more"]')
 
 
 #turn 1
-df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE1U, r'[!{#tradeNews()} ". Do you want to talk about this trade?"]')
+df.add_system_transition(State.START, State.TURNTRADE1U, r'[!"Hi I’m NBA chatbot." I found this interesting trade article that says that {#tradeNews()} ". Do you want to talk about this trade?"]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
-df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE1BS, '[#ONT(disagree)]')
-df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about all-stars, injuries, the draft, or stop talking. Which would you prefer?"]')
-df.add_user_transition(State.TURNTRADE1BU, State.END, '[/[a-z A-Z]+/]')
+df.add_user_transition(State.TURNTRADE1U, State.END, '[#ONT(disagree)]') #todo currently set up to end, maybe can let user select a different trade to discuss
+#df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about playoffs or stop talking. Which would you prefer?"]')
+#df.add_user_transition(State.TURNTRADE1BU, State.TURNPF1S, playoffs)
+#df.add_user_transition(State.TURNTRADE1BU, State.END, '[/[a-z A-Z]+/]')
 df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1ERR)
 df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Okay, I mean " $player " is really interesting, and I really want to talk about him. " #playerRating() " What do you think about him?"]' )
 
@@ -320,8 +337,8 @@ df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "I dont kn
 
 #turn 3
 
-df.add_system_transition(State.TURNTRADE3S1, State.TURNTRADE3U, r'[! "My robot uncle thinks " $player " is " $response2 "too. But we cant forget about the teams" #teamStats() ", and I think that " #goodBadTrade() ". Do you agree?"]')
-df.add_system_transition(State.TURNTRADE3S2, State.TURNTRADE3U, r'[! "Ultimately, " #goodBadTrade() ". Do you agree?"]')
+df.add_system_transition(State.TURNTRADE3S1, State.TURNTRADE3U, r'[! {My robot uncle thinks that,All my friends think that,My friend Seeree thinks that} $player " is " $response2 "too. But lets not forget about the teams" #teamStats() ", and I think that " #goodBadTrade() ". Do you agree?"]')
+df.add_system_transition(State.TURNTRADE3S2, State.TURNTRADE3U, r'[! {My robot uncle thinks that,All my friends think that,My friend Seeree thinks that} $player $response2 "too. Ultimately, " #goodBadTrade() ". Do you agree?"]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, '[#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S1, '[#ONT(disagree)]')
 
@@ -331,17 +348,32 @@ df.set_error_successor(State.TURNTRADE3U, State.TURNTRADE3ERR)
 df.add_system_transition(State.TURNTRADE3ERR, State.TURNTRADE4U, r'[! "That is certainly an opinion haha. Playoffs are happening soon though! How do you think this trade affects the playoff?"]')
 
 #turn 4
-df.add_system_transition(State.TURNTRADE4S1, State.TURNTRADE4U, r'[! "Interesting perspective. Anyway, how do you think this affects the playoff?"]')
+df.add_system_transition(State.TURNTRADE4S1, State.TURNTRADE4U, r'[! "Interesting perspective! Anyway, how do you think this affects the playoff?"]')
 df.add_system_transition(State.TURNTRADE4S, State.TURNTRADE4U, r'[! "How do you think this trade will affect the playoffs? "]')
 df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE5S, possible_results)
 
 df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE4DK1S, dont_know)
-df.add_system_transition(State.TURNTRADE4DK1S, State.TURNTRADE5U, r'[! "Honestly, youre probably right to be unsure as we wont know until playoffs actually start. Do you want to chat about playoffs or another topic?"]')
+df.add_system_transition(State.TURNTRADE4DK1S, State.TURNTRADE5U, r'[! "Honestly, youre probably right to be unsure as we wont know until playoffs actually start. Would you like to chat about another trade?"]')
 df.set_error_successor(State.TURNTRADE4U, State.TURNTRADE4ERR)
-df.add_system_transition(State.TURNTRADE4ERR, State.TURNTRADE5S, r'[! "Haha, youre funny, but ultimately I guess we wont know until later when playoffs start."]')
+df.add_system_transition(State.TURNTRADE4ERR, State.TURNTRADE5U, r'[! "Haha, youre funny, but ultimately I guess we wont know until later when playoffs start. Would you like to talk about another trade?"]')
 
-df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess that is a possibility. We will not know until playoffs actually start. Do you want to chat about playoffs or another topic?"]')
-df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]')
+df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess that is a possibility. We will not know until playoffs actually start." {Do you want to chat about another trade,Would you like to chat about another trade}"?"]')
+
+df.add_user_transition(State.TURNTRADE5U, State.TURNTRADE6AS, "[#ONT(agree)]")
+df.add_system_transition(State.TURNTRADE6AS, State.TURNTRADE1U, r'[! "Okay! I found" {another,this other,a new} {trade news, article} "that says that" #tradeNews() "Does that sound interesting?"]')
+
+df.add_user_transition(State.TURNTRADE5U, State.TURNTRADE6BS, "[#ONT(disagree)]")
+df.set_error_successor(State.TURNTRADE5U, State.TURNTRADE5U_ERR)
+df.add_system_transition(State.TURNTRADE5U_ERR, State.TURNTRADE6BU, r'[! "Okay, in that case would you like to talk about playoffs or would you like to stop talking?"]')
+
+df.add_system_transition(State.TURNTRADE6BS, State.TURNTRADE6BU, r'[! "Okay, in that case would you like to talk about playoffs or would you like to stop talking?"]')
+df.set_error_successor(State.TURNTRADE6BU, State.TURNTRADE6BU_ERR)
+df.add_system_transition(State.TURNTRADE6BU_ERR, State.END, r'[! "In that case, I will take my leave for now"]')
+df.add_user_transition(State.TURNTRADE6BU, State.END, end)
+df.add_user_transition(State.TURNTRADE6BU, State.TURNPF1S, playoffs)
+
+df.add_system_transition(State.TURNPF1S, State.END, r'[!  "You are currently accessing a module which will be deployed as a part of the project. I cannot talk about playoffs right now."]')
+
 
 
 
