@@ -259,6 +259,13 @@ class playerRating(Macro):
         playerid = s.lower()
         player = Player(playerid)
         PER = player.player_efficiency_rating
+        DEF_REB = player.defensive_rebound_percentage
+        OFF_REB = player.offensive_rebound_percentage
+        BLK = player.block_percentage
+        FLD_GOAL = player.field_goal_percentage
+        STL = player.steal_percentage
+        THR_PT = player.three_point_percentage
+
         if (PER > 18):
             vars['goodBadPlayer'] = 'good'
             return "I get the impression that he is efficient and good player. With more opportunities, he may be even better. I think this trade will go great."
@@ -348,7 +355,7 @@ df.set_error_successor(State.TURNTRADE3U, State.TURNTRADE3ERR)
 df.add_system_transition(State.TURNTRADE3ERR, State.TURNTRADE4U, r'[! "That is certainly an opinion haha. Playoffs are happening soon though! How do you think this trade affects the playoff?"]')
 
 #turn 4
-df.add_system_transition(State.TURNTRADE4S1, State.TURNTRADE4U, r'[! "Interesting perspective! Anyway, how do you think this affects the playoff?"]')
+df.add_system_transition(State.TURNTRADE4S1, State.TURNTRADE4U, r'[! "Interesting perspective! I cant say I agree with you though. Anyway, how do you think this affects the playoff?"]')
 df.add_system_transition(State.TURNTRADE4S, State.TURNTRADE4U, r'[! "How do you think this trade will affect the playoffs? "]')
 df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE5S, possible_results)
 
