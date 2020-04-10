@@ -134,65 +134,65 @@ class teamStats(Macro):
         player = ' '.join(playerList)
         #Assume input is team name, all lowercase
 
-        if vars['receivingTeam'] == "Atlanta Hawks" or "Atlanta" or "Hawks":
+        if vars['receivingTeam'] == "Atlanta Hawks" or  vars['receivingTeam'] == "Atlanta" or  vars['receivingTeam'] == "Hawks":
             team = 'ATL'
-        elif vars['receivingTeam'] == "Boston Celtics" or "Boston" or "Celtics":
+        elif vars['receivingTeam'] == "Boston Celtics" or vars['receivingTeam'] == "Boston" or vars['receivingTeam'] == "Celtics":
             team = 'BOS'
-        elif vars['receivingTeam'] == "Brooklyn Nets" or "Brooklyn" or "Nets":
+        elif vars['receivingTeam'] == "Brooklyn Nets" or vars['receivingTeam'] == "Brooklyn" or vars['receivingTeam'] == "Nets":
             team = 'BKN'
-        elif vars['receivingTeam'] =="Charlotte Hornets" or "Charlotte" or "Hornets":
+        elif vars['receivingTeam'] =="Charlotte Hornets" or vars['receivingTeam'] =="Charlotte" or vars['receivingTeam'] =="Hornets":
             team = 'CHA'
-        elif vars['receivingTeam'] =="Chicago Bulls" or "Chicago" or "Bulls":
+        elif vars['receivingTeam'] =="Chicago Bulls" or vars['receivingTeam'] =="Chicago" or vars['receivingTeam'] =="Bulls":
             team = 'CHI'
-        elif vars['receivingTeam'] =="Cleveland Cavaliers" or "Cleveland" or "Cavaliers":
+        elif vars['receivingTeam'] =="Cleveland Cavaliers" or vars['receivingTeam'] =="Cleveland" or vars['receivingTeam'] =="Cavaliers":
             team = 'CLE'
-        elif vars['receivingTeam'] =="Dallas Mavericks" or "Dallas" or "Mavericks":
+        elif vars['receivingTeam'] =="Dallas Mavericks" or vars['receivingTeam'] =="Dallas" or vars['receivingTeam'] =="Mavericks":
             team = 'DAL'
-        elif vars['receivingTeam'] =="Denver Nuggets" or "Denver" or "Nuggets":
+        elif vars['receivingTeam'] =="Denver Nuggets" or vars['receivingTeam'] =="Denver" or vars['receivingTeam'] =="Nuggets":
             team = 'DEN'
-        elif vars['receivingTeam'] =="Detroit Pistons" or "Detroit" or "Pistons":
+        elif vars['receivingTeam'] =="Detroit Pistons" or vars['receivingTeam'] =="Detroit" or vars['receivingTeam'] =="Pistons":
             team = 'DET'
-        elif vars['receivingTeam'] =="Golden State Warriors" or "GSW" or "Warriors":
+        elif vars['receivingTeam'] =="Golden State Warriors" or vars['receivingTeam'] =="GSW" or vars['receivingTeam'] =="Warriors":
             team = 'GSW'
-        elif vars['receivingTeam'] =="Houston Rockets" or "Houston" or "Rockets":
+        elif vars['receivingTeam'] =="Houston Rockets" or vars['receivingTeam'] =="Houston" or vars['receivingTeam'] =="Rockets":
             team = 'HOU'
-        elif vars['receivingTeam'] =="Indiana Pacers" or "Indiana" or "Pacers":
+        elif vars['receivingTeam'] =="Indiana Pacers" or vars['receivingTeam'] =="Indiana" or vars['receivingTeam'] =="Pacers":
             team = 'IND'
-        elif vars['receivingTeam'] =="LA Clippers" or "Clippers":
+        elif vars['receivingTeam'] =="LA Clippers" or vars['receivingTeam'] =="Clippers":
             team = 'LAC'
-        elif vars['receivingTeam'] =="Los Angeles Lakers" or "Lakers":
+        elif vars['receivingTeam'] =="Los Angeles Lakers" or vars['receivingTeam'] =="Lakers":
             team = 'LAL'
-        elif vars['receivingTeam'] =="Memphis Grizzlies" or "Memphis" or "Grizzlies":
+        elif vars['receivingTeam'] =="Memphis Grizzlies" or vars['receivingTeam'] =="Memphis" or vars['receivingTeam'] =="Grizzlies":
             team = 'MEM'
-        elif vars['receivingTeam'] =="Miami Heat" or "Miami":
+        elif vars['receivingTeam'] =="Miami Heat" or vars['receivingTeam'] =="Miami":
             team = 'MIA'
-        elif vars['receivingTeam'] =="Milwaukee Bucks" or "Milwaukee" or "Bucks":
+        elif vars['receivingTeam'] =="Milwaukee Bucks" or vars['receivingTeam'] =="Milwaukee" or vars['receivingTeam'] =="Bucks":
             team = 'MIL'
-        elif vars['receivingTeam'] =="Minnesota Timberwolves" or "Minnesota" or "Timberwolves":
+        elif vars['receivingTeam'] =="Minnesota Timberwolves" or vars['receivingTeam'] =="Minnesota" or vars['receivingTeam'] =="Timberwolves":
             team = 'MIN'
-        elif vars['receivingTeam'] =="New Orleans Pelicans" or "Pelicans" or "NoLa":
+        elif vars['receivingTeam'] =="New Orleans Pelicans" or vars['receivingTeam'] =="Pelicans" or vars['receivingTeam'] =="NoLa":
             team = 'NOP'
-        elif vars['receivingTeam'] =="New York Knicks" or "Knicks" or "NY":
+        elif vars['receivingTeam'] =="New York Knicks" or vars['receivingTeam'] =="Knicks" or vars['receivingTeam'] =="NY":
             team = 'NYK'
-        elif vars['receivingTeam'] =="Oklahoma City Thunder" or "Thunder" or "OKC":
+        elif vars['receivingTeam'] =="Oklahoma City Thunder" or vars['receivingTeam'] =="Thunder" or vars['receivingTeam'] =="OKC":
             team = 'OKC'
-        elif vars['receivingTeam'] =="Orlando Magic" or "Orlando" or "Magic":
+        elif vars['receivingTeam'] =="Orlando Magic" or vars['receivingTeam'] =="Orlando" or vars['receivingTeam'] =="Magic":
             team = 'ORL'
-        elif vars['receivingTeam'] =="Philadelphia SeventySixers" or "Philly" or "SeventySixers" or "76ers":
+        elif vars['receivingTeam'] =="Philadelphia SeventySixers" or vars['receivingTeam'] =="Philly" or vars['receivingTeam'] =="SeventySixers" or vars['receivingTeam'] =="76ers":
             team = 'PHI'
-        elif vars['receivingTeam'] =="Phoenix Suns" or "Phoenix" or "Suns":
+        elif vars['receivingTeam'] =="Phoenix Suns" or vars['receivingTeam'] =="Phoenix" or vars['receivingTeam'] =="Suns":
             team = 'PHX'
-        elif vars['receivingTeam'] =="Portland Trail Blazers" or "Portland" or "Trail Blazers":
+        elif vars['receivingTeam'] =="Portland Trail Blazers" or vars['receivingTeam'] ==vars['receivingTeam'] == "Portland" or vars['receivingTeam'] =="Trail Blazers":
             team = 'POR'
-        elif vars['receivingTeam'] =="Sacramento Kings" or "Sacramento" or "Kings":
+        elif vars['receivingTeam'] =="Sacramento Kings" or vars['receivingTeam'] =="Sacramento" or vars['receivingTeam'] =="Kings":
             team = 'SAC'
-        elif vars['receivingTeam'] =="San Antonio Spurs" or "San Antonio" or "Spurs":
+        elif vars['receivingTeam'] =="San Antonio Spurs" or vars['receivingTeam'] =="San Antonio" or vars['receivingTeam'] =="Spurs":
             team = 'SAS'
-        elif vars['receivingTeam'] =="Toronto Raptors" or "Toronto" or "Raptors":
+        elif vars['receivingTeam'] =="Toronto Raptors" or vars['receivingTeam'] =="Toronto" or vars['receivingTeam'] =="Raptors":
             team = 'TOR'
-        elif vars['receivingTeam'] =="Utah Jazz" or "Utah" or "Jazz":
+        elif vars['receivingTeam'] =="Utah Jazz" or vars['receivingTeam'] =="Utah" or vars['receivingTeam'] =="Jazz":
             team = 'UTA'
-        elif vars['receivingTeam'] =="Washington Wizards" or "Washington" or "Wizards":
+        elif vars['receivingTeam'] =="Washington Wizards" or vars['receivingTeam'] =="Washington" or vars['receivingTeam'] =="Wizards":
             team = 'WAS'
         else:
             #error handling? idk if needed
