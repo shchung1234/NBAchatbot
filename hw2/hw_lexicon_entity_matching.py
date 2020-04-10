@@ -375,7 +375,7 @@ end = '[{'\
 df.add_system_transition(State.START, State.TURNTRADE1U, r'[!"Hi I’m NBA chatbot. I heard that " {#tradeNews()} "this season. Do you want to talk about this trade?"]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE1AS, '[#ONT(disagree)]') #goes to talk about a different trade
-df.add_system_transition(State.TURNTRADE1AS, State.TURNTRADE1U , r'[! "How about how " {#tradeNews()}]')
+df.add_system_transition(State.TURNTRADE1AS, State.TURNTRADE1U , r'[! {How about how this:,I found this other trade article.,[! "What about this trade? I heard that"]} {#tradeNews()}]')
 df.add_user_transition(State.TURNTRADE1U, State.END, end) #terminates conversation
 #df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about playoffs or stop talking. Which would you prefer?"]')
 #df.add_user_transition(State.TURNTRADE1BU, State.TURNPF1S, playoffs)
