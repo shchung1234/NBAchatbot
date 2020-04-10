@@ -1,0 +1,10 @@
+Requirements:
+
+emora_stdm
+    -spacy
+enum
+requests
+json
+sportsreference
+json
+random
