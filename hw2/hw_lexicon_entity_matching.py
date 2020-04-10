@@ -274,12 +274,19 @@ class playerRating(Macro):
             elif BLK > 3.69 or STL >= 1.09:
                 return "He is incredible on defense, and I think this trade will make him only better."
             elif FLD_GOAL > 50 or THR_PT > 39:
-                return "He is a ridiculous shooter and I think {} can only benefit.".format(vars['receivingTeam'])
+                return "He is a ridiculous shooter, and he can only get better with time!"
             else:
                 return "I get the impression that he is efficient and good player. With more opportunities, he may be even better. I think this trade will go great."
         else:
             vars['goodBadPlayer'] = 'bad'
-            return "I don't get the impression that he is good. This could just be me, but he doesn't seem too efficient."
+            if DEF_REB <= 3.89 or OFF_REB <= 0.96:
+                return "I don't think he is that good at rebounding."
+            elif BLK > 0.48 or STL <= 0.88:
+                return "Hes honestly pretty bad on defense."
+            elif FLD_GOAL < 45 or THR_PT > 38.3:
+                return "He's just not a really good shooter."
+            else:
+                return "I don't get the impression that he is good. This could just be me, but he doesn't seem too efficient."
 
 
 knowledge = KnowledgeBase()
