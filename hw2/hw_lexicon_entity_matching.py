@@ -31,6 +31,7 @@ class State(Enum):
     TURNTRADE2ERR = auto()
     TURNTRADE3S1 = auto()
     TURNTRADE3S2 = auto()
+    TURNTRADE3S3 = auto()
     TURNTRADE3U = auto()
     TURNTRADE3DK1S = auto()
     TURNTRADE3ERR = auto()
@@ -386,7 +387,8 @@ df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Okay, I m
 
 df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "Lets talk about " $player ", " #playerRating() " What is your opinon about " $player "?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S1, "[$response2=#POS(adj)]")
-df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S2, "[$response2=#POS(verb)]")
+df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S2, "[$response2=#POS(verb) #NOT(#ONT(agree),#ONT(disagree))]")
+df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S3, "[{#ONT(agree),#ONT(disagree)}]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE2DK1S, dont_know) # dont knows
 df.add_system_transition(State.TURNTRADE2DK1S, State.TURNTRADE3U, r'[! "Its okay if youre not sure! I actually think that " #goodBadTrade() ". Do you agree?"]')
 df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
@@ -397,6 +399,7 @@ df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "I dont kn
 
 df.add_system_transition(State.TURNTRADE3S1, State.TURNTRADE3U, r'[! {My robot uncle thinks that,All my friends think that,My friend Seeree thinks that} $player " is " $response2 "too. But lets not forget about the teams" #teamStats() ", and I think that " #goodBadTrade() ". Do you agree?"]')
 df.add_system_transition(State.TURNTRADE3S2, State.TURNTRADE3U, r'[! {My robot uncle thinks that,All my friends think that,My friend Seeree thinks that} $player $response2 "too. Ultimately, " #goodBadTrade() ". Do you agree?"]')
+df.add_system_transition(State.TURNTRADE3S3, State.TURNTRADE3U, r'[! "Yea" {my robot uncle,my friend Seeree} "agrees with you on" $player "too. Ultimately, I think that" #goodBadTrade() ". Do you agree?"]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, '[#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S1, '[#ONT(disagree)]')
 
