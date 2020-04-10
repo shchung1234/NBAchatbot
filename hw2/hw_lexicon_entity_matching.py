@@ -261,6 +261,7 @@ class playerRating(Macro):
             s += n[0][i]
         s += "01"
         playerid = s.lower()
+        if (n[0] == "Marcus" and n[1] == "Morris"): playerid = "morrima02"
         player = Player(playerid)
         position = player.position
         exp = player.games_played
