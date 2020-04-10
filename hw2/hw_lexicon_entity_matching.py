@@ -321,7 +321,7 @@ class playerRating(Macro):
                 str += "He doesn't have any specialty in points, rebounds, nor assists."
             str += "I just don't see how he would suddenly get better."
             if (player('2019-20').minutes_played/player('2019-20').games_played < 12 or player('2019-20').minutes_played == None):
-                str += "Besides, who is this player anyways? because I've never heard of him."
+                str += "Besides, who is this player anyways because I've never heard of him."
             return str
 
 
