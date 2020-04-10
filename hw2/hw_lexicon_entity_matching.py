@@ -337,8 +337,8 @@ df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "I dont kn
 
 #turn 3
 
-df.add_system_transition(State.TURNTRADE3S1, State.TURNTRADE3U, r'[! "My robot uncle thinks " $player " is " $response2 "too. But we cant forget about the teams" #teamStats() ", and I think that " #goodBadTrade() ". Do you agree?"]')
-df.add_system_transition(State.TURNTRADE3S2, State.TURNTRADE3U, r'[! "Ultimately, " #goodBadTrade() ". Do you agree?"]')
+df.add_system_transition(State.TURNTRADE3S1, State.TURNTRADE3U, r'[! {My robot uncle thinks that,All my friends think that,My friend Seeree thinks that} $player " is " $response2 "too. But lets not forget about the teams" #teamStats() ", and I think that " #goodBadTrade() ". Do you agree?"]')
+df.add_system_transition(State.TURNTRADE3S2, State.TURNTRADE3U, r'[! {My robot uncle thinks that,All my friends think that,My friend Seeree thinks that} $player $response2 "too. Ultimately, " #goodBadTrade() ". Do you agree?"]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, '[#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S1, '[#ONT(disagree)]')
 
@@ -348,16 +348,16 @@ df.set_error_successor(State.TURNTRADE3U, State.TURNTRADE3ERR)
 df.add_system_transition(State.TURNTRADE3ERR, State.TURNTRADE4U, r'[! "That is certainly an opinion haha. Playoffs are happening soon though! How do you think this trade affects the playoff?"]')
 
 #turn 4
-df.add_system_transition(State.TURNTRADE4S1, State.TURNTRADE4U, r'[! "Interesting perspective. Anyway, how do you think this affects the playoff?"]')
+df.add_system_transition(State.TURNTRADE4S1, State.TURNTRADE4U, r'[! "Interesting perspective! Anyway, how do you think this affects the playoff?"]')
 df.add_system_transition(State.TURNTRADE4S, State.TURNTRADE4U, r'[! "How do you think this trade will affect the playoffs? "]')
 df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE5S, possible_results)
 
 df.add_user_transition(State.TURNTRADE4U, State.TURNTRADE4DK1S, dont_know)
-df.add_system_transition(State.TURNTRADE4DK1S, State.TURNTRADE5U, r'[! "Honestly, youre probably right to be unsure as we wont know until playoffs actually start. Do you want to chat about playoffs or stop talking?"]')
+df.add_system_transition(State.TURNTRADE4DK1S, State.TURNTRADE5U, r'[! "Honestly, youre probably right to be unsure as we wont know until playoffs actually start. Would you like to chat about another trade?"]')
 df.set_error_successor(State.TURNTRADE4U, State.TURNTRADE4ERR)
 df.add_system_transition(State.TURNTRADE4ERR, State.TURNTRADE5U, r'[! "Haha, youre funny, but ultimately I guess we wont know until later when playoffs start. Would you like to talk about another trade?"]')
 
-df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess that is a possibility. We will not know until playoffs actually start. Do you want to chat about another trade?"]')
+df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess that is a possibility. We will not know until playoffs actually start." {Do you want to chat about another trade,Would you like to chat about another trade}"?"]')
 
 df.add_user_transition(State.TURNTRADE5U, State.TURNTRADE6AS, "[#ONT(agree)]")
 df.add_system_transition(State.TURNTRADE6AS, State.TURNTRADE1U, r'[! "Okay! I found" {another,this other,a new} {trade news, article} "that says that" #tradeNews() "Does that sound interesting?"]')
