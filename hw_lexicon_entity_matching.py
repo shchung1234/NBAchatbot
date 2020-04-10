@@ -3,7 +3,8 @@ from enum import Enum, auto
 import requests
 from sportsreference.nba.schedule import Schedule
 from sportsreference.nba.roster import Player
-
+import json
+from random import randrange
 
 # TODO: Update the State enum as needed
 class State(Enum):
@@ -225,7 +226,7 @@ class teamStats(Macro):
 
         return "The {} are currently {} and {} ".format(vars['receivingTeam'], wins, losses)
 
-class tradeNews(Macro):
+class tradeNewsOld(Macro):
     def run (self, ngrams, vars, args):
         response = requests.get("https://stats.nba.com/js/data/playermovement/NBA_Player_Movement.json")
         test = response.json()
@@ -253,6 +254,36 @@ class tradeNews(Macro):
         #print(role)
 
         return "I found this most recent trade news that {} from {} is going to {}".format(player, givingTeam, receivingTeam)
+
+class tradeNews(Macro):
+    def run (self, ngrams, vars, args):
+        with open('trades.json') as f:
+            data = json.load(f)
+        trades = data['trades']
+        trade = trades[randrange(55)]['TRANSACTION_DESCRIPTION']
+        receivingTeam = trade.split(' received')[0]
+        givingTeam = trade.split('from ')[1]
+        givingTeam = givingTeam[:-1]
+        player = trade.split('received ')[1]
+        player = player.split('from')[0]
+
+        playerList = player.split(' ')
+        role = playerList[0]
+        playerList.pop(0)
+        player = ' '.join(playerList)
+
+        vars['receivingTeam'] = receivingTeam
+        vars['givingTeam'] = givingTeam
+        vars['player'] = player
+        
+        #print(trade)
+        #print('recieving team', receivingTeam)
+        #print('givingTeam', givingTeam)
+        #print(player)
+        #print(role)
+
+        return "I found this most recent trade news that {} from {} is going to {}".format(player, givingTeam, receivingTeam)
+
 
 class goodBadTrade(Macro):
     def run (self, ngrams, vars, args):
