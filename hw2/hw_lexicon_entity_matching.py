@@ -1,7 +1,6 @@
 from emora_stdm import KnowledgeBase, DialogueFlow, Macro
 from enum import Enum, auto
 import requests
-import json
 from sportsreference.nba.schedule import Schedule
 from sportsreference.nba.roster import Player
 import json

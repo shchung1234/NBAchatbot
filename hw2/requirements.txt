@@ -1,7 +1,5 @@
-Requirements:
-
 emora_stdm
-    -spacy
+spacy
 enum
 requests
 json
