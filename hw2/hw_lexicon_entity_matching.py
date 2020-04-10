@@ -266,9 +266,17 @@ class playerRating(Macro):
         STL = player.steal_percentage
         THR_PT = player.three_point_percentage
 
+        print(PER)
         if (PER > 18):
             vars['goodBadPlayer'] = 'good'
-            return "I get the impression that he is efficient and good player. With more opportunities, he may be even better. I think this trade will go great."
+            if DEF_REB > 5 or OFF_REB > 2:
+                return "This trade will be good I think. He'll definitely be able to leverage his skills at rebounding the ball."
+            elif BLK > 3.69 or STL >= 1.09:
+                return "He is incredible on defense, and I think this trade will make him only better."
+            elif FLD_GOAL > 50 or THR_PT > 39:
+                return "He is a ridiculous shooter and I think {} can only benefit.".format(vars['receivingTeam'])
+            else:
+                return "I get the impression that he is efficient and good player. With more opportunities, he may be even better. I think this trade will go great."
         else:
             vars['goodBadPlayer'] = 'bad'
             return "I don't get the impression that he is good. This could just be me, but he doesn't seem too efficient."
