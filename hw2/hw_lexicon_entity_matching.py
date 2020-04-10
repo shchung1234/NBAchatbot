@@ -235,7 +235,7 @@ class tradeNews(Macro):
         # print('givingTeam', givingTeam)
         # print(player)
         # print(role)
-        return "I heard that {} from {} went to {} this season".format(player, givingTeam, receivingTeam)
+        return "{} from {} went to {} this season".format(player, givingTeam, receivingTeam)
 
 
 class goodBadTrade(Macro):
