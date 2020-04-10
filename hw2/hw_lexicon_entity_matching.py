@@ -4,6 +4,8 @@ import requests
 import json
 from sportsreference.nba.schedule import Schedule
 from sportsreference.nba.roster import Player
+import json
+from random import randrange
 
 
 # TODO: Update the State enum as needed
@@ -11,6 +13,7 @@ class State(Enum):
     START = auto()
     TURN0 = auto()
     TURN0S = auto()
+    TURNTRADE1AS = auto()
     TURN0DK1S = auto()
     TURN0DK1U = auto()
     TURN0ERR = auto()
@@ -232,8 +235,8 @@ class tradeNews(Macro):
         # print('givingTeam', givingTeam)
         # print(player)
         # print(role)
-
         return "I heard that {} from {} went to {} this season".format(player, givingTeam, receivingTeam)
+
 
 class goodBadTrade(Macro):
     def run (self, ngrams, vars, args):
@@ -366,12 +369,14 @@ df.add_system_transition(State.TURNTRADE1S2, State.EARLYEND, r'[! "Oh, thats a s
 
 
 #turn 1
-df.add_system_transition(State.START, State.TURNTRADE1U, r'[!"Hi I’m NBA chatbot." I found this interesting trade article that says that {#tradeNews()} ". Do you want to talk about this trade?"]')
+df.add_system_transition(State.START, State.TURNTRADE1U, r'[!"Hi I’m NBA chatbot. I heard that " {#tradeNews()} "this season. Do you want to talk about this trade?"]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
-df.add_user_transition(State.TURNTRADE1U, State.END, '[#ONT(disagree)]') #todo currently set up to end, maybe can let user select a different trade to discuss
-df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about playoffs or stop talking. Which would you prefer?"]') #
-df.add_user_transition(State.TURNTRADE1BU, State.TURNPF1S, playoffs)#
-df.add_user_transition(State.TURNTRADE1BU, State.END, '[/[a-z A-Z]+/]')#
+df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE1AS, '[#ONT(disagree)]') #goes to talk about a different trade
+df.add_system_transition(State.TURNTRADE1AS, State.TURNTRADE1U , r'[! "How about how " {#tradeNews()}]')
+df.add_user_transition(State.TURNTRADE1U, State.END, end) #terminates conversation
+#df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about playoffs or stop talking. Which would you prefer?"]')
+#df.add_user_transition(State.TURNTRADE1BU, State.TURNPF1S, playoffs)
+#df.add_user_transition(State.TURNTRADE1BU, State.END, '[/[a-z A-Z]+/]')
 df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1ERR)
 df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Okay, I mean this trade would be interesting to talk about. " #playerRating() " What do you think about him?"]' )
 
@@ -430,4 +435,4 @@ df.add_system_transition(State.TURNPF1S, State.END, r'[!  "You are currently acc
 
 
 if __name__ == '__main__':
-    df.run(debugging=False)
+    df.run(debugging=True)
