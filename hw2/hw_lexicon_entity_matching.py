@@ -4,6 +4,8 @@ import requests
 import json
 from sportsreference.nba.schedule import Schedule
 from sportsreference.nba.roster import Player
+import json
+from random import randrange
 
 
 # TODO: Update the State enum as needed
@@ -207,11 +209,11 @@ class teamStats(Macro):
         return "The {} are currently {} and {} ".format(vars['receivingTeam'], wins, losses)
 
 class tradeNews(Macro):
-    def run (self, ngrams, vars, args):
-        response = requests.get("https://stats.nba.com/js/data/playermovement/NBA_Player_Movement.json")
-        test = response.json()
-        trades = [x for x in test['NBA_Player_Movement']['rows'] if x['Transaction_Type'] == 'Trade']
-        trade = trades[0]['TRANSACTION_DESCRIPTION']
+    def run(self, ngrams, vars, args):
+        with open('trades.json') as f:
+            data = json.load(f)
+        trades = data['trades']
+        trade = trades[randrange(55)]['TRANSACTION_DESCRIPTION']
         receivingTeam = trade.split(' received')[0]
         givingTeam = trade.split('from ')[1]
         givingTeam = givingTeam[:-1]
@@ -226,14 +228,16 @@ class tradeNews(Macro):
         vars['receivingTeam'] = receivingTeam
         vars['givingTeam'] = givingTeam
         vars['player'] = player
-        
-        #print(trade)
-        #print('recieving team', receivingTeam)
-        #print('givingTeam', givingTeam)
-        #print(player)
-        #print(role)
 
-        return "{} from {} went to {}".format(player, givingTeam, receivingTeam)
+        # print(trade)
+        # print('recieving team', receivingTeam)
+        # print('givingTeam', givingTeam)
+        # print(player)
+        # print(role)
+
+        return "I found this most recent trade news that {} from {} is going to {}".format(player, givingTeam,
+                                                                                           receivingTeam)
+
 
 class goodBadTrade(Macro):
     def run (self, ngrams, vars, args):
@@ -341,7 +345,7 @@ end = '[{'\
 df.add_system_transition(State.START, State.TURNTRADE1U, r'[!"Hi I’m NBA chatbot. I heard that " {#tradeNews()} "this season. Do you want to talk about this trade?"]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE1AS, '[#ONT(disagree)]') #goes to talk about a different trade
-df.add_system_transition(State.TURNTRADE1AS, State.TURNTRADE , )
+df.add_system_transition(State.TURNTRADE1AS, State.TURNTRADE1U , r'[! "How about how " {#tradeNews()}]')
 df.add_user_transition(State.TURNTRADE1U, State.END, end) #terminates conversation
 #df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about playoffs or stop talking. Which would you prefer?"]')
 #df.add_user_transition(State.TURNTRADE1BU, State.TURNPF1S, playoffs)
@@ -404,4 +408,4 @@ df.add_system_transition(State.TURNPF1S, State.END, r'[!  "You are currently acc
 
 
 if __name__ == '__main__':
-    df.run(debugging=False)
+    df.run(debugging=True)
