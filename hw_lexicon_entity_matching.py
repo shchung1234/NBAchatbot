@@ -11,7 +11,8 @@ class State(Enum):
   #states for trade conversation
     START = auto()
     TURN0 = auto()
-    TURN0S = auto()
+    TURNTRADE0S = auto()
+    TURNTRADE0U = auto()
     TURN0DK1S = auto()
     TURN0DK1U = auto()
     TURN0ERR = auto()
@@ -393,18 +394,59 @@ possible_results = '[{' \
                    'better,worse,obliterate,crush,destroy,change,effect,difference,improve,adjust,adapt,implications,good,bad,weird' \
                    '}]'
 
-"""trade turns"""
-#turn 0
-df.add_system_transition(State.START, State.TURN0, '"Hi I’m NBA chatbot. I can talk to you about trades, injuries, drafts, or all-stars. Which of these would you like to talk about?"')
-df.add_user_transition(State.TURN0, State.TURNPF1S, '[#ONT(trades)]') #todo once submitting, change back to correct turn, temporarily changed to test playoff module
-df.add_user_transition(State.TURN0, State.TURN0S, '[#ONT(offtopics)]')
+"""playoffs turns"""
+#turn 1
+df.add_system_transition(State.START, State.TURNPF1U, r'[! "Hi I am NB chatbot. The NBA season has been shutdown because of COVID. If we played playoffs based off the current standings, which team do you think would win?"]')
+df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
+df.add_user_transition(State.TURNPF1U, State.TURNPF2CS, '[#ONT(nonplayoffteams)]')
+df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$favUserTeam=#ONT(playoffteams)]')
+df.set_error_successor(State.TURNPF1U, State.TURNPF1ERR)
+df.add_system_transition(State.TURNPF1ERR, State.TURNPF2AS, 'Picking userTeam')
 
-df.add_user_transition(State.TURN0, State.TURN0DK1S, dont_know) # dont knows section
+
+#idk scenario 
+df.add_system_transition(State.TURNPF2CS, State.TURNPF2AU, r'[! #botFavTeam "I dont think that team will be in the playoffs. But you know, I think that " $favSysTeam " can win. Do you agree?"]')
+df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam "It is okay to be unsure because predictability of playoffs is difficult without more data. I think that " $favSysTeam " can win. Do you agree?"]')
+df.add_user_transition(State.TURNPF2AU, State.TURNPF3AS, '[#ONT(agree)]')
+df.add_user_transition(State.TURNPF2AU, State.TURNPF3BS, '[#ONT(disagree)]')
+df.set_error_successor(State.TURNPF2AU, State.TURNPF2AERR)
+df.add_system_transition(State.TURNPF2AERR, State.TURNPF3AS, 'uncertain about playoff team')
+
+df.add_system_transition(State.TURNPF3AS, State.TURNPF3AU, r'[! "I always love meeting other fans of " $favSysTeam " Why do you think " $favSysTeam " is going to win?"]')
+df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Why do you think " $favSysTeam " will not win?"]')
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #pull any response here
+df.add_system_transition(State.TURNPF4S, State.TURNPF5S, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". What do you think of " #comparePlayer]') #todo modify comparePlayer to work with either sysplayer or userplayer
+#df.set_error_successor(State.TURNPF3AU, State.TURNPF3AERR)
+#df.add_system_transition(State.TURNPF3AERR, State.TURN)
+
+# Playoff Turn 2 (not idk scenario)
+df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think" $favUserTeam "will win?"]')
+df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale=[#ONT(rationale)]]') # hopefully we can pick up rationales
+df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
+df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF3U, r'[! "Thats fair. Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
+
+df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Do you think theres a player that is integral to their team?"]')
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, "[$favUserPlayer=[#ONT(playoffteams)]]") #todo make ontology for players who are in and not in playoffs
+df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR2)
+
+#df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPFU, r'[! "Thats fair. Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer]')
+
+# Playoff Turn 3
+df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! "I think that " #comparePlayers ". What is your opinion?]')
+df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[#ONT(actions)]")
+
+
+
+"""trades turns"""
+#turn 0
+#need to run trade macro up here to get the trades specific to teams
+df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "Earlier in the season I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
+df.add_user_transition(State.TURNTRADE0S, State.TURN0DK1S, dont_know) # dont knows section
 df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if you dont know, I can just talk about trades! Is that okay?"]')
 df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S, "[#ONT(agree)]")
 df.set_error_successor(State.TURN0DK1U, State.TURN0ERR)
 
-df.add_system_transition(State.TURN0S, State.TURN0, r'[! "I do not know how to talk about that yet"]')
+df.add_system_transition(State.TURN0ERR, State.TURN0, r'[! "I do not know how to talk about that yet"]')
 df.set_error_successor(State.TURN0, State.TURN0ERR)
 df.add_system_transition(State.TURN0ERR, State.TURNTRADE1U, r'[! "Honestly, Im only really good at talking about trades right now. If thats okay then listen to this! " #tradeNews() ". Doesnt that sound interesting?"]')
 #df.add_system_transition(State.TURNTRADE1S2, State.EARLYEND, r'[! "Oh, thats a shame. I cant really talk about other news right now unfortunately. Maybe next time we can talk some more"]')
@@ -454,47 +496,6 @@ df.add_system_transition(State.TURNTRADE4ERR, State.TURNTRADE5S, r'[! "Haha, you
 df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess that is a possibility. We will not know until playoffs actually start. Do you want to chat about playoffs or another topic?"]')
 df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]')
 
-"""playoffs turns"""
-#turn 1
-df.add_system_transition(State.TURNPF1S, State.TURNPF1U, r'[! "The NBA season has been shutdown because of COVID. If we played playoffs based off the current standings, which team do you think would win?"]')
-df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
-df.add_user_transition(State.TURNPF1U, State.TURNPF2CS, '[#ONT(nonplayoffteams)]')
-df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$favUserTeam=#ONT(playoffteams)]')
-df.set_error_successor(State.TURNPF1U, State.TURNPF1ERR)
-df.add_system_transition(State.TURNPF1ERR, State.TURNPF2AS, 'Picking userTeam')
-
-
-#idk scenario 
-df.add_system_transition(State.TURNPF2CS, State.TURNPF2AU, r'[! #botFavTeam "I dont think that team will be in the playoffs. But you know, I think that " $favSysTeam " can win. Do you agree?"]')
-df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam "It is okay to be unsure because predictability of playoffs is difficult without more data. I think that " $favSysTeam " can win. Do you agree?"]')
-df.add_user_transition(State.TURNPF2AU, State.TURNPF3AS, '[#ONT(agree)]')
-df.add_user_transition(State.TURNPF2AU, State.TURNPF3BS, '[#ONT(disagree)]')
-df.set_error_successor(State.TURNPF2AU, State.TURNPF2AERR)
-df.add_system_transition(State.TURNPF2AERR, State.TURNPF3AS, 'uncertain about playoff team')
-
-df.add_system_transition(State.TURNPF3AS, State.TURNPF3AU, r'[! "I always love meeting other fans of " $favSysTeam " Why do you think " $favSysTeam " is going to win?"]')
-df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Why do you think " $favSysTeam " will not win?"]')
-df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #pull any response here
-df.add_system_transition(State.TURNPF4S, State.TURNPF5S, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer "."]') #todo redo the naming here of turnpf5s
-#df.set_error_successor(State.TURNPF3AU, State.TURNPF3AERR)
-#df.add_system_transition(State.TURNPF3AERR, State.TURN)
-
-# Playoff Turn 2 (not idk scenario)
-df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think" $favUserTeam "will win?"]')
-df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale=[#ONT(rationale)]]') # hopefully we can pick up rationales
-df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
-df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF3U, r'[! "Thats fair. Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
-
-df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Do you think theres a player that is integral to their team?"]')
-df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, "[$favUserPlayer=[#ONT(playoffteams)]]") #todo make ontology for players who are in and not in playoffs
-df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR2)
-
-#TODO:Need to see if we can get the team b player name and team name when we dont run the macro
-#df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPFU, r'[! "Thats fair. Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer]')
-
-# Playoff Turn 3
-df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #comparePlayers]')
-#df.add_system_
 
 if __name__ == '__main__':
     df.run(debugging=True)
