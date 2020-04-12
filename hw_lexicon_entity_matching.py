@@ -12,6 +12,7 @@ class State(Enum):
     START = auto()
     TURN0 = auto()
     TURNTRADE0S = auto()
+    TURNTRADE0AS = auto()
     TURNTRADE0U = auto()
     TURN0DK1S = auto()
     TURN0DK1U = auto()
@@ -65,6 +66,7 @@ class State(Enum):
     TURNPF3ERR = auto()
     TURNPF4S = auto()
     TURNPF5S = auto()
+    TURNPF5U = auto()
     END = auto()
     EARLYEND = auto()
 
@@ -448,7 +450,7 @@ possible_results = '[{' \
 
 """playoffs turns"""
 #turn 1
-df.add_system_transition(State.START, State.TURNPF1U, r'[! "Hi I am NB chatbot. The NBA season has been shutdown because of COVID. If we played playoffs based off the current standings, which team do you think would win?"]')
+df.add_system_transition(State.START, State.TURNPF1U, r'[! "Hi I am NBA chatbot. The NBA season has been shutdown because of COVID. If we played playoffs based off the current standings, which team do you think would win?"]')
 df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
 df.add_user_transition(State.TURNPF1U, State.TURNPF2CS, '[#ONT(nonplayoffteams)]')
 df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$favUserTeam=#ONT(playoffteams)]')
@@ -467,7 +469,9 @@ df.add_system_transition(State.TURNPF2AERR, State.TURNPF3AS, 'uncertain about pl
 df.add_system_transition(State.TURNPF3AS, State.TURNPF3AU, r'[! "I always love meeting other fans of " $favSysTeam " Why do you think " $favSysTeam " is going to win?"]')
 df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Why do you think " $favSysTeam " will not win?"]')
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #pull any response here
-df.add_system_transition(State.TURNPF4S, State.TURNPF5S, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". What do you think of " #comparePlayer]') #todo modify comparePlayer to work with either sysplayer or userplayer
+#this state throws an error because comparePlayers (or new Macro) needs to be able to work without having user input
+df.add_system_transition(State.TURNPF4S, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". What do you think of " $favSysPlayer "?"]') #todo modify comparePlayer to work with either sysplayer or userplayer
+#error transition for turn 3
 #df.set_error_successor(State.TURNPF3AU, State.TURNPF3AERR)
 #df.add_system_transition(State.TURNPF3AERR, State.TURN)
 
@@ -487,17 +491,21 @@ df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR2)
 df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! "I think that " #comparePlayers ". What is your opinion?]')
 df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[#ONT(actions)]")
 
+df.add_user_transition(State.TURNPF5U, State.TURNTRADE0AS, '[/[a-z A-Z]+/]')
 
 
 """trades turns"""
 #turn 0
 #need to run trade macro up here to get the trades specific to teams
+#TURNPF5S comes from the idk scenario. will probably need to add in some things to engage more with user response, this is generic catcher
+df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "Fair enough. Earlier in the season " #tradeNews]') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
 df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "Earlier in the season I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
-df.add_user_transition(State.TURNTRADE0S, State.TURN0DK1S, dont_know) # dont knows section
+df.add_user_transition(State.TURNTRADE0S, State.TURN0DK1S, dont_know) # dont knows section #todo fix the idk for tradeturn0
 df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if you dont know, I can just talk about trades! Is that okay?"]')
 df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S, "[#ONT(agree)]")
 df.set_error_successor(State.TURN0DK1U, State.TURN0ERR)
 
+#need to revise this trade turn
 df.add_system_transition(State.TURN0ERR, State.TURN0, r'[! "I do not know how to talk about that yet"]')
 df.set_error_successor(State.TURN0, State.TURN0ERR)
 df.add_system_transition(State.TURN0ERR, State.TURNTRADE1U, r'[! "Honestly, Im only really good at talking about trades right now. If thats okay then listen to this! " #tradeNews() ". Doesnt that sound interesting?"]')
