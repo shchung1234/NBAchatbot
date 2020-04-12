@@ -151,68 +151,68 @@ class teamStats(Macro):
         player = ' '.join(playerList)
         #Assume input is team name, all lowercase
 
-        if vars['receivingTeam'] == "Atlanta Hawks" or "Atlanta" or "Hawks":
+        if vars['receivingTeam'] == "Atlanta Hawks" or vars['receivingTeam'] == "Atlanta" or  vars['receivingTeam'] == "Hawks":
             team = 'ATL'
-        elif vars['receivingTeam'] == "Boston Celtics" or "Boston" or "Celtics":
+        elif vars['receivingTeam'] == "Boston Celtics" or vars['receivingTeam'] == "Boston" or vars['receivingTeam'] == "Celtics":
             team = 'BOS'
-        elif vars['receivingTeam'] == "Brooklyn Nets" or "Brooklyn" or "Nets":
+        elif vars['receivingTeam'] == "Brooklyn Nets" or vars['receivingTeam'] == "Brooklyn" or vars['receivingTeam'] == "Nets":
             team = 'BKN'
-        elif vars['receivingTeam'] =="Charlotte Hornets" or "Charlotte" or "Hornets":
+        elif vars['receivingTeam'] == "Charlotte Hornets" or vars['receivingTeam'] == "Charlotte" or vars['receivingTeam'] == "Hornets":
             team = 'CHA'
-        elif vars['receivingTeam'] =="Chicago Bulls" or "Chicago" or "Bulls":
+        elif vars['receivingTeam'] == "Chicago Bulls" or vars['receivingTeam'] == "Chicago" or vars['receivingTeam'] == "Bulls":
             team = 'CHI'
-        elif vars['receivingTeam'] =="Cleveland Cavaliers" or "Cleveland" or "Cavaliers":
+        elif vars['receivingTeam'] == "Cleveland Cavaliers" or vars['receivingTeam'] == "Cleveland" or vars['receivingTeam'] == "Cavaliers":
             team = 'CLE'
-        elif vars['receivingTeam'] =="Dallas Mavericks" or "Dallas" or "Mavericks":
+        elif vars['receivingTeam'] == "Dallas Mavericks" or vars['receivingTeam'] == "Dallas" or vars['receivingTeam'] == "Mavericks":
             team = 'DAL'
-        elif vars['receivingTeam'] =="Denver Nuggets" or "Denver" or "Nuggets":
+        elif vars['receivingTeam'] == "Denver Nuggets" or vars['receivingTeam'] == "Denver" or vars['receivingTeam'] == "Nuggets":
             team = 'DEN'
-        elif vars['receivingTeam'] =="Detroit Pistons" or "Detroit" or "Pistons":
+        elif vars['receivingTeam'] == "Detroit Pistons" or vars['receivingTeam'] == "Detroit" or vars['receivingTeam'] == "Pistons":
             team = 'DET'
-        elif vars['receivingTeam'] =="Golden State Warriors" or "GSW" or "Warriors":
+        elif vars['receivingTeam'] == "Golden State Warriors" or vars['receivingTeam'] == "GSW" or vars['receivingTeam'] == "Warriors":
             team = 'GSW'
-        elif vars['receivingTeam'] =="Houston Rockets" or "Houston" or "Rockets":
+        elif vars['receivingTeam'] == "Houston Rockets" or vars['receivingTeam'] == "Houston" or vars['receivingTeam'] == "Rockets":
             team = 'HOU'
-        elif vars['receivingTeam'] =="Indiana Pacers" or "Indiana" or "Pacers":
+        elif vars['receivingTeam'] == "Indiana Pacers" or vars['receivingTeam'] == "Indiana" or vars['receivingTeam'] == "Pacers":
             team = 'IND'
-        elif vars['receivingTeam'] =="LA Clippers" or "Clippers":
+        elif vars['receivingTeam'] == "LA Clippers" or vars['receivingTeam'] == "Clippers":
             team = 'LAC'
-        elif vars['receivingTeam'] =="Los Angeles Lakers" or "Lakers":
+        elif vars['receivingTeam'] == "Los Angeles Lakers" or vars['receivingTeam'] == "Lakers":
             team = 'LAL'
-        elif vars['receivingTeam'] =="Memphis Grizzlies" or "Memphis" or "Grizzlies":
+        elif vars['receivingTeam'] == "Memphis Grizzlies" or vars['receivingTeam'] == "Memphis" or vars['receivingTeam'] == "Grizzlies":
             team = 'MEM'
-        elif vars['receivingTeam'] =="Miami Heat" or "Miami":
+        elif vars['receivingTeam'] == "Miami Heat" or vars['receivingTeam'] == "Miami":
             team = 'MIA'
-        elif vars['receivingTeam'] =="Milwaukee Bucks" or "Milwaukee" or "Bucks":
+        elif vars['receivingTeam'] == "Milwaukee Bucks" or vars['receivingTeam'] == "Milwaukee" or vars['receivingTeam'] == "Bucks":
             team = 'MIL'
-        elif vars['receivingTeam'] =="Minnesota Timberwolves" or "Minnesota" or "Timberwolves":
+        elif vars['receivingTeam'] == "Minnesota Timberwolves" or vars['receivingTeam'] == "Minnesota" or vars['receivingTeam'] == "Timberwolves":
             team = 'MIN'
-        elif vars['receivingTeam'] =="New Orleans Pelicans" or "Pelicans" or "NoLa":
+        elif vars['receivingTeam'] == "New Orleans Pelicans" or vars['receivingTeam'] == "Pelicans" or vars['receivingTeam'] == "NoLa":
             team = 'NOP'
-        elif vars['receivingTeam'] =="New York Knicks" or "Knicks" or "NY":
+        elif vars['receivingTeam'] == "New York Knicks" or vars['receivingTeam'] == "Knicks" or vars['receivingTeam'] == "NY":
             team = 'NYK'
-        elif vars['receivingTeam'] =="Oklahoma City Thunder" or "Thunder" or "OKC":
+        elif vars['receivingTeam'] == "Oklahoma City Thunder" or vars['receivingTeam'] == "Thunder" or vars['receivingTeam'] == "OKC":
             team = 'OKC'
-        elif vars['receivingTeam'] =="Orlando Magic" or "Orlando" or "Magic":
+        elif vars['receivingTeam'] == "Orlando Magic" or vars['receivingTeam'] == "Orlando" or vars['receivingTeam'] == "Magic":
             team = 'ORL'
-        elif vars['receivingTeam'] =="Philadelphia SeventySixers" or "Philly" or "SeventySixers" or "76ers":
+        elif vars['receivingTeam'] == "Philadelphia SeventySixers" or vars['receivingTeam'] == "Philly" or vars['receivingTeam'] == "SeventySixers" or vars['receivingTeam'] == "76ers":
             team = 'PHI'
-        elif vars['receivingTeam'] =="Phoenix Suns" or "Phoenix" or "Suns":
+        elif vars['receivingTeam'] == "Phoenix Suns" or vars['receivingTeam'] == "Phoenix" or vars['receivingTeam'] == "Suns":
             team = 'PHX'
-        elif vars['receivingTeam'] =="Portland Trail Blazers" or "Portland" or "Trail Blazers":
+        elif vars['receivingTeam'] == "Portland Trail Blazers" or vars['receivingTeam'] == vars['receivingTeam'] == "Portland" or vars['receivingTeam'] == "Trail Blazers":
             team = 'POR'
-        elif vars['receivingTeam'] =="Sacramento Kings" or "Sacramento" or "Kings":
+        elif vars['receivingTeam'] == "Sacramento Kings" or vars['receivingTeam'] == "Sacramento" or vars['receivingTeam'] == "Kings":
             team = 'SAC'
-        elif vars['receivingTeam'] =="San Antonio Spurs" or "San Antonio" or "Spurs":
+        elif vars['receivingTeam'] == "San Antonio Spurs" or vars['receivingTeam'] == "San Antonio" or vars['receivingTeam'] == "Spurs":
             team = 'SAS'
-        elif vars['receivingTeam'] =="Toronto Raptors" or "Toronto" or "Raptors":
+        elif vars['receivingTeam'] == "Toronto Raptors" or vars['receivingTeam'] == "Toronto" or vars['receivingTeam'] == "Raptors":
             team = 'TOR'
-        elif vars['receivingTeam'] =="Utah Jazz" or "Utah" or "Jazz":
+        elif vars['receivingTeam'] == "Utah Jazz" or vars['receivingTeam'] == "Utah" or vars['receivingTeam'] == "Jazz":
             team = 'UTA'
-        elif vars['receivingTeam'] =="Washington Wizards" or "Washington" or "Wizards":
+        elif vars['receivingTeam'] == "Washington Wizards" or vars['receivingTeam'] == "Washington" or vars['receivingTeam'] == "Wizards":
             team = 'WAS'
         else:
-            #error handling? idk if needed
+            # error handling? idk if needed
             return "I didn't get that"
 
         wins = 0
@@ -335,15 +335,67 @@ class playerRating(Macro):
         for i in range(2):
             s += n[0][i]
         s += "01"
-        playerid = s.lower()
+        if (n[0] == "Marcus" and n[1] == "Morris"): playerid = "morrima02"
         player = Player(playerid)
+        position = player.position
+        exp = player.games_played
+        # career stats: average points/rebounds/blocks/etc per 40 minutes
+        C_REB = player.total_rebounds / player.minutes_played * 40
+        C_PTS = player.points / player.minutes_played * 40
+        C_AST = player.assists / player.minutes_played * 40
+        # current year stats: average points/rebounds/blocks/etc per 40 minutes
+        player = player('2019-20')
+        REB = player.total_rebounds / player.minutes_played * 40
+        # BLK = player.shots_blocked / player.minutes_played * 40
+        PTS = player.points / player.minutes_played * 40
+        # FLD_GOAL = player.field_goal_percentage
+        # THR_PT = player.three_point_percentage
+        # TW_PT = player.two_point_percentage
+        AST = player.assists / player.minutes_played * 40
         PER = player.player_efficiency_rating
-        if (PER > 18):
+        str = ''
+        if (PER > 17):
             vars['goodBadPlayer'] = 'good'
-            return "I get the impression that he is efficient and good player. With more opportunities, he may be even better. I think this trade will go great."
+            if (exp < 246):
+                str = str + "As an unexperienced player, I think " + player.name
+                if (C_PTS >= 16 or C_AST >= 5 or C_REB >= 9):
+                    str += " had a great career so far."
+            elif (exp < 500):
+                str = str + "As a player who have some experience, I think " + player.name
+                if (C_PTS >= 16 or C_AST >= 5 or C_REB >= 9):
+                    str += " had a great career so far."
+            else:
+                str = str + "As a veteran player, I think " + player.name
+                if (C_PTS >= 16 or C_AST >= 5 or C_REB >= 9):
+                    str += " is one of exceptional players that ever played the game."
+                else:
+                    str += " had a stable career."
+            if (REB > 4 and PTS > 10 and AST > 5):
+                str = str + vars['receivingTeam'] + ", " + "I think he became the core of the team. And his points, rebounds, and assists reflect that."
+            elif (REB > 7):
+                str = str + "With his rebounding skills, I think the team has really benefited from receiving " + player.name + "."
+            elif (PTS > 12):
+                str = str + "He has been scoring really well making a good contribution to " + vars['receivingTeam']
+            elif (AST > 5):
+                str = str + "His distribution of ball has really lifted " + vars['receivingTeam']
+            else:
+                str += "He has been making stable contribution to the team even though his stats don't stand out."
+            str += "And I think his contribution could have stood out more if NBA was not cancelled with pendamic crisis."
+            return str
         else:
             vars['goodBadPlayer'] = 'bad'
-            return "I don't get the impression that he is good. This could just be me, but he doesn't seem too efficient."
+            if (PTS <= 12):
+                str += "I don't see much contribution he is making to the team especially with scoring. "
+            elif (position == "C" or position == "PF" and REB <= 4):
+                str += "He's not a good rebounder for his position. "
+            elif (position == "PG" and AST <= 3):
+                str += "He is not that great with his assists to make a contribution to the team. "
+            else:
+                str += "He doesn't have any specialty in points, rebounds, nor assists."
+            str += "I just don't see how he would suddenly get better."
+            if (player('2019-20').minutes_played / player('2019-20').games_played < 12 or player('2019-20').minutes_played == None):
+                str += "Besides, who is this player anyways because I've never heard of him."
+            return str
 
 class comparePlayers(Macro):
     def run (self, ngrams, vars, args):
