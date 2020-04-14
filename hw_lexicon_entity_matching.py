@@ -288,7 +288,7 @@ class tradeNewsByTeam(Macro):
             data = json.load(f)
         trades = data['trades']
 
-        if vars['favUserTeam'] is not None:
+        if 'favUserTeam' in vars:
             trades = [x for x in trades if vars['favSysTeam'] in x['TRANSACTION_DESCRIPTION'] or vars['favUserTeam'] in x['TRANSACTION_DESCRIPTION']]
         else: 
             trades = [x for x in trades if vars['favSysTeam'] in x['TRANSACTION_DESCRIPTION']]
