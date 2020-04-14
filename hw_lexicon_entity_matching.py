@@ -287,7 +287,7 @@ class tradeNewsByTeam(Macro):
         with open('trades.json') as f:
             data = json.load(f)
         trades = data['trades']
-        trades = [x for x in trades if vars['botFavTeam'] in x['TRANSACTION_DESCRIPTION'] or vars['favUserTeam'] in x['TRANSACTION_DESCRIPTION']]
+        trades = [x for x in trades if vars['favSysTeam'] in x['TRANSACTION_DESCRIPTION'] or vars['favUserTeam'] in x['TRANSACTION_DESCRIPTION']]
 
         trade = trades[randrange(len(trades))]['TRANSACTION_DESCRIPTION']
         receivingTeam = trade.split(' received')[0]
@@ -457,7 +457,7 @@ knowledge.load_json_file("teams.json")
 df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(),
                                                                                                   'teamStats': teamStats(), 'playerRating' : playerRating(),
                                                                                                   'goodBadTrade' : goodBadTrade(), 'tradeNews':tradeNews(),
-                                                                                                  'botFavTeam': botFavTeam()})
+                                                                                                  'botFavTeam': botFavTeam(), 'tradeNewsByTeam':tradeNewsByTeam()})
 
 #########################
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
@@ -525,7 +525,7 @@ df.add_user_transition(State.TURNPF5U, State.TURNTRADE0AS, '[/[a-z A-Z]+/]')
 #turn 0
 #need to run trade macro up here to get the trades specific to teams
 #TURNPF5S comes from the idk scenario. will probably need to add in some things to engage more with user response, this is generic catcher
-df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "Fair enough. Earlier in the season " #tradeNews]') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
+df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "Fair enough. Earlier in the season " #tradeNewsByTeam]') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
 df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "Earlier in the season I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
 df.add_user_transition(State.TURNTRADE0S, State.TURN0DK1S, dont_know) # dont knows section #todo fix the idk for tradeturn0
 df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if you dont know, I can just talk about trades! Is that okay?"]')
