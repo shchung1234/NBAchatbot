@@ -288,7 +288,7 @@ class tradeNewsByTeam(Macro):
             data = json.load(f)
         trades = data['trades']
 
-        if vars['favUserTeam'] != None:
+        if vars['favUserTeam'] is not None:
             trades = [x for x in trades if vars['favSysTeam'] in x['TRANSACTION_DESCRIPTION'] or vars['favUserTeam'] in x['TRANSACTION_DESCRIPTION']]
         else: 
             trades = [x for x in trades if vars['favSysTeam'] in x['TRANSACTION_DESCRIPTION']]
@@ -454,7 +454,7 @@ class comparePlayers(Macro):
         ##PER was not mentioned so idk if its something we want to add
         if PTS > 20 or AST > 8 or REB > 10:
             return "I see {} is having an exceptional season. Personally, I think {} will win because of {}".format(vars['favUserPlayer'], vars['favSysTeam'], vars['favSysPlayer'])
-        return "Interesting you like {} because he is not that great satistically. Personally, I think {} will win because of {}".format(vars['favUserPlayer'], vars['favSysTeam'], vars['favSysPlayer'])
+        return "interesting you like {} because he is not that great satistically. Personally, I think {} will win because of {}".format(vars['favUserPlayer'], vars['favSysTeam'], vars['favSysPlayer'])
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
@@ -462,7 +462,7 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
                                                                                                   'teamStats': teamStats(), 'playerRating' : playerRating(),
                                                                                                   'goodBadTrade' : goodBadTrade(), 'tradeNews' : tradeNews(),
                                                                                                   'botFavTeam': botFavTeam(), 'tradeNewsByTeam' : tradeNewsByTeam(),
-                                                                                                  'comparePlayers' : comparePlayers})
+                                                                                                  'comparePlayers' : comparePlayers()})
 
 #########################
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
@@ -520,19 +520,21 @@ df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR2)
 #df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPFU, r'[! "Thats fair. Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer]')
 
 # Playoff Turn 3
-df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! "I think that " #comparePlayers() ". What is your opinion?"]')
-df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[#ONT(actions)]")
+df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! "I think that it is " #comparePlayers ". What is your opinion?"]')
+df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[#ONT(rationale)]") #need to add another way to transition to the trades here
 
 df.add_user_transition(State.TURNPF5U, State.TURNTRADE0AS, '[/[a-z A-Z]+/]')
 
 
 """trades turns"""
 #turn 0
-#need to run trade macro up here to get the trades specific to teams
+#todo need to run trade macro up here to get the trades specific to teams
 #TURNPF5S comes from the idk scenario. will probably need to add in some things to engage more with user response, this is generic catcher
 df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "Fair enough. Earlier in the season " #tradeNewsByTeam]') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
-df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "Earlier in the season I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
-df.add_user_transition(State.TURNTRADE0S, State.TURN0DK1S, dont_know) # dont knows section #todo fix the idk for tradeturn0
+df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "Earlier in the season I heard that" #tradeNewsByTeam ". Do you think that trade had repercussions for playoffs?"]')
+df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S, "[#ONT(agree)]")
+#df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S, "[ONT(disagree)]")
+df.add_user_transition(State.TURNTRADE0U, State.TURN0DK1S, dont_know)
 df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if you dont know, I can just talk about trades! Is that okay?"]')
 df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S, "[#ONT(agree)]")
 df.set_error_successor(State.TURN0DK1U, State.TURN0ERR)
