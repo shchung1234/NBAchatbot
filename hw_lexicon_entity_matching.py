@@ -287,9 +287,9 @@ class tradeNewsByTeam(Macro):
         with open('trades.json') as f:
             data = json.load(f)
         trades = data['trades']
-        trades = [x for x in trades if vars['botFavTeam'] in x['TRANSACTION_DESCRIPTION']]
+        trades = [x for x in trades if vars['botFavTeam'] in x['TRANSACTION_DESCRIPTION'] or vars['favUserTeam'] in x['TRANSACTION_DESCRIPTION']]
+
         trade = trades[randrange(len(trades))]['TRANSACTION_DESCRIPTION']
-        
         receivingTeam = trade.split(' received')[0]
         givingTeam = trade.split('from ')[1]
         givingTeam = givingTeam[:-1]
@@ -505,9 +505,10 @@ df.add_system_transition(State.TURNPF4S, State.TURNPF5U, r'[! "That is a good op
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think" $favUserTeam "will win?"]')
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale=[#ONT(rationale)]]') # hopefully we can pick up rationales
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
-df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF3U, r'[! "Thats fair. Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
+df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF3U, r'[! "Thats fair. Personally, I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
+#ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
-df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Do you think theres a player that is integral to their team?"]')
+df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Do you think there is a player that is integral to their team?"]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, "[$favUserPlayer=[#ONT(playoffteams)]]") #todo make ontology for players who are in and not in playoffs
 df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR2)
 
@@ -584,4 +585,4 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 
 
 if __name__ == '__main__':
-    df.run(debugging=True)
+    df.run(debugging=False)
