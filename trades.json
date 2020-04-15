@@ -12,15 +12,6 @@
     {
       "Transaction_Type": "Trade",
       "TRANSACTION_DATE": "2020-02-06T00:00:00",
-      "TRANSACTION_DESCRIPTION": "Minnesota Timberwolves received guard D'Angelo Russell from Golden State Warriors.",
-      "TEAM_ID": 1610612750,
-      "PLAYER_ID": 1626156,
-      "Additional_Sort": 1610612744,
-      "GroupSort": "Trade 2019096"
-    },
-    {
-      "Transaction_Type": "Trade",
-      "TRANSACTION_DATE": "2020-02-06T00:00:00",
       "TRANSACTION_DESCRIPTION": "Philadelphia 76ers received forward Glenn Robinson III from Golden State Warriors.",
       "TEAM_ID": 1610612755,
       "PLAYER_ID": 203922,
