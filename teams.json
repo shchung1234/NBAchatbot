@@ -1866,6 +1866,21 @@
     "trades": [
       "trade",
       "trades"
+    ],
+    "rationale": [
+      "efficient",
+      "points",
+      "shooting",
+      "assists",
+      "free throws",
+      "passing",
+      "turnovers",
+      "rebounds",
+      "steals",
+      "blocks",
+      "field goals",
+      "three",
+      "fouls"
     ]
   }
 }
