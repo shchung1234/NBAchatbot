@@ -519,10 +519,10 @@ df.add_system_transition(State.TURNPF3AS, State.TURNPF3AU, r'[! "I always love m
 df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Why do you think " $favSysTeam " will not win?"]')
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #pull any response here
 #this state throws an error because comparePlayers (or new Macro) needs to be able to work without having user input
-df.add_system_transition(State.TURNPF4S, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". What do you think of " $favSysPlayer "?"]') #todo modify comparePlayer to work with either sysplayer or userplayer
+df.add_system_transition(State.TURNPF4S, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". What do you think of " $favSysPlayer "?"]')
 #error transition for turn 3
 df.set_error_successor(State.TURNPF3AU, State.TURNPF3AERR)
-df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". What do you think of " $favSysPlayer "?"]') #todo modify comparePlayer to work with either sysplayer or userplayer
+df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". What do you think of " $favSysPlayer "?"]')
 
 
 # Playoff Turn 2 (not idk scenario)
@@ -540,7 +540,7 @@ df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF5U, r'[! "Thats fair.
 
 # Playoff Turn 3
 df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! "I think that it is " #comparePlayers ". What is your opinion?"]')
-df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[#ONT(rationale)]") #need to add another way to transition to the trades here
+df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[$teamRationale=[#ONT(rationale)]]") #need to add another way to transition to the trades here
 df.add_user_transition(State.TURNPF3U, State.TURNTRADE0AS, '[/[a-z A-Z]+/]')
 df.add_user_transition(State.TURNPF5U, State.TURNTRADE0AS, '[/[a-z A-Z]+/]')
 
