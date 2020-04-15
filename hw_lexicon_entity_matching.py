@@ -529,7 +529,7 @@ df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think" $favUserTeam "will win?"]')
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale=[#ONT(rationale)]]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
-df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF3U, r'[! "Thats fair. Personally, I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
+df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF3U, r'[! "Thats fair. Personally, I do not think that " $favUserTeam " are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
 df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Do you think there is a player that is integral to their team?"]')
