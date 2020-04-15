@@ -292,7 +292,7 @@ class tradeNewsByTeam(Macro):
         trades = data['trades']
 
         if 'favUserTeam' in vars:
-            trades = [x for x in trades if vars['favSysTeam'] in x['TRANSACTION_DESCRIPTION'] or vars['favUserTeam'] in x['TRANSACTION_DESCRIPTION']]
+            trades = [x for x in trades if vars['favUserTeam'] in x['TRANSACTION_DESCRIPTION']]
         else: 
             trades = [x for x in trades if vars['favSysTeam'] in x['TRANSACTION_DESCRIPTION']]
             
