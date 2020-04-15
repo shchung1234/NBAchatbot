@@ -530,7 +530,6 @@ df.add_user_transition(State.TURNPF5U, State.TURNTRADE0AS, '[/[a-z A-Z]+/]')
 #turn 0
 #todo need to run trade macro up here to get the trades specific to teams
 #TURNPF5S comes from the idk scenario. will probably need to add in some things to engage more with user response, this is generic catcher
-df.add_system_transition(State.START, State.TURNTRADE0AS, r'lalala')
 df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "Fair enough. I think this year is interesting because there were several trades around playoff teams.'
                                                                 r' you remember" #tradeNewsByTeam] " earlier this season?"') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
 df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "Earlier in the season I heard that" #tradeNewsByTeam ". Do you think that this could impact playoffs in any way?"]')
