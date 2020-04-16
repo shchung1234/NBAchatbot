@@ -18,6 +18,8 @@ class State(Enum):
     TURN0DK1U = auto()
     TURN0ERR = auto()
     TURNTRADE1S = auto()
+    TURNTRADE1S1 = auto()
+    TURNTRADE1S3 = auto()
     TURNTRADE1U = auto()
     TURNTRADE1ERR = auto()
     TURNTRADE1BS = auto()
@@ -360,34 +362,38 @@ class botFavTeam(Macro):
         
 class playerRating(Macro):
     def run (self, ngrams, vars, args):
-        n = vars['player'].split()
-        s = ""
+        n = vars['player'].lower().split()
+        playerid = ""
         if (len(n[1]) >= 5):    #edge case for names with shorter than 5 characters/jr. resolved
             for i in range(5):
-                s += n[1][i]
+                playerid += n[1][i]
         else:
             for i in range(len(n[1])):
-                s += n[1][i]
+                playerid += n[1][i]
         for i in range(2):
-            s += n[0][i]
-        s += "01"
-        if (n[0] == "Marcus" and n[1] == "Morris"): playerid = "morrima02"
+            playerid += n[0][i]
+        if playerid == "morrima":
+            playerid = "morrima03"
+        elif playerid == "thomais":
+            playerid = "thomais02"
+        else:
+            playerid += "01"
         player = Player(playerid)
         position = player.position
         exp = player.games_played
-        # career stats: average points/rebounds/blocks/etc per 40 minutes
-        C_REB = player.total_rebounds / player.minutes_played * 40
-        C_PTS = player.points / player.minutes_played * 40
-        C_AST = player.assists / player.minutes_played * 40
-        # current year stats: average points/rebounds/blocks/etc per 40 minutes
+        # career stats: average points/rebounds/blocks/etc per game
+        C_REB = player.total_rebounds / player.games_played
+        C_PTS = player.points / player.games_played
+        C_AST = player.assists / player.games_played
+        # current year stats: average points/rebounds/blocks/etc per game
         player = player('2019-20')
-        REB = player.total_rebounds / player.minutes_played * 40
+        REB = player.total_rebounds / player.games_played
         # BLK = player.shots_blocked / player.minutes_played * 40
-        PTS = player.points / player.minutes_played * 40
+        PTS = player.points / player.games_played
         # FLD_GOAL = player.field_goal_percentage
         # THR_PT = player.three_point_percentage
         # TW_PT = player.two_point_percentage
-        AST = player.assists / player.minutes_played * 40
+        AST = player.assists / player.games_played
         PER = player.player_efficiency_rating
         str = ''
         if (PER > 17):
@@ -406,17 +412,17 @@ class playerRating(Macro):
                     str += " is one of exceptional players that ever played the game."
                 else:
                     str += " had a stable career."
-            if (REB > 4 and PTS > 10 and AST > 5):
+            if (REB > 7 and PTS > 15 and AST > 5):
                 str = str + vars['receivingTeam'] + ", " + "I think he became the core of the team. And his points, rebounds, and assists reflect that."
             elif (REB > 7):
                 str = str + "With his rebounding skills, I think the team has really benefited from receiving " + player.name + "."
-            elif (PTS > 12):
+            elif (PTS > 15):
                 str = str + "He has been scoring really well making a good contribution to " + vars['receivingTeam']
             elif (AST > 5):
                 str = str + "His distribution of ball has really lifted " + vars['receivingTeam']
             else:
                 str += "He has been making stable contribution to the team even though his stats don't stand out."
-            str += "And I think his contribution could have stood out more if NBA was not cancelled with pendamic crisis."
+            str += "And I think his contribution can get even better if playoff was to start."
             return str
         else:
             vars['goodBadPlayer'] = 'bad'
@@ -548,41 +554,39 @@ df.add_user_transition(State.TURNPF5U, State.TURNTRADE0AS, '[/[a-z A-Z]+/]')
 """trades turns"""
 #turn 0
 #TURNPF5S comes from the idk scenario. will probably need to add in some things to engage more with user response, this is generic catcher
-df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "Fair enough. Earlier in the season " #tradeNewsByTeam ". do you think that impacted how " $receivingTeam " seeded into playoffs?"]') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
-df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "Earlier in the season I heard that" #tradeNewsByTeam ". Do you think that trade had repercussions for playoffs?"]')
-df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S, "[#ONT(agree)]")
-#df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S, "[ONT(disagree)]")
+df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "I see. Earlier in the season " {#tradeNews()} ". What do you think about $player ?"]') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
+df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "Earlier in the season I heard that" {#tradeNews()} ". What do you think about $player ?"]')
+df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S, "[$useropinion=#ONT(goodplayer)]")
+df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S1, "[$useropinion=#ONT(badplayer)]")
 df.add_user_transition(State.TURNTRADE0U, State.TURN0DK1S, dont_know)
-df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if you dont know, I can just talk about trades! Is that okay?"]')
-df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S, "[#ONT(agree)]")
-df.set_error_successor(State.TURN0DK1U, State.TURN0ERR)
+df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if you are not sure I can just talk about how I think! Is that okay?"]')
+df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S3, "[#ONT(agree)]")
+df.set_error_successor(State.TURNTRADE0U, State.TURN0ERR)
 
 #need to revise this trade turn
-df.add_system_transition(State.TURN0ERR, State.TURN0, r'[! "I do not know how to talk about that yet"]')
-df.set_error_successor(State.TURN0, State.TURN0ERR)
-df.add_system_transition(State.TURN0ERR, State.TURNTRADE1U, r'[! "Honestly, Im only really good at talking about trades right now. If thats okay then listen to this! " #tradeNews() ". Doesnt that sound interesting?"]')
+#df.add_system_transition(State.TURN0ERR, State.TURN0, r'[! "I do not know how to talk about that yet"]')
+#df.set_error_successor(State.TURN0, State.TURN0ERR)
+df.add_system_transition(State.TURN0ERR, State.TURNTRADE1U, r'[! "My robot uncle said the exact same thing haha Here is my thought." #playerRating() " Would you say you can agree with that?]')
 #df.add_system_transition(State.TURNTRADE1S2, State.EARLYEND, r'[! "Oh, thats a shame. I cant really talk about other news right now unfortunately. Maybe next time we can talk some more"]')
 
 
 #turn 1
-df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE1U, r'[!{#tradeNews()} ". Do you want to talk about this trade?"]')
+df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE1U, r'[! "Here is my thought. " #playerRating() " Would you say you can agree?]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE1BS, '[#ONT(disagree)]')
-df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about all-stars, injuries, the draft, or stop talking. Which would you prefer?"]')
-df.add_user_transition(State.TURNTRADE1BU, State.END, '[/[a-z A-Z]+/]')
 df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1ERR)
-df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Okay, I mean " $player " is really interesting, and I really want to talk about him. " #playerRating() " What do you think about him?"]' )
+df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "so i guess the big question is how do you think this trade will make difference in playoff performance for $receivingTeam ?"]' )
 
 #turn 2
-df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "When I watch " $player ", " #playerRating() " What do you think about " $player "?"]')
-df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S1, "[$response2=#POS(adj)]")
-df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S2, "[$response2=#POS(verb)]")
+df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "how do you think this will impact $receivingTeam and ultimately, would you think they could become a threat to $favUserTeam ?"]') #edge case when the news covers same team as userfavteam
+df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S1, "[$response2=#ONT(goodimpact)]") # TODO: more variation needed
+df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S2, "[$response2=#ONT(badimpact)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE2DK1S, dont_know) # dont knows
-df.add_system_transition(State.TURNTRADE2DK1S, State.TURNTRADE3U, r'[! "Its okay if youre not sure! I actually think that " #goodBadTrade() ". Do you agree?"]')
+df.add_system_transition(State.TURNTRADE2DK1S, State.TURNTRADE3U, r'[! "Its okay if youre not sure! I actually think that " #goodBadTrade() ". Do you agree?"]') #TODO: need to edit
 df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
-df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "I dont know why you made that comment about " $player ". I still think that " '
+df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "I dont know why you made that comment about " $player ". I still think that " ' #TODO: need to edit
                                                                  r'#goodBadTrade() ". Do you agree?"]')
-
+#TODO: next transition would be just responding to users opinion and concluding with "you wouldn't know until the playoff starts
 #turn 3
 
 df.add_system_transition(State.TURNTRADE3S1, State.TURNTRADE3U, r'[! "My robot uncle thinks " $player " is " $response2 "too. But we cant forget about the teams" #teamStats() ", and I think that " #goodBadTrade() ". Do you agree?"]')

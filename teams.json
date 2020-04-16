@@ -1846,6 +1846,27 @@
       "cool",
       "too"
     ],
+    "goodplayer":  [
+      "good",
+      "alright",
+      "okay",
+      "impressive",
+      "monster",
+      "beast",
+      "strong",
+      "fast",
+      "efficient",
+      "well rounded",
+      "specialist"
+    ],
+    "badplayer": [
+      "bad",
+      "worst",
+      "terrible",
+      "weak",
+      "inefficient",
+      "not good"
+    ],
     "disagree": [
       "no",
       "not really",
@@ -1854,7 +1875,33 @@
       "i dont",
       "dont",
       "not",
-      "not sure"
+      "not sure",
+      "not much",
+      "that different",
+      "not that big"
+    ],
+    "goodimpact": [
+      "improvement",
+      "improve",
+      "positive",
+      "deeper",
+      "wider",
+      "taller",
+      "great",
+      "good",
+      "cant hurt",
+      "doesnt hurt"
+    ],
+    "badimpact": [
+      "worse",
+      "better without",
+      "not good",
+      "weaken",
+      "lower chance"
+    ],
+    "threat": [
+      "threat",
+      ""
     ],
     "offtopics": [
       "injuries",
