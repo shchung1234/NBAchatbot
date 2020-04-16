@@ -20,6 +20,7 @@ class State(Enum):
     TURNTRADE1S = auto()
     TURNTRADE1S1 = auto()
     TURNTRADE1U = auto()
+    TURNTRADE0ERR = auto()
     TURNTRADE1ERR = auto()
     TURNTRADE1BS = auto()
     TURNTRADE1BU = auto()
@@ -569,6 +570,32 @@ df.add_system_transition(State.TURN0ERR, State.TURNTRADE1U, r'[! "Honestly, Im o
 #turn 1
 df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE1U, r'[! "ok then. lets talk about $player." #playerRating() " What do you think about him?"]') #r'[!{#tradeNews()} . Do you want to talk about this trade?"]'
 df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE1U, r'[! "ok then. lets talk about $player." #playerRating() " What do you think about him?"]')
+df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
+df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE1BS, '[#ONT(disagree)]')
+df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about all-stars, injuries, the draft, or stop talking. Which would you prefer?"]')
+df.add_user_transition(State.TURNTRADE1BU, State.END, '[/[a-z A-Z]+/]')
+df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1ERR)
+df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "Okay, I mean " $player " is really interesting, and I really want to talk about him. " #playerRating() " What do you think about him?"]' )
+
+
+#turn 2
+df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "When I watch " $player ", " #playerRating() " What do you think about " $player "?"]')
+df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S1, "[$response2=#POS(adj)]")
+df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S2, "[$response2=#POS(verb)]")
+df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE2DK1S, dont_know) # dont knows
+df.add_system_transition(State.TURNTRADE2DK1S, State.TURNTRADE3U, r'[! "Its okay if youre not sure! I actually think that " #goodBadTrade() ". Do you agree?"]')
+df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
+df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "I dont know why you made that comment about " $player ". I still think that " '
+                                                                 r'#goodBadTrade() ". Do you agree?"]')
+#need to revise this trade turn
+df.add_system_transition(State.TURN0ERR, State.TURN0, r'[! "I do not know how to talk about that yet"]')
+df.set_error_successor(State.TURN0, State.TURN0ERR)
+df.add_system_transition(State.TURN0ERR, State.TURNTRADE1U, r'[! "Honestly, Im only really good at talking about trades right now. If thats okay then listen to this! " #tradeNews() ". Doesnt that sound interesting?"]')
+#df.add_system_transition(State.TURNTRADE1S2, State.EARLYEND, r'[! "Oh, thats a shame. I cant really talk about other news right now unfortunately. Maybe next time we can talk some more"]')
+
+
+#turn 1
+df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE1U, r'[!{#tradeNews()} ". Do you want to talk about this trade?"]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE1BS, '[#ONT(disagree)]')
 df.add_system_transition(State.TURNTRADE1BS, State.TURNTRADE1BU, r'[! "We can also talk about all-stars, injuries, the draft, or stop talking. Which would you prefer?"]')
