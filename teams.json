@@ -1880,7 +1880,10 @@
       "blocks",
       "field goals",
       "three",
-      "fouls"
+      "fouls",
+      "good",
+      "bad",
+      "potential"
     ]
   }
 }

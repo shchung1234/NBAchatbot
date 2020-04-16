@@ -257,7 +257,7 @@ class tradeNewsOld(Macro):
 
         return "I found this most recent trade news that {} from {} is going to {}".format(player, givingTeam, receivingTeam)
 
-class tradeNews(Macro):
+class tradeNews(Macro): #this won't run because the range is changed due to change in json
     def run (self, ngrams, vars, args):
         with open('trades.json') as f:
             data = json.load(f)
@@ -506,11 +506,10 @@ df.add_user_transition(State.TURNPF1ERRU, State.END, end)
 df.add_user_transition(State.TURNPF1ERRU, State.TURNPF1ERR1S, proceed)
 df.add_system_transition(State.TURNPF1ERR1S, State.TURNPF2AU, r'[! #botFavTeam "Okay! I hope this will still be fun. I think that" $favSysTeam "can win the playoffs even with the unpredictability of the whole thing. What do you think?"]')
 
-#idk scenario 
-
-df.add_system_transition(State.TURNPF2CS, State.TURNPF2AU, r'[! #botFavTeam "I dont think that team will be in the playoffs. But you know, I think that" $favSysTeam "can win. Do you agree?"]')
-df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam "Its okay to be unsure because predictability of playoffs is difficult without more data. I think that " $favSysTeam " can win. Do you agree?"]')
-df.add_user_transition(State.TURNPF2AU, State.TURNPF3AS, '[#ONT(agree)]')
+#idk scenario
+df.add_system_transition(State.TURNPF2CS, State.TURNPF2AU, r'[! #botFavTeam "I dont think that team will be in the playoffs. But you know, I think that " $favSysTeam " can win. Do you agree?"]')
+df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam "It is okay to be unsure because predictability of playoffs is difficult without more data. I think that " $favSysTeam " can win. Do you agree?"]')
+df.add_user_transition(State.TURNPF2AU, State.TURNPF3AS, '[#ONT(agree)]') #can probably have a turn in here which catches the user saying another team, that will handle implicit no
 df.add_user_transition(State.TURNPF2AU, State.TURNPF3BS, '[#ONT(disagree)]')
 df.add_user_transition(State.TURNPF2AU, State.TURNPF2A_DK, dont_know)
 df.set_error_successor(State.TURNPF2AU, State.TURNPF2AERR)
