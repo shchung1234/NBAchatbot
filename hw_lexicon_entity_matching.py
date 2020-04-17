@@ -61,6 +61,7 @@ class State(Enum):
     TURNPF2BU1 = auto()
     TURNPF2BU = auto()
     TURNPF2CS = auto()
+    TURNPF2BDK = auto()
     TURNPF2ERR = auto()
     TURNPF2AERR = auto()
     TURNPF2BU_ERR1 = auto()
@@ -537,8 +538,8 @@ df.add_system_transition(State.TURNPF2A_DK, State.TURNPF5U, r'[! "Oh, are you no
 df.add_system_transition(State.TURNPF3AS, State.TURNPF3AU, r'[! "I always love meeting other fans of " $favSysTeam " Why do you think " $favSysTeam " is going to win?"]')
 df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Why do you think " $favSysTeam " will not win?"]')
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #pull any response here
-#this state throws an error because comparePlayers (or new Macro) needs to be able to work without having user input
-df.add_system_transition(State.TURNPF4S, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". What do you think of " $favSysPlayer "?"]')
+df.add_system_transition(State.TURNPF4S, State.TURNPF5U, r'[! "That is a good opinion. Persona'
+                                                         r'lly, I think " $favSysTeam "will win because of " $favSysPlayer ". What do you think of " $favSysPlayer "?"]')
 #error transition for turn 3
 df.set_error_successor(State.TURNPF3AU, State.TURNPF3AERR)
 df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". What do you think of " $favSysPlayer "?"]')
@@ -547,15 +548,16 @@ df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good
 # Playoff Turn 2 (not idk scenario)
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think the" $favUserTeam "will win?"]')
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale=[#ONT(rationale)]]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
-df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
-df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF3U, r'[! "Thats fair. Personally, I do not think that the " $favUserTeam " are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
+df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2) #todo add in something which catches player names
+df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF3U, r'[! "Thats fair. Personally, I do not think that the " $favUserTeam " are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]')
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
 df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Do you think there is a player that is integral to their team?"]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer=[#ONT(playoffteams)]]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree)]')
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF2BDK, dont_know)
+df.add_system_transition(State.TURNPF2BDK, State.TURNPF5U, r'[! "Fair enough, there are many good players on " $favSysTeam ". The best player on my playoff favorite is " $favSysPlayer ". What do you think of him?"]')
 df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR2)
-
 df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF5U, r'[! "Thats fair. Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer ". He is my hometown hero. What do you think of Kawhi Leonard?"]')
 
 # Playoff Turn 3
