@@ -45,6 +45,7 @@ class State(Enum):
     TURNTRADE4ERR = auto()
     TURNTRADE5U = auto()
     TURNTRADE5S = auto()
+
     
     #states for playoff conversation
     TURNPF1S = auto()
@@ -75,6 +76,7 @@ class State(Enum):
     TURNPF4S = auto()
     TURNPF5S = auto()
     TURNPF5U = auto()
+    TURNPF5AS = auto()
     END = auto()
     EARLYEND = auto()
 
@@ -298,11 +300,13 @@ class tradeNewsByTeam(Macro):
 
         if 'favUserTeam' in vars:
             trades = [x for x in trades if vars['favUserTeam'] in x['TRANSACTION_DESCRIPTION'].lower()]
+            #vars['receivingTeam'] = 'favUserTeam'
         else: 
             trades = [x for x in trades if vars['favSysTeam'] in x['TRANSACTION_DESCRIPTION'].lower()]
+            #vars['receivingTeam'] = 'favSysTeam'
 
 
-        print("*** TRADES *** ", trades)
+        #print("*** TRADES *** ", trades)
         trade = trades[randrange(len(trades))]['TRANSACTION_DESCRIPTION']
         receivingTeam = trade.split(' received')[0]
         givingTeam = trade.split('from ')[1]
@@ -315,6 +319,10 @@ class tradeNewsByTeam(Macro):
         playerList.pop(0)
         player = ' '.join(playerList)
 
+        if 'favUserTeam' in vars:
+            vars['tradeTeamInPlayoffs'] = vars['favUserTeam']
+        else:
+            vars['tradeTeamInPlayoffs'] = vars['favSysTeam']
         vars['receivingTeam'] = receivingTeam
         vars['givingTeam'] = givingTeam
         vars['player'] = player
@@ -537,14 +545,15 @@ df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good
 
 
 # Playoff Turn 2 (not idk scenario)
-df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think" $favUserTeam "will win?"]')
+df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think the" $favUserTeam "will win?"]')
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale=[#ONT(rationale)]]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
-df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF3U, r'[! "Thats fair. Personally, I do not think that " $favUserTeam " are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
+df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF3U, r'[! "Thats fair. Personally, I do not think that the " $favUserTeam " are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
 df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Do you think there is a player that is integral to their team?"]')
-df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer=[#ONT(playoffteams)]]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer=[#ONT(playoffteams)]]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree)]')
 df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR2)
 
 df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF5U, r'[! "Thats fair. Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer ". He is my hometown hero. What do you think of Kawhi Leonard?"]')
@@ -554,6 +563,7 @@ df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! "I think that it 
 df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[$teamRationale=[#ONT(rationale)]]") #need to add another way to transition to the trades here
 df.add_user_transition(State.TURNPF3U, State.TURNTRADE0AS, '[/[a-z A-Z]+/]')
 df.add_user_transition(State.TURNPF5U, State.TURNTRADE0AS, '[/[a-z A-Z]+/]')
+df.add_system_transition(State.TURNPF5AS, State.TURNPF5U, r'[! "It sounds like you do not think there is a star player on " $favUserTeam ". I think that " $favSysTeam " will win because of their star player " $favSysPlayer ". What do you think of him?"]')
 
 
 """trades turns"""
@@ -568,9 +578,9 @@ df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if 
 df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S3, "[#ONT(agree)]")
 df.set_error_successor(State.TURNTRADE0U, State.TURN0ERR)
 
-df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is good. " #playerRating() ". Do you think he influenced how " $receivingTeam " seeded into playoffs?"]')
-df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. I think " #playerRating() ". Do you think he influenced how " $receivingTeam " seeded into playoffs?"]')
-df.add_system_transition(State.TURNTRADE1S3, State.TURNTRADE2U, r'[! "I think " #playerRating() ". Do you think he influenced how " $receivingTeam " seeded into playoffs?"]')
+df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is good. " #playerRating() ". Do you think that grade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
+df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. I think " #playerRating() ". Do you think that grade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
+df.add_system_transition(State.TURNTRADE1S3, State.TURNTRADE2U, r'[! "I think " #playerRating() ". Do you think that trade how " $receivingTeam " seeded into playoffs?"]')
 
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3AS, "[#ONT(agree)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3BS, "[#ONT(disagree)]")
