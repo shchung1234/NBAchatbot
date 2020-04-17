@@ -604,13 +604,15 @@ df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if 
 df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S3, "[#ONT(agree)]")
 df.set_error_successor(State.TURNTRADE0U, State.TURN0ERR)
 
-df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is good. " #playerRating() ". Do you think that grade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
-df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. I think " #playerRating() ". Do you think that grade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
+df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is good. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
+df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. I think " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
 df.add_system_transition(State.TURNTRADE1S3, State.TURNTRADE2U, r'[! "I think " #playerRating() ". Do you think that trade how " $receivingTeam " seeded into playoffs?"]')
 
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3AS, "[#ONT(agree)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3BS, "[#ONT(disagree)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3CS, dont_know)
+
+
 
 
 
