@@ -517,11 +517,13 @@ df.add_user_transition(State.TURNPF1U, State.TURNPF2CS, '[#ONT(nonplayoffteams)]
 df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$favUserTeam=#ONT(playoffteams)]')
 
 df.set_error_successor(State.TURNPF1U, State.TURNPF1ERR)
-df.add_system_transition(State.TURNPF1ERR, State.TURNPF1ERRU, r'[! "Hmm, I dont think that is an NBA team. Do you want to keep talking? '
+df.add_system_transition(State.TURNPF1ERR, State.TURNPF1ERRU, r'[! "Hmm," {I dont think that is an NBA team,I dont think thats a team going into the playoffs,yea not sure if thats a team going into playoffs} ". Do you want to keep talking? '
                                                             r'We can either stop the conversation here and talk about something else, or I can keep on talking with you about a team that I think can win!"]')
 df.add_user_transition(State.TURNPF1ERRU, State.END, end)
 df.add_user_transition(State.TURNPF1ERRU, State.TURNPF1ERR1S, proceed)
-df.add_system_transition(State.TURNPF1ERR1S, State.TURNPF2AU, r'[! #botFavTeam "Okay! I hope this will still be fun. I think that" $favSysTeam "can win the playoffs even with the unpredictability of the whole thing. What do you think?"]')
+df.add_system_transition(State.TURNPF1ERR1S, State.TURNPF2AU, r'[! #botFavTeam {[! "Okay!"],[! "Aight!"],[! "Alrighty then!"]}{I hope that this will still be fun,I hope that this will still be entertaining,Hopefully this will still be interesting}'
+                                                              r'"for you. I think that" $favSysTeam "can win the playoffs" {even with the unpredictability of the whole thing,if we were to play today,just based off current standings}'
+                                                              r'". What do you think?"]')
 
 #idk scenario 
 
