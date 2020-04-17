@@ -297,9 +297,9 @@ class tradeNewsByTeam(Macro):
         trades = data['trades']
 
         if 'favUserTeam' in vars:
-            trades = [x for x in trades if vars['favUserTeam'] in x['TRANSACTION_DESCRIPTION']]
+            trades = [x for x in trades if vars['favUserTeam'] in x['TRANSACTION_DESCRIPTION'].lower()]
         else: 
-            trades = [x for x in trades if vars['favSysTeam'] in x['TRANSACTION_DESCRIPTION']]
+            trades = [x for x in trades if vars['favSysTeam'] in x['TRANSACTION_DESCRIPTION'].lower()]
 
 
         print("*** TRADES *** ", trades)
@@ -559,7 +559,7 @@ df.add_user_transition(State.TURNPF5U, State.TURNTRADE0AS, '[/[a-z A-Z]+/]')
 """trades turns"""
 #turn 0
 #TURNPF5S comes from the idk scenario. will probably need to add in some things to engage more with user response, this is generic catcher
-df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "I see. Earlier in the season " #tradeNewsByTeam() ". What do you think about " $player "?"]') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
+df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "I see. Earlier in the season " {#tradeNewsByTeam()} " What do you think about " $player "?"]') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
 df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about "$player "?"]')
 df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S, "[$userTradePlayerOpinion=#ONT(goodplayer)]")
 df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S1, "[$userTradePlayerOpinion=#ONT(badplayer)]")
@@ -568,7 +568,7 @@ df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if 
 df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S3, "[#ONT(agree)]")
 df.set_error_successor(State.TURNTRADE0U, State.TURN0ERR)
 
-df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is good. I think " #playerRating() ". Do you think he influenced how " $receivingTeam " seeded into playoffs?"]')
+df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is good. " #playerRating() ". Do you think he influenced how " $receivingTeam " seeded into playoffs?"]')
 df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. I think " #playerRating() ". Do you think he influenced how " $receivingTeam " seeded into playoffs?"]')
 df.add_system_transition(State.TURNTRADE1S3, State.TURNTRADE2U, r'[! "I think " #playerRating() ". Do you think he influenced how " $receivingTeam " seeded into playoffs?"]')
 
