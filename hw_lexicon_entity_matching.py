@@ -269,7 +269,9 @@ class tradeNews(Macro):
         with open('trades.json') as f:
             data = json.load(f)
         trades = data['trades']
-        trade = trades[randrange(len(trades))]['TRANSACTION_DESCRIPTION']
+        n = randrange(len(trades))
+        trade = trades[n]['TRANSACTION_DESCRIPTION']
+        vars['date'] = trades[n]["TRANSACTION_DATE"].split('-')[1]
         receivingTeam = trade.split(' received')[0]
         givingTeam = trade.split('from ')[1]
         givingTeam = givingTeam[:-1]
@@ -502,14 +504,19 @@ class playerRationale(Macro):
                 return "Did you know that {} actually has more assists per game than {}?".format(vars['favSysPlayer'], vars['favUserPlayer'])
             else:
                 return "Yeah, you are right {} has more assists per game than my favorite player, {}".format(vars['favUserPlayer'], vars['favSysPlayer'])
-
+class seedingImpact(Macro):
+    def run (self, ngrams, vars, args):
+        if int(vars['date']) >=2 and int(vars['date']) < 9:
+            return "I actually think the player didn't have time to prove that since he was traded quite recently before covid shutdown."
+        else:
+            return
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
 df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(),
                                                                                                   'teamStats': teamStats(), 'playerRating' : playerRating(),
                                                                                                   'goodBadTrade' : goodBadTrade(), 'tradeNews' : tradeNews(),
                                                                                                   'botFavTeam': botFavTeam(), 'tradeNewsByTeam' : tradeNewsByTeam(),
-                                                                                                  'comparePlayers' : comparePlayers()})
+                                                                                                  'comparePlayers' : comparePlayers()}, 'seedingImpact' : seedingImpact())
 
 #########################
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
@@ -604,7 +611,7 @@ df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if 
 df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S3, "[#ONT(agree)]")
 df.set_error_successor(State.TURNTRADE0U, State.TURN0ERR)
 
-df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is good. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
+df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is aiite. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
 df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. I think " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
 df.add_system_transition(State.TURNTRADE1S3, State.TURNTRADE2U, r'[! "I think " #playerRating() ". Do you think that trade how " $receivingTeam " seeded into playoffs?"]')
 
@@ -612,8 +619,14 @@ df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3AS, "[#ONT(agree)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3BS, "[#ONT(disagree)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3CS, dont_know)
 
+df.add_system_transition(State.TURNTRADE3AS, State.TURNTRADE3U, r'[! #seedingImpact() "So ultimately, do you think $favUserTeam could win?"]')
+df.add_system_transition(State.TURNTRADE3BS, State.TURNTRADE3U, r'[! I agree that he sucks. #seedingImpact "So ultimately, do you think $favUserTeam could win?"]')
 
-
+df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, '[/[a-z A-Z]+/]')
+df.add_system_transition(State.TURNTRADE5S, State.END, 'I guess thats a possibility. But I we wouldn’t know for sure since this is just our speculations haha.')
+"""
+we still need to work on errors and more macros, and idks
+"""
 
 
 """
