@@ -307,6 +307,8 @@ class tradeNewsByTeam(Macro):
         if 'favUserTeam' in vars:
             trades = [x for x in trades if vars['favUserTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
             #vars['receivingTeam'] = 'favUserTeam'
+            if len(trades) == 0:
+                trades = [x for x in trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
         else: 
             trades = [x for x in trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
             # print('favSysTeam: ', vars['favSysTeam'])
@@ -614,7 +616,7 @@ df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good
 
 # Playoff Turn 2 (not idk scenario)
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think the" $favUserTeam "will win?"]')
-df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale=[#ONT(rationale)]]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
+df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale={#ONT(rationale)}]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
 df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF5U, r'[! {hmm..., I dont know., What...} "Personally, I do not think that the" $favUserTeam "are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
 
