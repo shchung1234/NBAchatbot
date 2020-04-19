@@ -528,22 +528,23 @@ df.add_system_transition(State.TURNPF1ERR1S, State.TURNPF2AU, r'[! #botFavTeam {
 #idk scenario 
 
 df.add_system_transition(State.TURNPF2CS, State.TURNPF2AU, r'[! #botFavTeam "I dont think that team will be in the playoffs. But you know, I think that" $favSysTeam "can win. Do you agree?"]')
-df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam "Its okay to be unsure because predictability of playoffs is difficult without more data. I think that " $favSysTeam " can win. Do you agree?"]')
+df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam{Its okay to be unsure because predictability of playoffs is difficult without more data.,Its okay to be unsure.,'
+                                                           r'Its definitely hard to tell right now.} "I think that" $favSysTeam "can win" {if we were to play today.,given the available data.} "Do you agree?"]')
 df.add_user_transition(State.TURNPF2AU, State.TURNPF3AS, '[#ONT(agree)]')
 df.add_user_transition(State.TURNPF2AU, State.TURNPF3BS, '[#ONT(disagree)]')
 df.add_user_transition(State.TURNPF2AU, State.TURNPF2A_DK, dont_know)
 df.set_error_successor(State.TURNPF2AU, State.TURNPF2AERR)
-df.add_system_transition(State.TURNPF2AERR, State.TURNPF5U, r'[! "Thats an interesting take for sure. Personally, I think" $favSysTeam "will win because of" $favSysPlayer ". What do you think of" $favSysPlayer "?"]')
+df.add_system_transition(State.TURNPF2AERR, State.TURNPF5U, r'[! "Thats an interesting take for sure. Personally, I think" $favSysTeam "will win primarily because they have" $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 
-df.add_system_transition(State.TURNPF2A_DK, State.TURNPF5U, r'[! "Oh, are you not sure? Personally, I think" $favSysTeam "will win because of" $favSysPlayer ". What do you think of" $favSysPlayer "?"]')
+df.add_system_transition(State.TURNPF2A_DK, State.TURNPF5U, r'[! "Oh, are you not sure? Personally, I think" $favSysTeam "will win because they have" $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 df.add_system_transition(State.TURNPF3AS, State.TURNPF3AU, r'[! "I always love meeting other fans of " $favSysTeam " Why do you think " $favSysTeam " is going to win?"]')
 df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Why do you think " $favSysTeam " will not win?"]')
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #pull any response here
 #this state throws an error because comparePlayers (or new Macro) needs to be able to work without having user input
-df.add_system_transition(State.TURNPF4S, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". What do you think of " $favSysPlayer "?"]')
+df.add_system_transition(State.TURNPF4S, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 #error transition for turn 3
 df.set_error_successor(State.TURNPF3AU, State.TURNPF3AERR)
-df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". What do you think of " $favSysPlayer "?"]')
+df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 
 
 # Playoff Turn 2 (not idk scenario)
@@ -600,7 +601,6 @@ df.add_system_transition(State.TURNTRADE1ERR, State.TURNTRADE2U, r'[! "so i gues
 
 #turn 2
 df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE2U, r'[! "how do you think this will impact $receivingTeam and ultimately, would you think they could become a threat to $favUserTeam ?"]') #edge case when the news covers same team as userfavteam
-df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S1, "[$response2=#ONT(goodimpact)]") # TODO: more variation needed
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3S2, "[$response2=#ONT(badimpact)]")
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE2DK1S, dont_know) # dont knows
 df.add_system_transition(State.TURNTRADE2DK1S, State.TURNTRADE3U, r'[! "Its okay if youre not sure! I actually think that " #goodBadTrade() ". Do you agree?"]') #TODO: need to edit
@@ -609,13 +609,13 @@ df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "I dont kn
                                                                  r'#goodBadTrade() ". Do you agree?"]')
 #TODO: next transition would be just responding to users opinion and concluding with "you wouldn't know until the playoff starts
 #turn 3
-
 df.add_system_transition(State.TURNTRADE3S1, State.TURNTRADE3U, r'[! "My robot uncle thinks " $player " is " $response2 "too. But we cant forget about the teams" #teamStats() ", and I think that " #goodBadTrade() ". Do you agree?"]')
 df.add_system_transition(State.TURNTRADE3S2, State.TURNTRADE3U, r'[! "Ultimately, " #goodBadTrade() ". Do you agree?"]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, '[#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S1, '[#ONT(disagree)]')
 
-df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE3DK1S, dont_know) # dont knows
+df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE3DK1S,ate.TURNTRADE3S1, "[$response2=#ONT(goodimpact)]") # TODO: more variation needed
+df.add_user_transition(State.TURNTRADE2U, St dont_know) # dont knows
 df.add_system_transition(State.TURNTRADE3DK1S, State.TURNTRADE4U, r'[! "Youre not sure? Thats okay, since its hard to tell. How do you think this trade will affect the playoffs?"]')
 df.set_error_successor(State.TURNTRADE3U, State.TURNTRADE3ERR)
 df.add_system_transition(State.TURNTRADE3ERR, State.TURNTRADE4U, r'[! "That is certainly an opinion haha. Playoffs are happening soon though! How do you think this trade affects the playoff?"]')
