@@ -1865,7 +1865,8 @@
       "terrible",
       "weak",
       "inefficient",
-      "not good"
+      "not good",
+      "horrible"
     ],
     "disagree": [
       "no",
@@ -1916,13 +1917,18 @@
     ],
     "rationale": [
       "efficient",
+      "efficiency",
       "points",
       "shooting",
       "assists",
+      "assist",
       "free throws",
       "passing",
+      "pass",
       "turnovers",
+      "turnover",
       "rebounds",
+      "rebound",
       "steals",
       "blocks",
       "field goals",
