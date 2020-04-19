@@ -577,7 +577,7 @@ proceed = '[{'\
 df.add_system_transition(State.START, State.TURNPF1U, r'[! "Hi I am NBA chatbot. The NBA season has been" {shutdown,suspended,put on hold} "because of COVID. '
                                                       r' If we played playoffs" {just based off the current standings,today,right now} "though, which team do you think would win?"]')
 df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
-df.add_user_transition(State.TURNPF1U, State.TURNPF2CS, '[#ONT(nonplayoffteams)]')
+df.add_user_transition(State.TURNPF1U, State.TURNPF2CS, '{#ONT(nonplayoffteams)}')
 df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$favUserTeam=#ONT(playoffteams)]')
 
 df.set_error_successor(State.TURNPF1U, State.TURNPF1ERR)
@@ -617,7 +617,7 @@ df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why
 
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale=[#ONT(rationale)]]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
-df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF5U, r'[! "Thats a fair" {reason.,rationale.,line of thought.} "Personally, I do not think that the" $favUserTeam "are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
+df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF5U, r'[! {hmm..., I dont know., What?} "Personally, I do not think that the" $favUserTeam "are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
 
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
