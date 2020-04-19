@@ -65,6 +65,7 @@ class State(Enum):
     TURNPF2AERR = auto()
     TURNPF2BU_ERR1 = auto()
     TURNPF2BU_ERR2= auto()
+    TURNPF2BU_ERR3 = auto()
     TURNPF3AS = auto()
     TURNPF3AERR = auto()
     TURNPF3BS = auto()
@@ -72,11 +73,13 @@ class State(Enum):
     TURNPF3DS = auto()
     TURNPF3AU = auto()
     TURNPF3U = auto()
-    TURNPF3ERR = auto()
+    TURNPF3U_ERR = auto()
     TURNPF4S = auto()
     TURNPF5S = auto()
     TURNPF5U = auto()
     TURNPF5AS = auto()
+    TURNPF5U_ERR = auto()
+    TURNPF6S = auto()
     END = auto()
     EARLYEND = auto()
 
@@ -542,7 +545,7 @@ df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Why do you thin
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #pull any response here
 #this state throws an error because comparePlayers (or new Macro) needs to be able to work without having user input
 df.add_system_transition(State.TURNPF4S, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
-#error transition for turn 3
+
 df.set_error_successor(State.TURNPF3AU, State.TURNPF3AERR)
 df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 
@@ -551,22 +554,33 @@ df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think the" $favUserTeam "will win?"]')
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale=[#ONT(rationale)]]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
-df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF3U, r'[! "Thats fair. Personally, I do not think that the " $favUserTeam " are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
+df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF5U, r'[! "Thats a fair" {reason.,rationale.,line of thought.} "Personally, I do not think that the" $favUserTeam "are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
 df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Do you think there is a player that is integral to their team?"]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer=[#ONT(playoffteams)]]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree)]')
-df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR2)
+df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR3)
 
-df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF5U, r'[! "Thats fair. Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer ". He is my hometown hero. What do you think of Kawhi Leonard?"]')
+df.add_system_transition(State.TURNPF2BU_ERR3, State.TURNPF5U, r'[! "Thats a fair" {reason.,rationale.,line of thought.} "Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer ". He is my hometown hero. What do you think of" {him,$favSysPlayer} "?"]')
 
 # Playoff Turn 3
-df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! "I think that it is " #comparePlayers ". What is your opinion?"]')
+df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #comparePlayers {[! "What do you think?"],[! "Whats your opinion?"]}')
+
 df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[$teamRationale=[#ONT(rationale)]]") #need to add another way to transition to the trades here
-df.add_user_transition(State.TURNPF3U, State.TURNTRADE0AS, '[/[a-z A-Z]+/]')
-df.add_user_transition(State.TURNPF5U, State.TURNTRADE0AS, '[/[a-z A-Z]+/]')
-df.add_system_transition(State.TURNPF5AS, State.TURNPF5U, r'[! "It sounds like you do not think there is a star player on " $favUserTeam ". I think that " $favSysTeam " will win because of their star player " $favSysPlayer ". What do you think of him?"]')
+
+df.add_system_transition(State.TURNPF5AS, State.TURNPF5U, r'[! "It sounds like you do not think there is a star player on the" $favUserTeam ". I think that the" $favSysTeam "will win because of their star player," $favSysPlayer ". What do you think of him?"]')
+df.add_user_transition(State.TURNPF5U, State.TURNPF6S, '[{why,what makes you {think,say,believe} that,whats {your,the} reason}]')
+
+# 5U picks up all states where favUserPlayer has not been called (so no compare players)
+
+# Error succ for PF3U
+df.set_error_successor(State.TURNPF3U, State.TURNPF3U_ERR)
+df.add_system_transition(State.TURNPF3U_ERR, State.TURNTRADE0S, r'[! "Huh, I never thought about it that way. Speaking about the teams, earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
+# Error succ for PF5U
+df.set_error_successor(State.TURNPF5U, State.TURNPF5U_ERR)
+df.add_system_transition(State.TURNPF5U_ERR, State.TURNTRADE0AS, r'[! "I see, thats a fair opinion. Speaking about the teams, earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
+
 
 
 """trades turns"""
@@ -635,4 +649,4 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 """
 
 if __name__ == '__main__':
-    df.run(debugging=True)
+    df.run(debugging=False)
