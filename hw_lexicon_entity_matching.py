@@ -80,6 +80,9 @@ class State(Enum):
     TURNPF5U = auto()
     TURNPF5AS = auto()
     TURNPF5U_ERR = auto()
+    TURNPF6U = auto()
+    TURNPF7S = auto()
+    TURNPF7S1 = auto()
     TURNPF6S = auto()
     END = auto()
     EARLYEND = auto()
@@ -594,15 +597,21 @@ df.add_system_transition(State.TURNPF1ERR1S, State.TURNPF2AU, r'[! #botFavTeam {
 df.add_system_transition(State.TURNPF2CS, State.TURNPF2AU, r'[! #botFavTeam "I dont think that team will be in the playoffs. But you know, I think that" $favSysTeam "can win. Do you agree?"]')
 df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam{Its okay to be unsure because predictability of playoffs is difficult without more data.,Its okay to be unsure.,'
                                                            r'Its definitely hard to tell right now.} "I think that" $favSysTeam "can win" {if we were to play today.,given the available data.} "Do you agree?"]')
+# 2AU takes agree, disagree, dont know, and error.
 df.add_user_transition(State.TURNPF2AU, State.TURNPF3AS, '[#ONT(agree)]')
 df.add_user_transition(State.TURNPF2AU, State.TURNPF3BS, '[#ONT(disagree)]')
 df.add_user_transition(State.TURNPF2AU, State.TURNPF2A_DK, dont_know)
 df.set_error_successor(State.TURNPF2AU, State.TURNPF2AERR)
 df.add_system_transition(State.TURNPF2AERR, State.TURNPF5U, r'[! "Thats an interesting take for sure. Personally, I think" $favSysTeam "will win primarily because they have" $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 
+df.add_system_transition(State.TURNPF3AS, State.TURNPF3AU, r'[! "Im glad you agree with me about" $favSysTeam ". "'
+                                                           r' {Do you have any reason why you think,Why do you think,Why do you agree with me that}'
+                                                           r' $favSysTeam " is going to win?"]')
+df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Oh thats interesting! Why do you think " $favSysTeam " will not win?"]')
+
+# PF2A-dont know goes straight to 5U
 df.add_system_transition(State.TURNPF2A_DK, State.TURNPF5U, r'[! "Oh, are you not sure? Personally, I think" $favSysTeam "will win because they have" $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
-df.add_system_transition(State.TURNPF3AS, State.TURNPF3AU, r'[! "I always love meeting other fans of " $favSysTeam " Why do you think " $favSysTeam " is going to win?"]')
-df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Why do you think " $favSysTeam " will not win?"]')
+
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #pull any response here
 
 #this state throws an error because comparePlayers (or new Macro) needs to be able to work without having user input
@@ -633,7 +642,6 @@ df.add_system_transition(State.TURNPF2BU_ERR3, State.TURNPF5U, r'[! "Thats a fai
 
 # Playoff Turn 3
 df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #comparePlayers {[! "What do you think?"],[! "Whats your opinion?"]}')
-
 df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[$teamRationale=[#ONT(rationale)]]") #need to add another way to transition to the trades here
 
 df.add_system_transition(State.TURNPF5AS, State.TURNPF5U, r'[! "It sounds like you do not think there is a star player on the" $favUserTeam ". I think that the" $favSysTeam "will win because of their star player," $favSysPlayer ". What do you think of him?"]')
@@ -643,13 +651,24 @@ df.add_user_transition(State.TURNPF5U, State.TURNPF6S, '[{why,what makes you {th
 
 # Error succ for PF3U
 df.set_error_successor(State.TURNPF3U, State.TURNPF3U_ERR)
-df.add_system_transition(State.TURNPF3U_ERR, State.TURNTRADE0S, r'[! "Huh, I never thought about it that way. Speaking about the teams, earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
+df.add_system_transition(State.TURNPF3U_ERR, State.TURNTRADE0U, r'[! "Huh, I never thought about it that way. Speaking about the teams, earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
 # Error succ for PF5U
 df.set_error_successor(State.TURNPF5U, State.TURNPF5U_ERR)
-df.add_system_transition(State.TURNPF5U_ERR, State.TURNTRADE0AS, r'[! "I see, thats a fair opinion. Speaking about the teams, earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
+df.add_system_transition(State.TURNPF5U_ERR, State.TURNTRADE0U, r'[! "I see, thats a fair opinion. Speaking about the teams, earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
 
+# PF6S: System makes a claim why it thinks favSysPlayer is integral to team
+df.add_system_transition(State.TURNPF6S, State.TURNPF6U, r'[! "Mostly because" $favSysPlayer "is really" {integral to,important to} $favSysTeam ". He"'
+                                                         r'{is super clutch,is always making ridiculous shots,is such a great team player}{especially at important moments,especially at the end of games}]')
 
+# PF6U takes a disagreement to the previous statement, else transitions straight to PF7S1 and subsequent trade turns
+df.add_user_transition(State.TURNPF6U, State.TURNPF7S, '[/[a-z A-Z]*/ #NOT(#ONT(disagree))]')
+df.add_user_transition(State.TURNPF6U, State.TURNPF7S1, '[#ONT(disagree)]')
 
+# Error succ for PF6U
+# PF7S transitions into trade turns
+df.add_system_transition(State.TURNPF7S, State.TURNTRADE0U, r'[! "Okay, lets focus back on the teams though. Earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
+df.add_system_transition(State.TURNPF7S1, State.TURNTRADE0U, r'[! "Hmm okay, lets agree to disagree for now and wait until the playoffs actually start! '
+                                                             r'Focusing back on the teams though, earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
 """trades turns"""
 #turn 0
 #TURNPF5S comes from the idk scenario. will probably need to add in some things to engage more with user response, this is generic catcher
@@ -728,4 +747,4 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 """
 
 if __name__ == '__main__':
-    df.run(debugging=False)
+    df.run(debugging=True)
