@@ -309,11 +309,11 @@ class tradeNewsByTeam(Macro):
             #vars['receivingTeam'] = 'favUserTeam'
         else: 
             trades = [x for x in trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
-            print('favSysTeam: ', vars['favSysTeam'])
-            print('*** going with favSysTeam ***')
+            # print('favSysTeam: ', vars['favSysTeam'])
+            # print('*** going with favSysTeam ***')
 
 
-        print("*** TRADES *** ", trades)
+        # print("*** TRADES *** ", trades)
         trade = trades[randrange(len(trades))]['TRANSACTION_DESCRIPTION']
         receivingTeam = trade.split(' received')[0]
         givingTeam = trade.split('from ')[1]
@@ -354,16 +354,16 @@ class botFavTeam(Macro):
     def run (self, ngrams, vars, args):
         if 'favUserTeam' in vars:
             if vars['favUserTeam'] in 'los angeles clippers' or vars['favUserTeam'] in 'lA clippers' or vars['favUserTeam'] in 'clippers':
-                vars['favSysTeam'] = 'Bucks'
-                vars['favSysPlayer'] = 'Giannis Antetokounmpo'
-                vars['favSysPlayerPER'] = 31.71
-                vars['favSysPlayerPTS'] = 29.6
-                vars['favSysPlayerREB'] = 13.7
-                vars['favSysPlayerAST'] = 5.8
+                vars['favSysTeam'] = 'Miami Heat'
+                vars['favSysPlayer'] = 'Jimmy Butler'
+                vars['favSysPlayerPER'] = 23.41
+                vars['favSysPlayerPTS'] = 20.2
+                vars['favSysPlayerREB'] = 6.6
+                vars['favSysPlayerAST'] = 6.1
                 return
 
         if 'favUserTeam' in vars:
-            if vars['favUserTeam'] in 'milwaukee bucks' or vars['favUserTeam'] in 'bucks' or vars['favUserTeam'] in 'milwaukee':
+            if vars['favUserTeam'] in 'miami heat' or vars['favUserTeam'] in 'heat' or vars['favUserTeam'] in 'miami':
                 vars['favSysTeam'] = 'Clippers'
                 vars['favSysPlayer'] = 'Kawhi Leonard'
                 vars['favSysPlayerPER'] = 26.76
@@ -574,8 +574,8 @@ proceed = '[{'\
 
 """playoffs turns"""
 #turn 1
-df.add_system_transition(State.START, State.TURNPF1U, r'[! "Hi I am NBA chatbot. The NBA season has been" {shutdown,suspended,put on hold} "because of COVID. '
-                                                      r' If we played playoffs" {just based off the current standings,today,right now} "though, which team do you think would win?"]')
+df.add_system_transition(State.START, State.TURNPF1U, r'[! "Hi I am NBA chatbot. The NBA season has been" {shutdown,suspended,put on hold} "because of COVID-19. '
+                                                      r' If we had playoffs" {based off the current standings,today,right now} ", which team do you think would win?"]')
 df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
 df.add_user_transition(State.TURNPF1U, State.TURNPF2CS, '[#ONT(nonplayoffteams)]')
 df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$favUserTeam=#ONT(playoffteams)]')
@@ -614,7 +614,6 @@ df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good
 
 # Playoff Turn 2 (not idk scenario)
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think the" $favUserTeam "will win?"]')
-
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale=[#ONT(rationale)]]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
 df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF5U, r'[! "Thats a fair" {reason.,rationale.,line of thought.} "Personally, I do not think that the" $favUserTeam "are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
@@ -627,10 +626,10 @@ df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree)]')
 
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF2BDK, dont_know)
 df.add_system_transition(State.TURNPF2BDK, State.TURNPF5U, r'[! "Fair enough, there are many good players on " $favSysTeam ". The best player on my playoff favorite is " $favSysPlayer ". What do you think of him?"]')
+
 df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR3)
 
 df.add_system_transition(State.TURNPF2BU_ERR3, State.TURNPF5U, r'[! "Thats a fair" {reason.,rationale.,line of thought.} "Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer ". He is my hometown hero. What do you think of" {him,$favSysPlayer} "?"]')
-
 
 # Playoff Turn 3
 df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #comparePlayers {[! "What do you think?"],[! "Whats your opinion?"]}')
