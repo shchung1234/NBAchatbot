@@ -590,7 +590,7 @@ df.add_system_transition(State.START, State.TURNPF1U, r'[! "Hi I am NBA chatbot.
                                                       r' If we had playoffs" {based off the current standings,today,right now} ", which team do you think would win?"]')
 df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
 df.add_user_transition(State.TURNPF1U, State.TURNPF2CS, '{#ONT(nonplayoffteams)}')
-df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$favUserTeam=#ONT(playoffteams)]')
+df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$favUserTeam={#ONT(playoffteams)}]')
 
 df.set_error_successor(State.TURNPF1U, State.TURNPF1ERR)
 df.add_system_transition(State.TURNPF1ERR, State.TURNPF1ERRU, r'[! "Hmm," {I dont think that is an NBA team,I dont think thats a team going into the playoffs,yea not sure if thats a team going into playoffs} ". Do you want to keep talking? '
@@ -641,7 +641,7 @@ df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF2BU1, r'[! {hmm..., I
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
 df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Having good" $rationale "could be critical to win. Do you think there is a player that is integral to the " $favUserTeam "?"]')
-df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer=[#ONT(playoffteams)]]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer={#ONT(playoffteams)}]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3ES, '[{#ONT(nonplayoffteams),#NER(person)}]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree) #NOT(#ONT(nonplayoffteams),#NER(person))]')
 
