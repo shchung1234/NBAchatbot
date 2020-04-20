@@ -544,7 +544,7 @@ class positiveSeedingImpact(Macro):
         if int(vars['date']) >=2 and int(vars['date']) < 9:
             return "he was traded quite recently before covid shutdown so I am wondering if he will continue to perform as well as he has so far."
         else:
-            return "It certainly seems like he jelled well with the team"
+            return "It certainly seems like he meshes well with the team"
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
 df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(),
@@ -686,7 +686,7 @@ df.add_system_transition(State.TURNTRADE0ERR, State.TURNTRADE2U, r'[! "I have he
 
 df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is aiite. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
 df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. I think " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
-df.add_system_transition(State.TURNTRADE1S3, State.TURNTRADE2U, r'[! "I think " #playerRating() ". Do you think that trade how " $receivingTeam " seeded into playoffs?"]')
+df.add_system_transition(State.TURNTRADE1S3, State.TURNTRADE2U, r'[! "I think " #playerRating() ". Do you think that trade influenced how " $receivingTeam " seeded into playoffs?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3BS, '[$playerImpact=#ONT(disagree)]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3AS, '[$playerImpact=#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3CS, dont_know)
@@ -698,8 +698,8 @@ df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "That is t
 #WHAT IF FAVUSERTEAM DOESN'T EXIST!?›
 #todo we already know they're the team we think the user would win so it is nonsensical to ask them again
 #can't say i agree/disagree in a turn if the macro that is being called is also forming an opinion because they might contradict
-df.add_system_transition(State.TURNTRADE3AS, State.TURNTRADE3U, r'[! #positiveSeedingImpact() ". Do you think " $tradeTeamInPlayoffs "could win?"]')
-df.add_system_transition(State.TURNTRADE3BS, State.TURNTRADE3U, r'[! #negativeSeedingImpact() ". Do you think " $tradeTeamInPlayoffs "could win?"]')
+df.add_system_transition(State.TURNTRADE3AS, State.TURNTRADE3U, r'[! #positiveSeedingImpact() ". Do you think " $tradeTeamInPlayoffs "could win the playoffs?"]')
+df.add_system_transition(State.TURNTRADE3BS, State.TURNTRADE3U, r'[! #negativeSeedingImpact() ". Do you think " $tradeTeamInPlayoffs "could win the playoffs?"]')
 df.add_system_transition(State.TURNTRADE3CS, State.TURNTRADE3U, r'[! Yeah I am a little uncertain myself too because I feel like player personality plays a big role in how they influence a team. How do you think the rest of the playoffs will go though?"]')
 
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, '[/[a-z A-Z]+/]')
