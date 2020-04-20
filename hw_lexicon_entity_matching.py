@@ -64,8 +64,8 @@ class State(Enum):
     TURNPF2BS = auto()
     TURNPF2BS1 = auto()
     TURNPF2BS2 = auto()
-    TURNPF2BU1 = auto()
     TURNPF2BU = auto()
+    TURNPF2BU1 = auto()
     TURNPF2CS = auto()
     TURNPF2BDK = auto()
     TURNPF2ERR = auto()
@@ -534,7 +534,7 @@ class negativeSeedingImpact(Macro):
         #trade = trades[n]['TRANSACTION_DESCRIPTION']
         vars['date'] = trades[n]["TRANSACTION_DATE"].split('-')[1]
         if int(vars['date']) >=2 and int(vars['date']) < 9:
-            return "I disagree, I do not think he has had time to trade himself because he was traded very recently before covid shutdown."
+            return "actually though, i do not think he had enough time to impact because he was traded very recently before covid shutdown."
         else:
             return "I agree, the trade was early in the season and he has not shown he was worth it"
 
@@ -790,4 +790,4 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 """
 
 if __name__ == '__main__':
-    df.run(debugging=True)
+    df.run(debugging=False)
