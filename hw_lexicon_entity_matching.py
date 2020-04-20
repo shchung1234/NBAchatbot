@@ -73,6 +73,7 @@ class State(Enum):
     TURNPF3BS = auto()
     TURNPF3CS = auto()
     TURNPF3DS = auto()
+    TURNPF3ES = auto()
     TURNPF3AU = auto()
     TURNPF3U = auto()
     TURNPF3U_ERR = auto()
@@ -629,19 +630,23 @@ df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale={#ONT(rationale2)}]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
 df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(topPlayers)}]')
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
-df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF5U, r'[! {hmm..., I dont know., What...} "Personally, I do not think that the" $favUserTeam "are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer "What do you think of him?"]') #todo make sure this transition goes into the correct user transition
+df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF2BU1, r'[! {hmm..., I dont know., What...} "Personally, I do not think that the" $favUserTeam "are that good. '
+                                                                 r'Im curious why you think that though. Do you think there is a player that is" {integral,important} "to" $favUserTeam "?"]') #todo make sure this transition goes into the correct user transition
 
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
 df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Having good " $rationale" could be critical to win. Do you think there is a player that is integral to the " $favUserTeam "?"]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer=[#ONT(playoffteams)]]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
-df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree)]')
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF3ES, '[{#ONT(nonplayoffteams),#NER(person)}]')
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree) #NOT(#ONT(nonplayoffteams),#NER(person))]')
 
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF2BDK, dont_know)
-df.add_system_transition(State.TURNPF2BDK, State.TURNPF5U, r'[! "Fair enough, there are many good players on " $favSysTeam ". The best player on my playoff favorite is " $favSysPlayer ". What do you think of him?"]')
+df.add_system_transition(State.TURNPF2BDK, State.TURNPF5U, r'[! "Fair enough, there might actually be many good players on" $favSysTeam ". The best player on my playoff favorite is " $favSysPlayer ". What do you think of him?"]')
+
+df.add_system_transition(State.TURNPF3ES, State.TURNPF5U, r'[! "I dont think thats a player on the" $favUserTeam ", but thats okay!'
+                                                          r' Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer ". He is my hometown hero. What do you think of" {him,$favSysPlayer} "?"]')
 
 df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR3)
-
 df.add_system_transition(State.TURNPF2BU_ERR3, State.TURNPF5U, r'[! "Thats a fair" {reason.,rationale.,line of thought.} "Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer ". He is my hometown hero. What do you think of" {him,$favSysPlayer} "?"]')
 
 # Playoff Turn 3
