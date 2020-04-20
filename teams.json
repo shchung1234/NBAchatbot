@@ -1900,13 +1900,15 @@
       "james harden",
       "kawhi leonard"
     ],
-    "rationale2": [
+    "rationaletwo": [
       "player",
       "coach",
       "players",
       "playstyle",
       "rebounders",
-      "shooters"
+      "rebounder",
+      "shooters",
+      "shooter"
     ],
     "rationale": [
       "efficient",
