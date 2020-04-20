@@ -22,11 +22,13 @@ class State(Enum):
     TURNTRADE1S3 = auto()
     TURNTRADE1U = auto()
     TURNTRADE1ERR = auto()
+    TURNTRADE1U_ERR = auto()
+    TURNTRADE1AS = auto()
     TURNTRADE1BS = auto()
     TURNTRADE1BU = auto()
-    TURNTRADE2S = auto()
     TURNTRADE2U = auto()
     TURNTRADE2AS = auto()
+    TURNTRADE2S = auto()
     TURNTRADE2AU = auto()
     TURNTRADE2DK1S = auto()
     TURNTRADE2ERR = auto()
@@ -45,6 +47,9 @@ class State(Enum):
     TURNTRADE4ERR = auto()
     TURNTRADE5U = auto()
     TURNTRADE5S = auto()
+    TURNTRADE5U_ERR = auto()
+    TURNTRADE6AS = auto()
+    TURNTRADE6BS = auto()
 
     
     #states for playoff conversation
@@ -563,7 +568,7 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
 # natex expressions
 dont_know = '[{' \
             'dont know,do not know,unsure,maybe,[not,{sure,certain}],hard to say,no idea,uncertain,i guess,[!no {opinion,opinions,idea,ideas,thought,thoughts,knowledge}],' \
-            '[{dont,do not}, have, {opinion,opinions,idea,ideas,thought,thoughts,knowledge}],' \
+            '[{dont,do not}, have, {one,opinion,opinions,idea,ideas,thought,thoughts,knowledge}],' \
             '[!{cant,cannot,dont} {think,remember,recall}]' \
             '}]'
 
@@ -688,21 +693,22 @@ df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "Earlier in 
 df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S, "[$userTradePlayerOpinion=#ONT(goodplayer)]")
 df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S1, "[$userTradePlayerOpinion=#ONT(badplayer)]")
 df.add_user_transition(State.TURNTRADE0U, State.TURN0DK1S, dont_know)
-df.add_system_transition(State.TURN0DK1S, State.TURN0DK1U, r'[! "No worries, if you are not sure I can just talk about how I think! Is that okay?"]')
-df.add_user_transition(State.TURN0DK1U, State.TURNTRADE1S3, "[#ONT(agree)]")
+
+# Error succ for 0U
 df.set_error_successor(State.TURNTRADE0U, State.TURNTRADE0ERR)
 df.add_system_transition(State.TURNTRADE0ERR, State.TURNTRADE2U, r'[! "I have heard that from my robot uncle too. Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
 
-df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is aiite. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
+# transitions from 1S-esque
+df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is aight. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
 df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. I think " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
-df.add_system_transition(State.TURNTRADE1S3, State.TURNTRADE2U, r'[! "I think " #playerRating() ". Do you think that trade influenced how " $receivingTeam " seeded into playoffs?"]')
+df.add_system_transition(State.TURN0DK1S, State.TURNTRADE2U, r'[! "No worries, if you are not sure I can" {just talk about,give,talk to you about} "my opinions! I think " #playerRating() ". Do you think that trade how " $receivingTeam " seeded into playoffs?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3BS, '[$playerImpact=#ONT(disagree)]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3AS, '[$playerImpact=#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3CS, dont_know)
+
+# Error Succ for 2U
 df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
 df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "That is true too. I think it is hard to tell the impact of a trade because there are player intangibles such as personality which play a big role. Do you think the players would have let the trade impact their playoff mentality?"]')
-
-
 
 #WHAT IF FAVUSERTEAM DOESN'T EXIST!?›
 #todo we already know they're the team we think the user would win so it is nonsensical to ask them again
@@ -711,8 +717,29 @@ df.add_system_transition(State.TURNTRADE3AS, State.TURNTRADE3U, r'[! #positiveSe
 df.add_system_transition(State.TURNTRADE3BS, State.TURNTRADE3U, r'[! #negativeSeedingImpact() ". Do you think " $tradeTeamInPlayoffs "could win the playoffs?"]')
 df.add_system_transition(State.TURNTRADE3CS, State.TURNTRADE3U, r'[! Yeah I am a little uncertain myself too because I feel like player personality plays a big role in how they influence a team. How do you think the rest of the playoffs will go though?"]')
 
-df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, '[/[a-z A-Z]+/]')
-df.add_system_transition(State.TURNTRADE5S, State.END, 'I guess thats a possibility. But we wouldn’t know for sure since this is just our speculations haha.')
+df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE5S, '[/[a-z A-Z]+/]')
+df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess thats a possibility. But we wouldn’t know for sure since this is just our speculations haha.'
+                                                       ' While youre here," {do you want to chat about another trade,would you like to chat about another trade}"?"')
+
+df.add_user_transition(State.TURNTRADE5U, State.TURNTRADE6AS, "[#ONT(agree)]")
+df.add_system_transition(State.TURNTRADE6AS, State.TURNTRADE1U, r'[! "Okay! I found" {another,this other,a new} {trade news, article} "that says that" #tradeNews() "Does that sound interesting?"]')
+
+df.add_user_transition(State.TURNTRADE5U, State.TURNTRADE6BS, "[#ONT(disagree)]")
+df.add_system_transition(State.TURNTRADE6BS, State.END, r'[! "Okay, well in that case we can talk again later. Bye!"]')
+
+# Error Succ 5U
+df.set_error_successor(State.TURNTRADE5U, State.TURNTRADE5U_ERR)
+df.add_system_transition(State.TURNTRADE5U_ERR, State.END, r'[! "Okay, since I didnt get an explicit affirmation, Ill take my leave for now. See you next time!"]')
+
+df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE2S, '[#ONT(agree)]')
+df.add_system_transition(State.TURNTRADE2S, State.TURNTRADE0U, r'[! "Okay, then what do you think about" $player "?"]')
+df.add_user_transition(State.TURNTRADE1U, State.TURNTRADE1AS, '[#ONT(disagree)]') #goes to talk about a different trade
+df.add_system_transition(State.TURNTRADE1AS, State.TURNTRADE1U , r'[! {[! "How about this:"],I found this other trade article.,[! "What about this trade? I heard that"]} {#tradeNews()}]')
+
+# Errpr Succ 1U
+df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1U_ERR)
+df.add_system_transition(State.TURNTRADE1U_ERR, State.TURNTRADE0U, r'[! "Okay, I think this trade should be interesting to talk about! What do you think about" $player "?"]')
+
 """
 we still need to work on errors and more macros, and idks
 """
