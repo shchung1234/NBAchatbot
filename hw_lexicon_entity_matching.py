@@ -642,7 +642,7 @@ df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF2BU1, r'[! {hmm..., I
 
 df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Having good" $rationale "could be critical to win. Do you think there is a player that is integral to the " $favUserTeam "?"]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer={#ONT(playoffteams)}]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
-df.add_user_transition(State.TURNPF2BU1, State.TURNPF3ES, '[{#ONT(nonplayoffteams),#NER(person)}]')
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF3ES, '[{#ONT(nonplayoffteams),#NER(person)} #NOT(#ONT(playoffteams))]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree) #NOT(#ONT(nonplayoffteams),#NER(person))]')
 
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF2BDK, dont_know)
