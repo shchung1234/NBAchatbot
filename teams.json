@@ -1875,9 +1875,44 @@
       "trade",
       "trades"
     ],
+    "topPlayers": [
+      "rudy gobert",
+      "kemba walker",
+      "ben simmons",
+      "chris paul",
+      "victor oladipo",
+      "donovan mitchell",
+      "paul george",
+      "lebron james",
+      "lebron",
+      "giannis antetokounmpo"
+      "giannis",
+      "jimmy butler",
+      "kyrie irving",
+      "jason tatum",
+      "damian lillard",
+      "nikola jokic",
+      "jokic",
+      "kevin durant",
+      "russell westbrook",
+      "joel embiid",
+      "anthony davis",
+      "james harden",
+      "kawhi leonard"
+    ],
+    "rationale2": [
+      "player",
+      "coach",
+      "players",
+      "playstyle",
+      "rebounders",
+      "shooters"
+    ],
     "rationale": [
       "efficient",
       "efficiency",
+      "playstyle",
+      "field goals",
       "points",
       "shooting",
       "assists",
@@ -1891,7 +1926,6 @@
       "rebound",
       "steals",
       "blocks",
-      "field goals",
       "three",
       "fouls"
     ]
