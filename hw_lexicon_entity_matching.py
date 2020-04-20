@@ -498,7 +498,7 @@ class comparePlayers(Macro):
         ##PER was not mentioned so idk if its something we want to add
         if PTS > 20 or AST > 8 or REB > 10:
             return "I see {} is having an exceptional season. Personally, I think {} will win because {} is more clutch".format(vars['favUserPlayer'], vars['favSysTeam'], vars['favSysPlayer'])
-        return "interesting you like {} because he is not the top player satistically. Personally, I think {} will win because of {}".format(vars['favUserPlayer'], vars['favSysTeam'], vars['favSysPlayer'])
+        return "Its interesting that you like {} because he is not the top player statistically speaking. Personally, I think {} will win because of {}".format(vars['favUserPlayer'], vars['favSysTeam'], vars['favSysPlayer'])
 
 
 class playerRationale(Macro):
@@ -640,7 +640,7 @@ df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF2BU1, r'[! {hmm..., I
 
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
-df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Having good " $rationale" could be critical to win. Do you think there is a player that is integral to the " $favUserTeam "?"]')
+df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Having good" $rationale "could be critical to win. Do you think there is a player that is integral to the " $favUserTeam "?"]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer=[#ONT(playoffteams)]]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3ES, '[{#ONT(nonplayoffteams),#NER(person)}]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree) #NOT(#ONT(nonplayoffteams),#NER(person))]')
@@ -656,8 +656,9 @@ df.add_system_transition(State.TURNPF2BU_ERR3, State.TURNPF5U, r'[! "Thats a fai
 
 # Playoff Turn 3
 
-df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #comparePlayers {[! "What do you think?"],[! "Whats your opinion?"]}')
+df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #comparePlayers {[! "What do you think?"],[! "Whats your opinion?"]}]')
 df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[#ONT(rationale)]") #need to add another way to transition to the trades here
+df.add_user_transition(State.TURNPF3U, State.TURNPF6S,  '[{why,what makes you {think,say,believe},whats {your,the} reason}]')
 
 
 df.add_system_transition(State.TURNPF5AS, State.TURNPF5U, r'[! "It sounds like you do not think there is a star player on the" $favUserTeam ". I think that the" $favSysTeam "will win because of their star player," $favSysPlayer ". What do you think of him?"]')
@@ -674,7 +675,7 @@ df.add_system_transition(State.TURNPF5U_ERR, State.TURNTRADE0U, r'[! "I see, tha
 
 # PF6S: System makes a claim why it thinks favSysPlayer is integral to team
 df.add_system_transition(State.TURNPF6S, State.TURNPF6U, r'[! "Mostly because" $favSysPlayer "is really" {integral to,important to} $favSysTeam ". He"'
-                                                         r'{is super clutch,is always making ridiculous shots,is such a great team player}{especially at important moments,especially at the end of games}]')
+                                                         r'{is super clutch,is always making ridiculous shots,is such a great team player}{especially at important moments in the game,especially at the end of games}]')
 
 # PF6U takes a disagreement or any statement, then goes to PF7
 df.add_user_transition(State.TURNPF6U, State.TURNPF7S, '[/[a-z A-Z]*/ #NOT(#ONT(disagree))]')
@@ -688,7 +689,7 @@ df.add_system_transition(State.TURNPF7S1, State.TURNTRADE0U, r'[! "Hmm okay, let
 """trades turns"""
 #turn 0
 #TURNPF5S comes from the idk scenario. will probably need to add in some things to engage more with user response, this is generic catcher
-df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "I see. Earlier in the season " {#tradeNewsByTeam()} " What do you think about " $player "?"]') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
+df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "I see. Earlier in the season" {#tradeNewsByTeam()} "What do you think about " $player "?"]') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
 df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about "$player "?"]')
 df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S, "[$userTradePlayerOpinion=#ONT(goodplayer)]")
 df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S1, "[$userTradePlayerOpinion=#ONT(badplayer)]")
@@ -701,7 +702,7 @@ df.add_system_transition(State.TURNTRADE0ERR, State.TURNTRADE2U, r'[! "I have he
 # transitions from 1S-esque
 df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is aight. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
 df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. I think " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
-df.add_system_transition(State.TURN0DK1S, State.TURNTRADE2U, r'[! "No worries, if you are not sure I can" {just talk about,give,talk to you about} "my opinions! I think " #playerRating() ". Do you think that trade how " $receivingTeam " seeded into playoffs?"]')
+df.add_system_transition(State.TURN0DK1S, State.TURNTRADE2U, r'[! "No worries, if you are not sure I can" {just talk about,give,talk to you about} "my opinions! I think " #playerRating() ". Do you think that trade how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3BS, '[$playerImpact=#ONT(disagree)]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3AS, '[$playerImpact=#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3CS, dont_know)
@@ -719,7 +720,7 @@ df.add_system_transition(State.TURNTRADE3CS, State.TURNTRADE3U, r'[! Yeah I am a
 
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE5S, '[/[a-z A-Z]+/]')
 df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess thats a possibility. But we wouldn’t know for sure since this is just our speculations haha.'
-                                                       ' While youre here," {do you want to chat about another trade,would you like to chat about another trade}"?"')
+                                                       ' While youre here," {do you want to chat about another trade,would you like to chat about another trade}"?"]')
 
 df.add_user_transition(State.TURNTRADE5U, State.TURNTRADE6AS, "[#ONT(agree)]")
 df.add_system_transition(State.TURNTRADE6AS, State.TURNTRADE1U, r'[! "Okay! I found" {another,this other,a new} {trade news, article} "that says that" #tradeNews() "Does that sound interesting?"]')
