@@ -305,13 +305,13 @@ class tradeNewsByTeam(Macro):
     def run (self, ngrams, vars, args):
         with open('trades.json') as f:
             data = json.load(f)
-        trades = data['trades']
+        all_trades = data['trades']
 
         if 'favUserTeam' in vars:
-            trades = [x for x in trades if vars['favUserTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
+            trades = [x for x in all_trades if vars['favUserTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
             #vars['receivingTeam'] = 'favUserTeam'
-            if trades == []:
-                trades = [x for x in trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
+            if not trades:
+                trades = [x for x in all_trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
         else: 
             trades = [x for x in trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
             # print('favSysTeam: ', vars['favSysTeam'])
@@ -574,7 +574,7 @@ end = '[{'\
       '}]'
 
 proceed = '[{'\
-          'keep,continue,proceed,go on,carry on'\
+          'keep,continue,proceed,go on,carry on,ok,okay,fine,sounds good,yes'\
           '}]'
 
 """playoffs turns"""
