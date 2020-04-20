@@ -643,7 +643,7 @@ df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR3)
 df.add_system_transition(State.TURNPF2BU_ERR3, State.TURNPF5U, r'[! "Thats a fair" {reason.,rationale.,line of thought.} "Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer ". He is my hometown hero. What do you think of" {him,$favSysPlayer} "?"]')
 
 # Playoff Turn 3
-df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #comparePlayers {[! "What do you think?"],[! "Whats your opinion?"]}')
+df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #comparePlayers {[! "What do you think?"],[! "Whats your opinion?"]}]')
 df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[$teamRationale=[#ONT(rationale)]]") #need to add another way to transition to the trades here
 
 df.add_system_transition(State.TURNPF5AS, State.TURNPF5U, r'[! "It sounds like you do not think there is a star player on the" $favUserTeam ". I think that the" $favSysTeam "will win because of their star player," $favSysPlayer ". What do you think of him?"]')
@@ -662,7 +662,7 @@ df.add_system_transition(State.TURNPF5U_ERR, State.TURNTRADE0U, r'[! "I see, tha
 df.add_system_transition(State.TURNPF6S, State.TURNPF6U, r'[! "Mostly because" $favSysPlayer "is really" {integral to,important to} $favSysTeam ". He"'
                                                          r'{is super clutch,is always making ridiculous shots,is such a great team player}{especially at important moments,especially at the end of games}]')
 
-# PF6U takes a disagreement to the previous statement, else transitions straight to PF7S1 and subsequent trade turns
+# PF6U takes a disagreement or any statement, then goes to PF7
 df.add_user_transition(State.TURNPF6U, State.TURNPF7S, '[/[a-z A-Z]*/ #NOT(#ONT(disagree))]')
 df.add_user_transition(State.TURNPF6U, State.TURNPF7S1, '[#ONT(disagree)]')
 
