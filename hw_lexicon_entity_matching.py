@@ -306,13 +306,13 @@ class tradeNewsByTeam(Macro):
     def run (self, ngrams, vars, args):
         with open('trades.json') as f:
             data = json.load(f)
-        trades = data['trades']
+        all_trades = data['trades']
 
         if 'favUserTeam' in vars:
-            trades = [x for x in trades if vars['favUserTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
+            trades = [x for x in all_trades if vars['favUserTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
             #vars['receivingTeam'] = 'favUserTeam'
-            if len(trades) == 0:
-                trades = [x for x in trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
+            if not trades:
+                trades = [x for x in all_trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
         else: 
             trades = [x for x in trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
             # print('favSysTeam: ', vars['favSysTeam'])
@@ -545,7 +545,7 @@ class positiveSeedingImpact(Macro):
         if int(vars['date']) >=2 and int(vars['date']) < 9:
             return "he was traded quite recently before covid shutdown so I am wondering if he will continue to perform as well as he has so far."
         else:
-            return "It certainly seems like he jelled well with the team"
+            return "It certainly seems like he meshes well with the team"
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
 df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(),
@@ -575,7 +575,7 @@ end = '[{'\
       '}]'
 
 proceed = '[{'\
-          'keep,continue,proceed,go on,carry on'\
+          'keep,continue,proceed,go on,carry on,ok,okay,fine,sounds good,yes'\
           '}]'
 
 """playoffs turns"""
@@ -629,7 +629,7 @@ df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale={#ONT(rationale2)}]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
 df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(topPlayers)}]')
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
-df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF5U, r'[! {hmm..., I dont know., What...} "Personally, I do not think that the" $favUserTeam "are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer]') #todo make sure this transition goes into the correct user transition
+df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF5U, r'[! {hmm..., I dont know., What...} "Personally, I do not think that the" $favUserTeam "are that good. I think that the" $favSysTeam "have the best chance of winning because of" $favSysPlayer "What do you think of him?"]') #todo make sure this transition goes into the correct user transition
 
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
@@ -645,8 +645,10 @@ df.set_error_successor(State.TURNPF2BU1, State.TURNPF2BU_ERR3)
 df.add_system_transition(State.TURNPF2BU_ERR3, State.TURNPF5U, r'[! "Thats a fair" {reason.,rationale.,line of thought.} "Personally, I think that" $favSysTeam "has the best chance of winning because of" $favSysPlayer ". He is my hometown hero. What do you think of" {him,$favSysPlayer} "?"]')
 
 # Playoff Turn 3
+
 df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #comparePlayers {[! "What do you think?"],[! "Whats your opinion?"]}')
 df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[#ONT(rationale)]") #need to add another way to transition to the trades here
+
 
 df.add_system_transition(State.TURNPF5AS, State.TURNPF5U, r'[! "It sounds like you do not think there is a star player on the" $favUserTeam ". I think that the" $favSysTeam "will win because of their star player," $favSysPlayer ". What do you think of him?"]')
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S, '[{why,what makes you {think,say,believe} that,whats {your,the} reason}]')
@@ -664,7 +666,7 @@ df.add_system_transition(State.TURNPF5U_ERR, State.TURNTRADE0U, r'[! "I see, tha
 df.add_system_transition(State.TURNPF6S, State.TURNPF6U, r'[! "Mostly because" $favSysPlayer "is really" {integral to,important to} $favSysTeam ". He"'
                                                          r'{is super clutch,is always making ridiculous shots,is such a great team player}{especially at important moments,especially at the end of games}]')
 
-# PF6U takes a disagreement to the previous statement, else transitions straight to PF7S1 and subsequent trade turns
+# PF6U takes a disagreement or any statement, then goes to PF7
 df.add_user_transition(State.TURNPF6U, State.TURNPF7S, '[/[a-z A-Z]*/ #NOT(#ONT(disagree))]')
 df.add_user_transition(State.TURNPF6U, State.TURNPF7S1, '[#ONT(disagree)]')
 
@@ -688,20 +690,24 @@ df.add_system_transition(State.TURNTRADE0ERR, State.TURNTRADE2U, r'[! "I have he
 
 df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is aiite. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
 df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. I think " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
-df.add_system_transition(State.TURNTRADE1S3, State.TURNTRADE2U, r'[! "I think " #playerRating() ". Do you think that trade how " $receivingTeam " seeded into playoffs?"]')
+df.add_system_transition(State.TURNTRADE1S3, State.TURNTRADE2U, r'[! "I think " #playerRating() ". Do you think that trade influenced how " $receivingTeam " seeded into playoffs?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3BS, '[$playerImpact=#ONT(disagree)]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3AS, '[$playerImpact=#ONT(agree)]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3CS, dont_know)
+df.set_error_successor(State.TURNTRADE2U, State.TURNTRADE2ERR)
+df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "That is true too. I think it is hard to tell the impact of a trade because there are player intangibles such as personality which play a big role. Do you think the players would have let the trade impact their playoff mentality?"]')
+
 
 
 #WHAT IF FAVUSERTEAM DOESN'T EXIST!?›
 #todo we already know they're the team we think the user would win so it is nonsensical to ask them again
 #can't say i agree/disagree in a turn if the macro that is being called is also forming an opinion because they might contradict
-df.add_system_transition(State.TURNTRADE3AS, State.TURNTRADE3U, r'[! #positiveSeedingImpact() ". Do you think " $tradeTeamInPlayoffs "could win?"]')
-df.add_system_transition(State.TURNTRADE3BS, State.TURNTRADE3U, r'[! #negativeSeedingImpact() ". Do you think " $tradeTeamInPlayoffs "could win?"]')
+df.add_system_transition(State.TURNTRADE3AS, State.TURNTRADE3U, r'[! #positiveSeedingImpact() ". Do you think " $tradeTeamInPlayoffs "could win the playoffs?"]')
+df.add_system_transition(State.TURNTRADE3BS, State.TURNTRADE3U, r'[! #negativeSeedingImpact() ". Do you think " $tradeTeamInPlayoffs "could win the playoffs?"]')
+df.add_system_transition(State.TURNTRADE3CS, State.TURNTRADE3U, r'[! Yeah I am a little uncertain myself too because I feel like player personality plays a big role in how they influence a team. How do you think the rest of the playoffs will go though?"]')
 
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE4S, '[/[a-z A-Z]+/]')
-df.add_system_transition(State.TURNTRADE5S, State.END, 'I guess thats a possibility. But I we wouldn’t know for sure since this is just our speculations haha.')
+df.add_system_transition(State.TURNTRADE5S, State.END, 'I guess thats a possibility. But we wouldn’t know for sure since this is just our speculations haha.')
 """
 we still need to work on errors and more macros, and idks
 """
