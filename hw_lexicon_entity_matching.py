@@ -309,8 +309,9 @@ class tradeNewsByTeam(Macro):
 
         if 'favUserTeam' in vars:
             trades = [x for x in trades if vars['favUserTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
+            print(trades)
             #vars['receivingTeam'] = 'favUserTeam'
-            if len(trades) == 0:
+            if trades == []:
                 trades = [x for x in trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
         else: 
             trades = [x for x in trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
