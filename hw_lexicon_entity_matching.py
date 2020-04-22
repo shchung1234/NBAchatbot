@@ -6,6 +6,15 @@ from sportsreference.nba.roster import Player
 import json
 import re
 from random import randrange
+import nltk
+import twython
+nltk.download('vader_lexicon')
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+
+
+
+
 
 # TODO: Update the State enum as needed
 class State(Enum):
@@ -83,7 +92,8 @@ class State(Enum):
     TURNPF3AU = auto()
     TURNPF3U = auto()
     TURNPF3U_ERR = auto()
-    TURNPF4S = auto()
+    TURNPF4S_OP_GOOD = auto()
+    TURNPF4S_OP_BAD = auto()
     TURNPF5S = auto()
     TURNPF5U = auto()
     TURNPF5AS = auto()
@@ -571,6 +581,23 @@ class teamPlayerCheck(Macro):
                 vars['sameTeam'] = "no"
         return
 
+class sentiAnalyser(Macro):
+    def run (self, ngrams, vars, args):
+        sid = SentimentIntensityAnalyzer()
+
+        text = vars["userOpinionGen"]
+
+        scores = sid.polarity_scores(text)
+
+        if vars["userOpinionGen"] != "negative" or vars["userOpinionGen"] != "positive" or vars["userOpinionGen"] != "neutral":
+            if scores['neg'] > scores['pos']:
+                vars["userOpinionGen"] = "negative"
+            elif scores['pos'] > scores['neg']:
+                vars["userOpinionGen"] = "positive"
+            else:
+                vars["userOpinionGen"] = "neutral"
+        return
+
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
 df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=knowledge, macros={'news': news(), 'newsPlayer': newsPlayer(), 'newsTeam': newsTeam(),
@@ -596,6 +623,11 @@ dont_know = '[{' \
 possible_results = '[{' \
                    'better,worse,obliterate,crush,destroy,change,effect,difference,improve,adjust,adapt,implications,good,bad,weird' \
                    '}]'
+
+favSysTeamGood = '{' \
+                 '[{good,great,well-balanced,well balanced,awesome,ridiculous,super,nice,outstanding} {shooting,defense,offense,team dynamic}]' \
+                 '}'
+
 end = '[{'\
       'end,stop,terminate,cease'\
       '}]'
@@ -641,11 +673,14 @@ df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Oh thats intere
 # PF2A-dont know goes straight to 5U
 df.add_system_transition(State.TURNPF2A_DK, State.TURNPF5U, r'[! "Oh, are you not sure? Personally, I think" $favSysTeam "will win because they have" $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 
-df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #pull any response here
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GOOD, '[$favSysTeamRationale={#ONT(favSysTeamGood)}]') #todo: CHANGE TO ACTUAL ONTOLOGY NAMEs
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD, '[$favSysTeamRationale={#ONT(favSysTeamBad)}]')
+df.add_user_transition(State.TURNPF4AU, State.TURNPF4S_OP_GEN, '$userOpinionGen=[/[a-zA-Z]*/] #NOT(#ONT(favSysTeamGood),#ONT(favSysTeamBad))')
 
 #this state throws an error because comparePlayers (or new Macro) needs to be able to work without having user input
-df.add_system_transition(State.TURNPF4S, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
-
+df.add_system_transition(State.TURNPF4S_OP_GOOD, State.TURNPF5U, r'[! "Yes! I full heartedly agree that" $favSysTeam "has a really solid" $favSysTeamRationale'
+                                                                 r' ". In addition, I also think that" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
+df.add_system_transition(State.TURNPF4S_OP_BAD, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I mean maybe youre right that" $favSysTeam "might not win because of their ]')
 df.set_error_successor(State.TURNPF3AU, State.TURNPF3AERR)
 df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 
@@ -655,15 +690,15 @@ df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale={#ONT(rationaletwo)}]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
 df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(topPlayers)}]')
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
-df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF2BU1, r'[! {hmm..., I dont know., What...} "Personally, I do not think that the" $favUserTeam "are that good. '
+df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF2BU1, r'[! {Hmm..., I dont know., What...} "Personally, I do not think that the" $favUserTeam "are that good. '
                                                                  r'Im curious why you think that though. Do you think there is a player that is" {integral,important} "to" $favUserTeam "?"]') #todo make sure this transition goes into the correct user transition
 
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
 df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Having good" $rationale "could be critical to win. Do you think there is a player that is integral to the " $favUserTeam "?"]')
-df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer={#ONT(playoffteams)}]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
-df.add_user_transition(State.TURNPF2BU1, State.TURNPF3ES, '[{#ONT(nonplayoffteams),#NER(person)} #NOT(#ONT(playoffteams))]')
-df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree) #NOT(#ONT(nonplayoffteams),#NER(person))]')
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer={#ONT(playoffteams),#ONT(nonplayoffteams)}]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF3ES, '[{#NER(person)} #NOT(#ONT(playoffteams),#ONT(nonplayoffteams))]')
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree) #NOT(#ONT(playoffteams),#ONT(nonplayoffteams),#NER(person))]')
 
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF2BDK, dont_know)
 df.add_system_transition(State.TURNPF2BDK, State.TURNPF5U, r'[! "Fair enough, there might actually be many good players on" $favSysTeam ". The best player on my playoff favorite is " $favSysPlayer ". What do you think of him?"]')
