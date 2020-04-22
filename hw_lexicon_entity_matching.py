@@ -559,13 +559,6 @@ class teamPlayerCheck(Macro):
         with open('teams.json') as f:
             data = json.load(f)
         new_dict = data['ontology']
-        #print(dict)
-        def get_key(val):
-            for key, value in new_dict.items():
-                if val == value:
-                    return key
-
-            return "key doesn't exist"
 
         vars['sameTeam'] = ""
 
