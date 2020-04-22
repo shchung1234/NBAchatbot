@@ -92,6 +92,10 @@ class State(Enum):
     TURNPF7S = auto()
     TURNPF7S1 = auto()
     TURNPF6S = auto()
+    TURNNOPF1S = auto()
+    TURNNOPF1U = auto()
+    TURNNOPF1ERR = auto()
+    TURNNOPF2S = auto()
     END = auto()
     EARLYEND = auto()
 
@@ -616,7 +620,7 @@ proceed = '[{'\
 df.add_system_transition(State.START, State.TURNPF1U, r'[! "Hi I am NBA chatbot. The NBA season has been" {shutdown,suspended,put on hold} "because of COVID-19. '
                                                       r' If we had playoffs" {based off the current standings,today,right now} ", which team do you think would win?"]')
 df.add_user_transition(State.TURNPF1U, State.TURNPF2AS, dont_know)
-df.add_user_transition(State.TURNPF1U, State.TURNPF2CS, '{#ONT(nonplayoffteams)}')
+df.add_user_transition(State.TURNPF1U, State.TURNPF2CS, '[$favUserTeam={#ONT(nonplayoffteams)}]')
 df.add_user_transition(State.TURNPF1U, State.TURNPF2BS, '[$favUserTeam={#ONT(playoffteams)}]')
 
 df.set_error_successor(State.TURNPF1U, State.TURNPF1ERR)
@@ -628,9 +632,16 @@ df.add_system_transition(State.TURNPF1ERR1S, State.TURNPF2AU, r'[! #botFavTeam {
                                                               r'"for you. I think that" $favSysTeam "can win the playoffs" {even with the unpredictability of the whole thing,if we were to play today,just based off current standings}'
                                                               r'". What do you think?"]')
 
-#idk scenario 
+#favUserTeam not in playoffs scenario
+df.add_system_transition(State.TURNPF2CS, State.TURNNOPF1U, r'[! #botFavTeam "Based off the standings I dont think that the " $favUserTeam " would be in the playoffs. Who is your favorite player on the " $favUserTeam "?"]')
+df.add_user_transition(State.TURNNOPF1U, State.TURNNOPF2S, '[{$favUserPlayer={#ONT(teams)}]') #todo double check that it does not catch on teams and apply the favUserPlayer is on favUserTeam macro
+df.add_user_transition(State.TURNNOPF1U, State.TURNPF5AS, dont_know) #todo double check the variables in TURNPF5AS and make sure they are all declared and no declaring macro needs to be called
+df.set_error_successor(State.TURNNOPF1U, State.TURNNOPF1ERR)
+df.add_system_transition(State.TURNNOPF1ERR, State.TURNPF5U, r'[! "My friend who is also a" $userFavTeam " fan has said that too. "#comparePlayers() "What do you think of" $favUserPlayer "?"]')
 
-df.add_system_transition(State.TURNPF2CS, State.TURNPF2AU, r'[! #botFavTeam "I dont think that team will be in the playoffs. But you know, I think that" $favSysTeam "can win. Do you agree?"]')
+df.add_system_transition(State.TURNNOPF2S, State.TURNPF5U, '[! #comparePlayers() "What do you think of " $favUserPlayer "?"]')
+
+#idk scenario
 df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam{Its okay to be unsure because predictability of playoffs is difficult without more data.,Its okay to be unsure.,'
                                                            r'Its definitely hard to tell right now.} "I think that" $favSysTeam "can win" {if we were to play today.,given the available data.} "Do you agree?"]')
 # 2AU takes agree, disagree, dont know, and error.
