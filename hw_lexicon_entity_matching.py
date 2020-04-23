@@ -634,12 +634,12 @@ df.add_system_transition(State.TURNPF1ERR1S, State.TURNPF2AU, r'[! #botFavTeam {
 
 #favUserTeam not in playoffs scenario
 df.add_system_transition(State.TURNPF2CS, State.TURNNOPF1U, r'[! #botFavTeam "Based off the standings I dont think that the " $favUserTeam " would be in the playoffs. Who is your favorite player on the " $favUserTeam "?"]')
-df.add_user_transition(State.TURNNOPF1U, State.TURNNOPF2S, '[{$favUserPlayer={#ONT(teams)}]') #todo double check that it does not catch on teams and apply the favUserPlayer is on favUserTeam macro
+df.add_user_transition(State.TURNNOPF1U, State.TURNNOPF2S, '[$favUserPlayer={#ONT(teams)}]') #todo double check that it does not catch on teams and apply the favUserPlayer is on favUserTeam macro
 df.add_user_transition(State.TURNNOPF1U, State.TURNPF5AS, dont_know) #todo double check the variables in TURNPF5AS and make sure they are all declared and no declaring macro needs to be called
 df.set_error_successor(State.TURNNOPF1U, State.TURNNOPF1ERR)
 df.add_system_transition(State.TURNNOPF1ERR, State.TURNPF5U, r'[! "My friend who is also a" $userFavTeam " fan has said that too. "#comparePlayers() "What do you think of" $favUserPlayer "?"]')
 
-df.add_system_transition(State.TURNNOPF2S, State.TURNPF5U, '[! #comparePlayers() "What do you think of " $favUserPlayer "?"]')
+df.add_system_transition(State.TURNNOPF2S, State.TURNPF5U, '[! #comparePlayers() "What do you think of " $favTeamPlayer "?"]')
 
 #idk scenario
 df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam{Its okay to be unsure because predictability of playoffs is difficult without more data.,Its okay to be unsure.,'
