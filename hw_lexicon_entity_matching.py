@@ -598,7 +598,7 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
 
 # natex expressions
 dont_know = '[{' \
-            'dont know,do not know,unsure,maybe,[not,{sure,certain}],hard to say,no idea,uncertain,i guess,[!no {opinion,opinions,idea,ideas,thought,thoughts,knowledge}],' \
+            'dont know,do not know,unsure,maybe, do not have, [not,{sure,certain}],hard to say,no idea,uncertain,i guess,[!no {opinion,opinions,idea,ideas,thought,thoughts,knowledge}],' \
             '[{dont,do not}, have, {one,opinion,opinions,idea,ideas,thought,thoughts,knowledge}],' \
             '[!{cant,cannot,dont} {think,remember,recall}]' \
             '}]'
@@ -698,7 +698,7 @@ df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #teamPlayerCheck 
 df.add_system_transition(State.TURNPF3CS, State.TURNPF5U, r'[! #teamPlayerCheck #GATE(sameTeam:no) "Huh, I dont think thats a player on the" $favUserTeam'
                                                           r'", but" #comparePlayers {[! ". What do you think?"],[! ". Whats your opinion?"]}]')
 # todo: revise this to also be able to catch "I guess i can agree with you" and similar phrasing
-df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[{#ONT(rationale),#ONT(agree)}]")
+df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[{#ONT(rationale),#ONT(agree)}]") #todo doesn't actually catch on rationale here
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S,  '[{why,what makes you {think,say,believe},whats {your,the} reason}]')
 
 
