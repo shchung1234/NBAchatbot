@@ -1929,27 +1929,70 @@
       "prime",
       "clutch",
       "assists",
-      "assist",
-      "free throw",
       "free throws",
       "passing",
-      "pass",
       "turnovers",
-      "turnover",
       "rebounds",
-      "rebound",
       "steals",
       "stealing",
-      "steal",
       "blocks",
-      "block",
       "blocking",
       "three",
       "fouls",
-      "foul",
-      "dribbling",
+      "dribbling"
+    ],
+    "rationaleVerb": [
+      "play",
+      "free throw",
+      "pass",
+      "shoot",
+      "steal",
+      "rebound",
+      "assist",
+      "block",
+      "foul"
       "dribbles",
       "dribble"
+    ],
+    "adjPositive": [
+      "good",
+      "great",
+      "well-balanced",
+      "well balanced",
+      "awesome",
+      "ridiculous",
+      "super",
+      "nice",
+      "outstanding",
+      "solid",
+      "crazy",
+      "strong",
+      "stable",
+      "healthy",
+      "quality",
+      "terrific",
+      "fantastic",
+      "top-notch",
+      "exceptional",
+      "wonderful",
+      "first-rate",
+      "superb",
+      "efficient",
+      "reliable"
+    ],
+    "advPositive": [
+      "well",
+      "amazingly",
+      "exceptionally"
+    ],
+    "adjNegative": [
+      "mediocre",
+      "bad",
+      "weak"
+    ],
+    "adjAmbiguous": [
+      "aggresive",
+      "aggro"
     ],
     "kawhi leonard": [
       "claw",
@@ -2200,6 +2243,7 @@
       "weird voice",
       "weird laughter",
       "too quiet"
+
     ]
   }
 }
