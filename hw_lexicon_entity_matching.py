@@ -92,8 +92,11 @@ class State(Enum):
     TURNPF3AU = auto()
     TURNPF3U = auto()
     TURNPF3U_ERR = auto()
-    TURNPF4S_OP_GOOD = auto()
-    TURNPF4S_OP_BAD = auto()
+    TURNPF4S_OP_GOOD1 = auto()
+    TURNPF4S_OP_GOOD2 = auto()
+    TURNPF4S_OP_BAD1 = auto()
+    TURNPF4S_OP_BAD2 = auto()
+    TURNPF4S_OP_GEN = auto()
     TURNPF5S = auto()
     TURNPF5U = auto()
     TURNPF5AS = auto()
@@ -581,22 +584,25 @@ class teamPlayerCheck(Macro):
                 vars['sameTeam'] = "no"
         return
 
-class sentiAnalyser(Macro):
+class sentiAnalyserFavSysTeam(Macro):
     def run (self, ngrams, vars, args):
         sid = SentimentIntensityAnalyzer()
 
-        text = vars["userOpinionGen"]
+        text = vars["userOpinionSysTeamGen"]
 
         scores = sid.polarity_scores(text)
 
-        if vars["userOpinionGen"] != "negative" or vars["userOpinionGen"] != "positive" or vars["userOpinionGen"] != "neutral":
-            if scores['neg'] > scores['pos']:
-                vars["userOpinionGen"] = "negative"
-            elif scores['pos'] > scores['neg']:
-                vars["userOpinionGen"] = "positive"
-            else:
-                vars["userOpinionGen"] = "neutral"
-        return
+
+        if scores['neg'] < scores['pos']:
+            print(scores)
+            return "Thats a positive opinion"
+        elif scores['pos'] < scores['neg']:
+            print(scores)
+            return "Thats a negative opinion"
+        else:
+            print(scores)
+            return "Thats a neutral opinion"
+
 
 knowledge = KnowledgeBase()
 knowledge.load_json_file("teams.json")
@@ -606,7 +612,7 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
                                                                                                   'botFavTeam': botFavTeam(), 'tradeNewsByTeam' : tradeNewsByTeam(),
                                                                                                   'comparePlayers' : comparePlayers(), 'positiveSeedingImpact' : positiveSeedingImpact(),
                                                                                                   'negativeSeedingImpact' : negativeSeedingImpact(),
-                                                                                                  'teamPlayerCheck': teamPlayerCheck()})
+                                                                                                  'teamPlayerCheck': teamPlayerCheck(), 'sentiAnalyserFavSysTeam': sentiAnalyserFavSysTeam()})
 
 #########################
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
@@ -623,10 +629,6 @@ dont_know = '[{' \
 possible_results = '[{' \
                    'better,worse,obliterate,crush,destroy,change,effect,difference,improve,adjust,adapt,implications,good,bad,weird' \
                    '}]'
-
-favSysTeamGood = '{' \
-                 '[{good,great,well-balanced,well balanced,awesome,ridiculous,super,nice,outstanding} {shooting,defense,offense,team dynamic}]' \
-                 '}'
 
 end = '[{'\
       'end,stop,terminate,cease'\
@@ -673,14 +675,22 @@ df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Oh thats intere
 # PF2A-dont know goes straight to 5U
 df.add_system_transition(State.TURNPF2A_DK, State.TURNPF5U, r'[! "Oh, are you not sure? Personally, I think" $favSysTeam "will win because they have" $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 
-df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GOOD, '[$favSysTeamRationale={#ONT(favSysTeamGood)}]') #todo: CHANGE TO ACTUAL ONTOLOGY NAMEs
-df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD, '[$favSysTeamRationale={#ONT(favSysTeamBad)}]')
-df.add_user_transition(State.TURNPF4AU, State.TURNPF4S_OP_GEN, '$userOpinionGen=[/[a-zA-Z]*/] #NOT(#ONT(favSysTeamGood),#ONT(favSysTeamBad))')
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GOOD1, '[$favSysTeamAdj={#ONT(adjPositive)}, $favSysTeamRationale={#ONT(rationale)}]') #todo: CHANGE TO ACTUAL ONTOLOGY NAMEs
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GOOD2, '[$favSysTeamRationale={#ONT(rationale)}, $favSysTeamAdj={#ONT(adjPositive)}]')
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD1, '[$favSysTeamAdj={#ONT(adjNegative)}, $favSysTeamRationale={#ONT(rationale)}]')
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD2, '[$favSysTeamRationale={#ONT(rationale)}, $favSysTeamAdj={#ONT(adjPositive)}]')
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GEN, '[$userOpinionSysTeamGen=[/.*/] #NOT(#ONT(rationale))]')
 
 #this state throws an error because comparePlayers (or new Macro) needs to be able to work without having user input
-df.add_system_transition(State.TURNPF4S_OP_GOOD, State.TURNPF5U, r'[! "Yes! I full heartedly agree that" $favSysTeam "has a really solid" $favSysTeamRationale'
+df.add_system_transition(State.TURNPF4S_OP_GOOD1, State.TURNPF5U, r'[! "Yes! I whole heartedly agree that" $favSysTeam "has a really solid" $favSysTeamRationale'
                                                                  r' ". In addition, I also think that" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
-df.add_system_transition(State.TURNPF4S_OP_BAD, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I mean maybe youre right that" $favSysTeam "might not win because of their ]')
+df.add_system_transition(State.TURNPF4S_OP_GOOD2, State.TURNPF5U, r'[! "Yes! I whole heartedly agree that" $favSysTeam "has a really solid" $favSysTeamRationale'
+                                                                 r' ". In addition, I also think that" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
+df.add_system_transition(State.TURNPF4S_OP_BAD1, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I mean maybe youre right that" $favSysTeam "might not win because of their mediocre" '
+                                                                r'$favSysTeamRationale ". I still think that" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
+df.add_system_transition(State.TURNPF4S_OP_BAD2, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I mean maybe youre right that" $favSysTeam "might not win because of their mediocre" '
+                                                                r'$favSysTeamRationale ". I still think that" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
+df.add_system_transition(State.TURNPF4S_OP_GEN, State.TURNPF5U, r'[! #sentiAnalyserFavSysTeam()]')
 df.set_error_successor(State.TURNPF3AU, State.TURNPF3AERR)
 df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 

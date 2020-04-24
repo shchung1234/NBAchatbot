@@ -1923,9 +1923,46 @@
       "rebounds",
       "rebound",
       "steals",
+      "stealing",
+      "steal",
       "blocks",
       "three",
       "fouls"
+    ],
+    "adjPositive": [
+      "good",
+      "great",
+      "well-balanced",
+      "well balanced",
+      "awesome",
+      "ridiculous",
+      "super",
+      "nice",
+      "outstanding",
+      "solid",
+      "crazy",
+      "strong",
+      "stable",
+      "healthy",
+      "quality",
+      "terrific",
+      "fantastic",
+      "top-notch",
+      "exceptional",
+      "wonderful",
+      "first-rate",
+      "superb",
+      "efficient",
+      "reliable"
+    ],
+    "adjNegative": [
+      "mediocre",
+      "bad",
+      "weak"
+    ],
+    "adjAmbiguous": [
+      "aggresive",
+      "aggro"
     ]
   }
 }
