@@ -1914,20 +1914,25 @@
       "points",
       "shooting",
       "assists",
-      "assist",
       "free throws",
       "passing",
-      "pass",
       "turnovers",
-      "turnover",
       "rebounds",
-      "rebound",
       "steals",
       "stealing",
-      "steal",
       "blocks",
       "three",
       "fouls"
+    ],
+    "rationaleVerb": [
+      "play",
+      "pass",
+      "shoot",
+      "steal",
+      "rebound",
+      "assist",
+      "block",
+      "foul"
     ],
     "adjPositive": [
       "good",
@@ -1954,6 +1959,11 @@
       "superb",
       "efficient",
       "reliable"
+    ],
+    "advPositive": [
+      "well",
+      "amazingly",
+      "exceptionally"
     ],
     "adjNegative": [
       "mediocre",
