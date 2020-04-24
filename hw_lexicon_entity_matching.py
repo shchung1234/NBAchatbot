@@ -759,6 +759,7 @@ df.add_user_transition(State.TURNPF3U, State.TURNTRADE0BS, "{#ONT(agree)}")
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S, '[{why,[what makes you {think,say,believe}],[whats {your,the} reason}]]') #todo *** there is a bug here ***
 
 
+
 df.add_system_transition(State.TURNPF5AS, State.TURNPF5U, r'[! "It sounds like you do not think there is a star player on the" $favUserTeam ". I think that the" $favSysTeam "will win because of their star player," $favSysPlayer ". What do you think of him?"]')
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S, '[{why,[what makes you {think,say,believe}],[whats {your,the} reason}]]')
 
