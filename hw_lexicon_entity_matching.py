@@ -7,7 +7,6 @@ import json
 import re
 from random import randrange
 import nltk
-import twython
 nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
@@ -734,7 +733,7 @@ df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF2BU1, r'[! {Hmm..., I
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
 
-df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Having good" $rationale "could be critical to win. Do you think there is a player that is integral to the " $favUserTeam "?"]')
+df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Having good" $teamRationale "could be critical to win. Do you think there is a player that is integral to the " $favUserTeam "?"]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer={#ONT(playoffteams),#ONT(nonplayoffteams)}]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3ES, '[{#NER(person)} #NOT(#ONT(playoffteams),#ONT(nonplayoffteams))]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree) #NOT(#ONT(playoffteams),#ONT(nonplayoffteams),#NER(person))]')
