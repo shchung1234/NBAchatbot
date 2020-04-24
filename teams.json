@@ -1913,6 +1913,8 @@
       "underperforming",
       "underperforms",
       "stamina",
+      "teamplayer",
+      "team player",
       "resillient",
       "ballhog",
       "ball hog",
@@ -1928,6 +1930,7 @@
       "clutch",
       "assists",
       "assist",
+      "free throw",
       "free throws",
       "passing",
       "pass",
@@ -1936,9 +1939,14 @@
       "rebounds",
       "rebound",
       "steals",
+      "stealing",
+      "steal",
       "blocks",
+      "block",
+      "blocking",
       "three",
-      "fouls"
+      "fouls",
+      "foul"
     ],
     "kawhi leonard": [
       "claw",
