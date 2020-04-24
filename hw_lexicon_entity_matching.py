@@ -14,6 +14,7 @@ class State(Enum):
     TURN0 = auto()
     TURNTRADE0S = auto()
     TURNTRADE0AS = auto()
+    TURNTRADE0BS = auto()
     TURNTRADE0U = auto()
     TURN0DK1S = auto()
     TURN0DK1U = auto()
@@ -304,6 +305,7 @@ class tradeNews(Macro):
         vars['receivingTeam'] = receivingTeam
         vars['givingTeam'] = givingTeam
         vars['player'] = player
+        vars['tradeTeamInPlayoffs'] = receivingTeam
         
         #print(trade)
         #print('recieving team', receivingTeam)
@@ -311,7 +313,7 @@ class tradeNews(Macro):
         #print(player)
         #print(role)
 
-        return "I found this most recent trade news that {} from {} is going to {}".format(player, givingTeam, receivingTeam)
+        return "{} from {} is going to {}".format(player, givingTeam, receivingTeam)
 
 class tradeNewsByTeam(Macro):
     def run (self, ngrams, vars, args):
@@ -464,7 +466,7 @@ class playerRating(Macro):
         else:
             vars['goodBadPlayer'] = 'bad'
             if (PTS <= 12):
-                str += "I don't see much contribution he is making to the team especially with scoring. "
+                str += "He's not contributing enough to the team especially with scoring. "
             elif (position == "C" or position == "PF" and REB <= 4):
                 str += "He's not a good rebounder for his position. "
             elif (position == "PG" and AST <= 3):
@@ -505,22 +507,22 @@ class comparePlayers(Macro):
 
 class playerRationale(Macro):
     def run (self, ngrams, vars, args):
-        if vars['rationale'] == 'efficient' or vars['rationale'] == 'efficiency':
+        if vars['playerRationale'] == 'efficient' or vars['playerRationale'] == 'efficiency':
             if vars['favSysPlayerPER'] > vars['favUserPlayerPER']:
                 return "Did you know that {} is actually more efficient than {}?".format(vars['favSysPlayer'], vars['favUserPlayer'])
             else:
                 return "Yeah, you are right {} is more efficient than my favorite player, {}".format(vars['favUserPlayer'], vars['favSysPlayer'])
-        if vars['rationale'] == 'points':
+        if vars['playerRationale'] == 'points':
             if vars['favSysPlayerPTS'] > vars['favUserPlayerPTS']:
                 return "Did you know that {} actually scores more points per game than {}?".format(vars['favSysPlayer'], vars['favUserPlayer'])
             else:
                 return "Yeah, you are right {} scores more points per game than my favorite player, {}".format(vars['favUserPlayer'], vars['favSysPlayer'])
-        if vars['rationale'] == 'rebounds' or vars['rationale'] == 'rebound':
+        if vars['playerRationale'] == 'rebounds' or vars['playerRationale'] == 'rebound':
             if vars['favSysPlayerREB'] > vars['favUserPlayerREB']:
                 return "Did you know that {} actually has more rebounds per game than {}?".format(vars['favSysPlayer'], vars['favUserPlayer'])
             else:
                 return "Yeah, you are right {} has more rebounds per game than my favorite player, {}".format(vars['favUserPlayer'], vars['favSysPlayer'])
-        if vars['rationale'] == 'assists' or vars['rationale'] == 'assist':
+        if vars['playerRationale'] == 'assists' or vars['playerRationale'] == 'assist':
             if vars['favSysPlayerAST'] > vars['favUserPlayerAST']:
                 return "Did you know that {} actually has more assists per game than {}?".format(vars['favSysPlayer'], vars['favUserPlayer'])
             else:
@@ -536,7 +538,7 @@ class negativeSeedingImpact(Macro):
         #trade = trades[n]['TRANSACTION_DESCRIPTION']
         vars['date'] = trades[n]["TRANSACTION_DATE"].split('-')[1]
         if int(vars['date']) >=2 and int(vars['date']) < 9:
-            return "actually though, i do not think he had enough time to impact because he was traded very recently before covid shutdown."
+            return "actually though, i do not think he had enough time to impact the team because he was traded close to the covid shutdown"
         else:
             return "I agree, the trade was early in the season and he has not shown he was worth it"
 
@@ -656,7 +658,7 @@ df.add_system_transition(State.TURNPF3BS, State.TURNPF3AU, r'[! "Oh thats intere
 # PF2A-dont know goes straight to 5U
 df.add_system_transition(State.TURNPF2A_DK, State.TURNPF5U, r'[! "Oh, are you not sure? Personally, I think" $favSysTeam "will win because they have" $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 
-df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #pull any response here
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S, '[/[a-z A-Z]+/]') #todo need to change this
 
 #this state throws an error because comparePlayers (or new Macro) needs to be able to work without having user input
 df.add_system_transition(State.TURNPF4S, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
@@ -667,15 +669,15 @@ df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good
 
 # Playoff Turn 2 (not idk scenario)
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think the" $favUserTeam "will win?"]')
-df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$rationale={#ONT(rationaletwo)}]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
-df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(topPlayers)}]')
+df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$teamRationale={#ONT(rationaletwo)}]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
+df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(topPlayers)}]') #todo change this to check if player is on the team
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
 df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF2BU1, r'[! {hmm..., I dont know., What...} "Personally, I do not think that the" $favUserTeam "are that good. '
                                                                  r'Im curious why you think that though. Do you think there is a player that is" {integral,important} "to" $favUserTeam "?"]') #todo make sure this transition goes into the correct user transition
 
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
-df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Having good" $rationale "could be critical to win. Do you think there is a player that is integral to the " $favUserTeam "?"]')
+df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Having good" $teamRationale "could be critical to win. Do you think there is a player that is integral to the " $favUserTeam "?"]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer={#ONT(playoffteams)}]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3ES, '[{#ONT(nonplayoffteams),#NER(person)} #NOT(#ONT(playoffteams))]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree) #NOT(#ONT(nonplayoffteams),#NER(person))]')
@@ -695,8 +697,9 @@ df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #teamPlayerCheck 
 df.add_system_transition(State.TURNPF3CS, State.TURNPF5U, r'[! #teamPlayerCheck #GATE(sameTeam:no) "Huh, I dont think thats a player on the" $favUserTeam'
                                                           r'", but" #comparePlayers {[! ". What do you think?"],[! ". Whats your opinion?"]}]')
 # todo: revise this to also be able to catch "I guess i can agree with you" and similar phrasing
-df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[{#ONT(rationale),#ONT(agree)}]") #todo doesn't actually catch on rationale here
-df.add_user_transition(State.TURNPF3U, State.TURNPF6S,  '[{why,what makes you {think,say,believe},whats {your,the} reason}]')
+df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[$playerRationale = {#ONT(rationale)}]")
+df.add_user_transition(State.TURNPF3U, State.TURNTRADE0BS, "{#ONT(agree)}")
+df.add_user_transition(State.TURNPF3U, State.TURNPF6S, '[{why,what makes you {think,say,believe},whats {your,the} reason}]') #todo *** there is a bug here ***
 
 
 df.add_system_transition(State.TURNPF5AS, State.TURNPF5U, r'[! "It sounds like you do not think there is a star player on the" $favUserTeam ". I think that the" $favSysTeam "will win because of their star player," $favSysPlayer ". What do you think of him?"]')
@@ -728,9 +731,10 @@ df.add_system_transition(State.TURNPF7S1, State.TURNTRADE0U, r'[! "Hmm okay, let
 #turn 0
 #TURNPF5S comes from the idk scenario. will probably need to add in some things to engage more with user response, this is generic catcher
 df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "I see. Speaking about the teams, earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
-df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "I see. Speaking about the teams, earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about "$player "?"]')
-df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S, "[$userTradePlayerOpinion=#ONT(goodplayer)]")
-df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S1, "[$userTradePlayerOpinion=#ONT(badplayer)]")
+df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "I have also heard my robot uncle say that about his " $playerRationale ". Speaking about the teams, earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about "$player "?"]')
+df.add_system_transition(State.TURNTRADE0BS, State.TURNTRADE0U, r'[! "Great minds think alike!. Speaking about the teams, earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
+df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S, "[$userTradePlayerOpinion=#ONT(goodplayer)]") #todo insert rationale here
+df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S1, "[$userTradePlayerOpinion=#ONT(badplayer)]") #todo insert rationale here
 df.add_user_transition(State.TURNTRADE0U, State.TURN0DK1S, dont_know)
 
 # Error succ for 0U
@@ -752,9 +756,9 @@ df.add_system_transition(State.TURNTRADE2ERR, State.TURNTRADE3U, r'[! "That is t
 #WHAT IF FAVUSERTEAM DOESN'T EXIST!?›
 #todo we already know they're the team we think the user would win so it is nonsensical to ask them again
 #can't say i agree/disagree in a turn if the macro that is being called is also forming an opinion because they might contradict
-df.add_system_transition(State.TURNTRADE3AS, State.TURNTRADE3U, r'[! #positiveSeedingImpact() ". Do you think " $tradeTeamInPlayoffs "could win the playoffs?"]')
-df.add_system_transition(State.TURNTRADE3BS, State.TURNTRADE3U, r'[! #negativeSeedingImpact() ". Do you think " $tradeTeamInPlayoffs "could win the playoffs?"]')
-df.add_system_transition(State.TURNTRADE3CS, State.TURNTRADE3U, r'[! Yeah I am a little uncertain myself too because I feel like player personality plays a big role in how they influence a team. How do you think the rest of the playoffs will go though?"]')
+df.add_system_transition(State.TURNTRADE3AS, State.TURNTRADE3U, r'[! #positiveSeedingImpact() ". Do you think he will play a big role in getting the " $tradeTeamInPlayoffs "to playoffs next year?"]')
+df.add_system_transition(State.TURNTRADE3BS, State.TURNTRADE3U, r'[! #negativeSeedingImpact() ". Do you think he will play a big role in getting the " $tradeTeamInPlayoffs "to playoffs next year?"]')
+df.add_system_transition(State.TURNTRADE3CS, State.TURNTRADE3U, r'[! Yeah I am a little uncertain myself too because I feel like player personality plays a big role in how they influence a team. Do you think he will have a big role on the team next year?"]')
 
 df.add_user_transition(State.TURNTRADE3U, State.TURNTRADE5S, '[/[a-z A-Z]+/]')
 df.add_system_transition(State.TURNTRADE5S, State.TURNTRADE5U, r'[! "I guess thats a possibility. But we wouldn’t know for sure since this is just our speculations haha.'
