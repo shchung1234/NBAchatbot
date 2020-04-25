@@ -426,7 +426,7 @@ class botFavTeam(Macro):
         return
 
 class nextYearPlayoffImpact(Macro):
-    def run(selfself, ngrams, vars, args):
+    def run(self, ngrams, vars, args):
         n = vars['player'].lower().split()
         playerid = ""
         if (len(n[1]) >= 5):  # edge case for names with shorter than 5 characters/jr. resolved
