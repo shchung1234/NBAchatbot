@@ -575,6 +575,28 @@ class positiveSeedingImpact(Macro):
         else:
             return "It certainly seems like he meshes well with the team"
 
+class nicknameToPlayer(Macro):
+    def run (self, ngrams, vars, args):
+        with open('original_names.json') as f:
+            data = json.load(f)
+        new_dict= data['ontology']
+
+        with open('teams.json') as g:
+            data1 = json.load(g)
+        onto_dict = data1['ontology']
+
+        player_name_list = list(new_dict.values())
+
+        if 'favUserPlayer' in vars:
+            if vars['favUserPlayer'] not in player_name_list:
+                for key,value in onto_dict.items():
+                    if vars['favUserPlayer'] in value:
+                        vars['favUserPlayer'] = key
+
+        return
+
+
+
 class teamPlayerCheck(Macro):
     def run (self, ngrams, vars, args):
         with open('teams.json') as f:
@@ -620,7 +642,8 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
                                                                                                   'botFavTeam': botFavTeam(), 'tradeNewsByTeam' : tradeNewsByTeam(),
                                                                                                   'comparePlayers' : comparePlayers(), 'positiveSeedingImpact' : positiveSeedingImpact(),
                                                                                                   'negativeSeedingImpact' : negativeSeedingImpact(),
-                                                                                                  'teamPlayerCheck': teamPlayerCheck(), 'sentiAnalyserFavSysTeam': sentiAnalyserFavSysTeam()})
+                                                                                                  'teamPlayerCheck': teamPlayerCheck(), 'sentiAnalyserFavSysTeam': sentiAnalyserFavSysTeam(),
+                                                                                                  'nicknameToPlayer': nicknameToPlayer()})
 
 #########################
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
@@ -668,9 +691,9 @@ df.add_system_transition(State.TURNPF2CS, State.TURNNOPF1U, r'[! #botFavTeam "Ba
 df.add_user_transition(State.TURNNOPF1U, State.TURNNOPF2S, '[$favUserPlayer={#ONT(teams)}]') #todo double check that it does not catch on teams and apply the favUserPlayer is on favUserTeam macro
 df.add_user_transition(State.TURNNOPF1U, State.TURNPF5AS, dont_know) #todo double check the variables in TURNPF5AS and make sure they are all declared and no declaring macro needs to be called
 df.set_error_successor(State.TURNNOPF1U, State.TURNNOPF1ERR)
-df.add_system_transition(State.TURNNOPF1ERR, State.TURNPF5U, r'[! "My friend who is also a" $userFavTeam " fan has said that too. "#comparePlayers() "What do you think of" $favUserPlayer "?"]')
+df.add_system_transition(State.TURNNOPF1ERR, State.TURNPF5U, r'[! #nicknameToPlayer "My friend who is also a" $userFavTeam " fan has said that too. "#comparePlayers() "What do you think of" $favUserPlayer "?"]')
 
-df.add_system_transition(State.TURNNOPF2S, State.TURNPF5U, '[! #comparePlayers() "What do you think of " $favTeamPlayer "?"]')
+df.add_system_transition(State.TURNNOPF2S, State.TURNPF5U, '[! #nicknameToPlayer #comparePlayers() "What do you think of " $favTeamPlayer "?"]')
 
 #idk scenario
 df.add_system_transition(State.TURNPF2AS, State.TURNPF2AU, r'[! #botFavTeam{Its okay to be unsure because predictability of playoffs is difficult without more data.,Its okay to be unsure.,'
@@ -750,8 +773,8 @@ df.add_system_transition(State.TURNPF2BU_ERR3, State.TURNPF5U, r'[! "Thats a fai
 
 # Playoff Turn 3
 
-df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #teamPlayerCheck #GATE(sameTeam:yes) #comparePlayers {[! "What do you think?"],[! "Whats your opinion?"]}]')
-df.add_system_transition(State.TURNPF3CS, State.TURNPF5U, r'[! #teamPlayerCheck #GATE(sameTeam:no) "Huh, I dont think thats a player on the" $favUserTeam'
+df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #nicknameToPlayer #teamPlayerCheck #GATE(sameTeam:yes) #comparePlayers {[! "What do you think?"],[! "Whats your opinion?"]}]')
+df.add_system_transition(State.TURNPF3CS, State.TURNPF5U, r'[! #nicknameToPlayer #teamPlayerCheck #GATE(sameTeam:no) "Huh, I dont think thats a player on the" $favUserTeam'
                                                           r'", but" #comparePlayers {[! ". What do you think?"],[! ". Whats your opinion?"]}]')
 # todo: revise this to also be able to catch "I guess i can agree with you" and similar phrasing
 df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[$playerRationale = {#ONT(rationale)}]")
