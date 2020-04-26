@@ -483,14 +483,14 @@ class playerRating(Macro):
         C_AST = player.assists / player.games_played
         # current year stats: average points/rebounds/blocks/etc per game
         player = player('2019-20')
-        REB = player.total_rebounds / player.games_played
+        REB = player('2019-20').total_rebounds / player('2019-20').games_played
         # BLK = player.shots_blocked / player.minutes_played * 40
-        PTS = player.points / player.games_played
+        PTS = player('2019-20').points / player('2019-20').games_played
         # FLD_GOAL = player.field_goal_percentage
         # THR_PT = player.three_point_percentage
         # TW_PT = player.two_point_percentage
-        AST = player.assists / player.games_played
-        PER = player.player_efficiency_rating
+        AST = player('2019-20').assists / player('2019-20').games_played
+        PER = player('2019-20').player_efficiency_rating
         str = ''
         if (PER > 17):
             vars['goodBadPlayer'] = 'good'
@@ -522,17 +522,25 @@ class playerRating(Macro):
             return str
         else:
             vars['goodBadPlayer'] = 'bad'
-            if (PTS <= 12): #it prints this part all the time
-                str += "He's not contributing enough to the team especially with scoring. "
-            elif (position == "C" or position == "PF" and REB <= 4):
-                str += "He's not a good rebounder for his position. "
-            elif (position == "PG" and AST <= 3):
-                str += "He is not that great with his assists to make a contribution to the team. "
+            if (PTS <= 5): #it prints this part all the time
+                str += "for this season, he's not contributing enough to the team especially with scoring "
+            if (position == "C" or position == "PF" and REB <= 4):
+                if (PTS <= 5):
+                    str += "and rebounds"
+                else:
+                    str += "in the current season, He's not a good rebounder for his position. "
+            if (position == "PG" and AST <= 3):
+                if(PTS <= 5):
+                    str += "and assists even though he is a point guard."
+                else:
+                    str += "He is not that great with his assists even though he is a point guard. "
             else:
-                str += "He doesn't have any specialty in points, rebounds, nor assists."
-            str += "I just don't see how he would suddenly get better."
+                str += "I dont think he is too terrible but he is not a huge impact to the game."
             if (player('2019-20').minutes_played / player('2019-20').games_played < 12 or player('2019-20').minutes_played == None):
-                str += "Besides, who is this player anyways because I've never heard of him."
+                str += "Besides, who is this player anyways?"
+            else:
+                if (C_PTS >= 15):
+                    str + "He had a decent career though."
             return str
 
 class comparePlayers(Macro):

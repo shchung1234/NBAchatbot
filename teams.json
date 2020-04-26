@@ -2193,22 +2193,28 @@
       "zanos",
       "zion"
     ],
-    "butler pos": [
+    "butlerIsPos": [
       "defensive",
-      "hustles",
       "ace stopper",
-      "work ethics",
-      "butler is clutch",
-      "he is clutch",
+      "hustler",
+      "good mentor",
+      "good leader"
+    ],
+    "butlerPos": [
+      "has good work ethics",
+      "is clutch",
       "works hard",
-      "leadership",
+      "has good leadership",
       "leads teammates",
       "hates to lose"
     ],
-    "butler neg": [
+    "butlerIsNeg": [
       "too strict",
-      "bad chemistry",
       "bad teammate",
+      "not unique"
+    ],
+    "butlerHasNeg": [
+      "bad chemistry",
       "hates timberwolves",
       "hates old teammate",
       "old teammate hated him",
