@@ -828,9 +828,9 @@ df.add_system_transition(State.TURNPF2BU_ERR3, State.TURNPF5U, r'[! "Thats a fai
 
 # Playoff Turn 3
 
-df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #nicknameToPlayer #teamPlayerCheck #GATE(sameTeam:yes) #comparePlayers {[! "What do you think"],[! "Whats your opinion"]} {of him, $favSysPlayer}"?"]')
-df.add_system_transition(State.TURNPF3CS, State.TURNPF5U, r'[! #nicknameToPlayer #teamPlayerCheck #GATE(sameTeam:no) "Huh, I dont think thats a player on the" $favUserTeam'
-                                                          r'", but" #comparePlayers {[! ". What do you think?"],[! ". Whats your opinion?"]}]')
+df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #nicknameToPlayer() #teamPlayerCheck() #GATE(sameTeam:yes) #comparePlayers {[! "What do you think"],[! "Whats your opinion"]} {of him, $favSysPlayer}"?"]')
+df.add_system_transition(State.TURNPF3CS, State.TURNPF5U, r'[! #nicknameToPlayer() #teamPlayerCheck() #GATE(sameTeam:no) "Huh, I dont think thats a player on the" $favUserTeam'
+                                                          r'", but" #comparePlayers() {[! ". What do you think?"],[! ". Whats your opinion?"]}]')
 # todo: revise this to also be able to catch "I guess i can agree with you" and similar phrasing
 df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[$playerRationale = {#ONT(rationale)}]")
 df.add_user_transition(State.TURNPF3U, State.TURNTRADE0BS, "{#ONT(agree)}")
