@@ -866,8 +866,8 @@ df.set_error_successor(State.TURNPF6U, State.TURNTRADE0AS)
 
 # Error succ for PF6U
 # PF7S transitions into trade turns
-df.add_system_transition(State.TURNPF7AS, State.TURNTRADE0U, r'[! #teamPlayerCheck #GATE(sameTeam:yes) "Oh, he is pretty good too. Hopefully he and " $favSysPlayer " will lead the "$favSysTeam " to a victory. earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
-df.add_system_transition(State.TURNPF7AS, State.TURNTRADE0AU, r'[! #teamPlayerCheck #GATE(sameTeam:no) "Huh, I dont think thats a player on the" $favSysTeam'
+df.add_system_transition(State.TURNPF7AS, State.TURNTRADE0U, r'[! #nicknameToPlayer #teamPlayerCheck #GATE(sameTeam:yes) "Oh, he is pretty good too. Hopefully he and " $favSysPlayer " will lead the "$favSysTeam " to a victory. earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
+df.add_system_transition(State.TURNPF7AS, State.TURNTRADE0AU, r'[! #nicknameToPlayer #teamPlayerCheck #GATE(sameTeam:no) "Huh, I dont think thats a player on the" $favSysTeam'
                                                           r'". Going back to the teams, earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
 df.add_system_transition(State.TURNPF7S, State.TURNTRADE0U, r'[! "Glad to see you agree with me. Going back to the teams, earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
 df.add_system_transition(State.TURNPF7S1, State.TURNTRADE0U, r'[! "Hmm okay, lets agree to disagree for now and wait until the playoffs actually start! '
