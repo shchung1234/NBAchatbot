@@ -916,7 +916,7 @@ df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #nicknameToPlayer
 df.add_system_transition(State.TURNPF3CS, State.TURNPF5U, r'[! #nicknameToPlayer #teamPlayerCheck #GATE(sameTeam:no) "Huh, I dont think thats a player on the" $favUserTeam'
                                                           r'", but" #comparePlayers {[! ". What do you think"],[! ". Whats your opinion"]} {of him, $favSysPlayer}"?"]')
 # todo: revise this to also be able to catch "I guess i can agree with you" and similar phrasing
-<<<<<<< HEAD
+
 df.add_user_transition(State.TURNPF3U, State.TURNPF8AS, "$butlerOpinion = {#ONT(butlerNeg)}") #handles situation with butlerNeg verb
 df.add_user_transition(State.TURNPF3U, State.TURNPF8BS, "$butlerOpinion = {#ONT(butlerIsNeg)}") #handles butlerNeg adj
 df.add_user_transition(State.TURNPF3U, State.TURNPF8CS, "$butlerOpinion = {#ONT(butlerIsPos)}") #handles butlerPos adj
@@ -939,7 +939,6 @@ df.add_system_transition(State.TURNPF8FS, State.TURNTRADE0U, r'[! "Yeah, " [{he,
 df.add_system_transition(State.TURNPF8GS, State.TURNTRADE0U, r'[! "Even though " [{he, Kawhi}] " is "  $kawhiOpinion " he always " [{shows up, overperforms}] " In playoffs. Anyways, I saw that" {#tradeNewsByTeam()} ". What are your thoughts about " $player "?"]') #handles situation with Kawhi neg adj
 df.add_system_transition(State.TURNPF8HS, State.TURNTRADE0U, r'[! "I actually agree with you that " [{he, Kawhi}]  $kawhiOpinion " but he always " [{shows up, overperforms}] " In playoffs. Anyways, I saw that" {#tradeNewsByTeam()} ". What are your thoughts about " $player "?"]') #handles situation with Kawhi neg verb
 
-=======
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S, '[{why,[what makes you {think,say,believe}],[whats {your,the} reason]}]') #todo *** there is a bug here ***
 
 # good opinions
@@ -964,7 +963,6 @@ df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_GEN, '[$userOpinionSysP
 # Error succ for PF3U
 df.set_error_successor(State.TURNPF3U, State.TURNPF3U_ERR)
 df.add_system_transition(State.TURNPF3U_ERR, State.TURNTRADE0U, r'[! "Huh, I never thought about it that way. Speaking about the teams, earlier in the season" #tradeNewsByTeam() " What do you think about" $player "?"]')
->>>>>>> 2565d4bfb1a0e8250ff28f5f68856941c2d7745b
 
 
 df.add_system_transition(State.TURNPF5AS, State.TURNPF5U, r'[! "It sounds like you do not think there is a star player on the" $favUserTeam ". I think that the" $favSysTeam "will win because of their star player," $favSysPlayer ". What do you think of him?"]')
