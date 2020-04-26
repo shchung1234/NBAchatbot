@@ -787,7 +787,7 @@ df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good
 # Playoff Turn 2 (not idk scenario)
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think the" $favUserTeam "will win?"]')
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$teamRationale={#ONT(rationaletwo)}]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
-df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(topPlayers)}]') #todo change this to check if player is on the team
+df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(playoffteams)}]') #todo change this to check if player is on the team
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
 df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF2BU1, r'[! {Hmm..., I dont know., What...} "Personally, I do not think that the" $favUserTeam "are that good. '
                                                                  r'Im curious why you think that though. Do you think there is a player that is" {integral,important} "to" $favUserTeam "?"]') #todo make sure this transition goes into the correct user transition
