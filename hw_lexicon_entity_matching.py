@@ -712,7 +712,7 @@ class sentiAnalyserFavSysPlayer(Macro):
 
 
         if scores['neg'] < scores['pos']:
-            return "Right! I can tell that you really like {}, just like me!".format(vars['favSysPlayer'])
+            return "Right! I can tell that you like {}, just like me!".format(vars['favSysPlayer'])
         elif scores['pos'] < scores['neg']:
             print(scores)
             return "Hmmm... okay I see you dont really like {}".format(vars['favSysPlayer'])
@@ -816,7 +816,7 @@ df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD4, '[$favSysTeamRat
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD5, '[$not={#ONT(not)}, $favSysTeamAdj={#ONT(adjPositive)}]') # they arent good
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD6, '[$favSysTeamRationale={#ONT(rationaleVerbNegative)}]') # they choke/underperform
 # generic error catcher
-df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GEN, '[$userOpinionSysTeamGen=[/.*/] #NOT(#ONT(rationaleVerb)},#ONT(rationale),#ONT(adjPositive),#ONT(adjNegative))]')
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GEN, '[$userOpinionSysTeamGen=[/.*/] #NOT(#ONT(rationaleVerbNegative)},#ONT(rationale),#ONT(adjPositive),#ONT(adjNegative))]')
 
 
 #this state throws an error because comparePlayers (or new Macro) needs to be able to work without having user input
