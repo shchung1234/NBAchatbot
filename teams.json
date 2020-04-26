@@ -1911,6 +1911,8 @@
     "rationale": [
       "leadership",
       "playstyle",
+      "defense",
+      "offence",
 
       "efficiency",
       "stamina",
@@ -1934,8 +1936,15 @@
     ],
     "rationalePerson": [
       "leader",
-      "team player",
-      "teamplayer"
+      "leaders",
+      "player",
+      "teamplayer",
+      "players",
+      "teamplayers",
+      "shooter",
+      "shooters",
+      "free thrower",
+      "free throwers"
     ],
     "rationaleVerb": [
       "play",
