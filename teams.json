@@ -1909,48 +1909,33 @@
       "shooter"
     ],
     "rationale": [
-      "chokes",
-      "underperforming",
-      "underperforms",
-      "stamina",
-      "teamplayer",
-      "team player",
-      "ballhog",
-      "ball hog",
-      "efficient",
-      "efficiency",
+      "leadership",
       "playstyle",
+
+      "efficiency",
+      "stamina",
+      "prime",
+      "clutch",
+
       "field goals",
       "points",
       "shooting",
-      "leader",
-      "leadership",
-      "prime",
-      "clutch",
-      "assists",
-      "free throws",
+      "assisting",
+      "free throwing",
       "passing",
       "turnovers",
-      "rebounds",
-      "steals",
       "stealing",
-      "blocks",
       "blocking",
       "three",
-      "fouls",
-      "dribbling"
+      "dribbling",
+
+      "ballhog",
+      "ball hog"
     ],
-    "rationaleVerbSingular": [
-      "plays",
-      "free throws",
-      "passes",
-      "shoots",
-      "steals",
-      "rebounds",
-      "assists",
-      "blocks",
-      "fouls",
-      "dribbles"
+    "rationalePerson": [
+      "leader",
+      "team player",
+      "teamplayer"
     ],
     "rationaleVerb": [
       "play",
@@ -1962,7 +1947,26 @@
       "assist",
       "block",
       "foul",
-      "dribble"
+      "dribble",
+      "plays",
+      "free throws",
+      "passes",
+      "shoots",
+      "steals",
+      "rebounds",
+      "assists",
+      "blocks",
+      "fouls",
+      "dribbles"
+    ],
+    "rationaleVerbNegative": [
+      "underperform",
+      "underperforms",
+      "underperforming",
+      "choke",
+      "chokes",
+      "underachieve",
+      "underachieves"
     ],
     "adjPositive": [
       "good",
@@ -2014,9 +2018,20 @@
     ],
     "not" : [
       "not",
-      "/\\w+n't/",
-      "/\\w+nt/",
+      "arent",
+      "dont",
+      "didnt",
+      "wont",
+      "doesnt",
       "never"
+    ],
+    "questionWords": [
+      "why",
+      "what",
+      "who",
+      "where",
+      "when",
+      "how"
     ],
     "kawhi leonard": [
       "claw",
