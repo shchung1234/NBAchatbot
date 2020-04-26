@@ -1915,7 +1915,6 @@
       "stamina",
       "teamplayer",
       "team player",
-      "resillient",
       "ballhog",
       "ball hog",
       "efficient",
@@ -1941,6 +1940,18 @@
       "fouls",
       "dribbling"
     ],
+    "rationaleVerbSingular": [
+      "plays",
+      "free throws",
+      "passes",
+      "shoots",
+      "steals",
+      "rebounds",
+      "assists",
+      "blocks",
+      "fouls",
+      "dribbles"
+    ],
     "rationaleVerb": [
       "play",
       "free throw",
@@ -1951,7 +1962,6 @@
       "assist",
       "block",
       "foul",
-      "dribbles",
       "dribble"
     ],
     "adjPositive": [
@@ -1978,12 +1988,8 @@
       "first-rate",
       "superb",
       "efficient",
-      "reliable"
-    ],
-    "advPositive": [
-      "well",
-      "amazingly",
-      "exceptionally"
+      "reliable",
+      "resilient"
     ],
     "adjNegative": [
       "mediocre",
@@ -1993,6 +1999,24 @@
     "adjAmbiguous": [
       "aggresive",
       "aggro"
+    ],
+    "advPositive": [
+      "well",
+      "amazingly",
+      "exceptionally"
+    ],
+    "advNegative": [
+      "poorly",
+      "mediocrely",
+      "badly",
+      "inefficiently",
+      "abysmally"
+    ],
+    "not" : [
+      "not",
+      "/\\w+n't/",
+      "/\\w+nt/",
+      "never"
     ],
     "kawhi leonard": [
       "claw",
