@@ -2237,45 +2237,52 @@
       "bad teammate",
       "not unique"
     ],
-    "butlerHasNeg": [
-      "bad chemistry",
+    "butlerNeg": [
+      "has bad chemistry",
+      "has bad teammates",
       "hates timberwolves",
       "hates old teammate",
-      "old teammate hated him",
-      "old teammates hate him",
-      "cant play with younger players"
+      "cant play with younger players",
+      "has inexperienced teammates"
     ],
-    "kawhi pos": [
+    "kawhiHasPos": [
       "big hands",
-      "clutch",
-      "he is clutch",
-      "kawhi is clutch",
-      "playoff player",
-      "good in important games",
+      "huge hands",
       "long reach",
-      "great leader",
+      "good teammates",
+      "good playoff record",
+      "decent playoff record",
       "good leadership",
       "great leadership",
-      "ball with one hand",
-      "defensive",
-      "steals well",
-      "mvp candidate",
-      "mvp"
     ],
-    "kawhi neg": [
+    "kawhiIsPos": [
+      "playoff player",
+      "good in important games",
+      "great leader",
+      "defensive",
+      "mvp candidate"
+    ],
+    "kawhiIsNeg": [
       "injury prone",
-      "gets injured",
       "too fragile",
       "fragile",
-      "doesnt play",
+      "not funny",
+      "too quiet",
+      "inconsistent with health"
+    ],
+    "kawhiNeg": [
+      "gets injured too often",
+      "gets injured so easily",
+      "gets injured often",
+      "gets injured so often",
+      "doesnt play regular season game",
       "overlaps with paul george",
       "betrayed toronto",
       "betrayed raptors",
-      "not funny",
-      "weird voice",
-      "weird laughter",
-      "too quiet"
-
+      "has weird voice",
+      "has weird laughter",
+      "barely plays regular season",
+      "barely plays"
     ]
   }
 }
