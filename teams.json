@@ -2242,11 +2242,10 @@
       "zion"
     ],
     "butlerIsPos": [
-      "defensive",
       "ace stopper",
       "hustler",
-      "good mentor",
-      "good leader"
+      "mentor",
+      "leader"
     ],
     "butlerPos": [
       "has good work ethics",
@@ -2271,6 +2270,7 @@
     ],
     "kawhiHasPos": [
       "big hands",
+      "large hands",
       "huge hands",
       "long reach",
       "good teammates",
@@ -2281,9 +2281,7 @@
     ],
     "kawhiIsPos": [
       "playoff player",
-      "good in important games",
-      "great leader",
-      "defensive",
+      "defensive player",
       "mvp candidate"
     ],
     "kawhiIsNeg": [
