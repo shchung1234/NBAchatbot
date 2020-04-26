@@ -658,7 +658,7 @@ class nicknameToPlayer(Macro):
         player_name_list = list(new_dict.values())
 
         if 'favUserPlayer' in vars:
-            if vars['favUserPlayer'] not in player_name_list:
+            if vars['favUserPlayer'] not in (item for sublist in player_name_list for item in sublist):
                 for key,value in onto_dict.items():
                     if vars['favUserPlayer'] in value:
                         vars['favUserPlayer'] = key
@@ -859,13 +859,13 @@ df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD1, '[$favUserTeamAdj={#ONT(adjPositive)}, $favUserTeamRationale={#ONT(rationale)}]') # they have a solid playstyle
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD2, '[$favUserTeamRationale={#ONT(rationale)}, $favUserTeamAdj={#ONT(adjPositive)}]') # their playstyle is very solid
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD3, '[#NOT(#ONT(not)) $favUserTeamAdj={#ONT(adjPositive)}]') # they are very reliable
-df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD4, '[$favUserTeamRationale={#ONT(rationaleVerb)}, $favUserTeamAdv={#ONT(advPositive}]') # they steal really well (verb + adv)
+df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD4, '[$favUserTeamRationale={#ONT(rationaleVerb)}, $favUserTeamAdv={#ONT(advPositive)}]') # they steal really well (verb + adv)
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD5, '[$not={#ONT(not)}, $favUserTeamAdj={#ONT(adjNegative)}]') # they arent bad
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD6, '[$favUserTeamRationale={#ONT(rationale)}]') # because of their efficiency
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD7, '[$favUserTeamAdj={#ONT(adjPositive)}, $favUserTeamRationale={#ONT(rationalePerson)}]')
 
 # 2BU if they give a player name
-df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(playoffteams)}]') #todo change this to check if player is on the team
+df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(playoffteams),#ONT(nonplayoffteams)}]') #todo change this to check if player is on the team
 
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
 df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF2BU1, r'[! {Hmm..., I dont know., What...} "Personally, I do not think that the" $favUserTeam "are that good. '
