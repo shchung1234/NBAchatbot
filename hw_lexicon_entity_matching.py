@@ -489,7 +489,7 @@ class nextYearPlayoffImpact(Macro):
 
 
         
-class playerRating(Macro):
+class playerRating(Macro): #*** *** *** ***
     def run (self, ngrams, vars, args):
         n = vars['player'].lower().split()
         playerid = ""
@@ -525,7 +525,7 @@ class playerRating(Macro):
         AST = player('2019-20').assists / player('2019-20').games_played
         PER = player('2019-20').player_efficiency_rating
         str = ''
-        if (PER > 17):
+        if (PER > 15):
             vars['goodBadPlayer'] = 'good'
             if (exp < 246):
                 str = str + "As an unexperienced player, I think " + player.name
@@ -576,7 +576,7 @@ class playerRating(Macro):
                     str + "He had a decent career though."
             return str
 
-class comparePlayers(Macro):
+class comparePlayers(Macro): #*** *** *** ***
     def run (self, ngrams, vars, args):
         n = vars['favUserPlayer'].split()
         s = ""
@@ -603,7 +603,7 @@ class comparePlayers(Macro):
         return "Its interesting that you like {} because he is not the top player statistically speaking. Personally, I think {} will win because of {}".format(vars['favUserPlayer'], vars['favSysTeam'], vars['favSysPlayer'])
 
 
-class playerRationale(Macro):
+class playerRationale(Macro): #*** *** *** ***
     def run (self, ngrams, vars, args):
         if vars['playerRationale'] == 'efficient' or vars['playerRationale'] == 'efficiency':
             if vars['favSysPlayerPER'] > vars['favUserPlayerPER']:
@@ -694,7 +694,7 @@ class teamPlayerCheck(Macro):
                 vars['sameTeam'] = "no"
         return
 
-class sentiAnalyserFavSysTeam(Macro):
+class sentiAnalyserFavSysTeam(Macro): #*** *** *** ***
     def run (self, ngrams, vars, args):
         sid = SentimentIntensityAnalyzer()
 
@@ -1208,4 +1208,4 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 """
 
 if __name__ == '__main__':
-    df.run(debugging=True)
+    df.run(debugging=False)
