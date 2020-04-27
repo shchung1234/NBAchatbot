@@ -1035,19 +1035,19 @@ df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_GEN, '[$userOpinionSysP
                                                               '#ONT(kawhiIsPos),#ONT(kawhiIsNeg),#ONT(kawhiNeg),#ONT(questionWords))]')
 
 # good opinion responses
-df.add_system_transition(State.TURNPF6S_OP_GOOD1, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "has a really solid" $favSysTeamRationale'
+df.add_system_transition(State.TURNPF6S_OP_GOOD1, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "has a really solid" $favSysPlayerRationale'
                                                                  r' ". Lets go back to the teams now. I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
-df.add_system_transition(State.TURNPF6S_OP_GOOD2, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "has a really solid" $favSysTeamRationale'
+df.add_system_transition(State.TURNPF6S_OP_GOOD2, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "has a really solid" $favSysPlayerRationale'
                                                                  r' ". Lets go back to the teams now. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
 df.add_system_transition(State.TURNPF6S_OP_GOOD3, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I also agree that" $favSysPlayer "is really" $favSysPlayerAdj'
                                                                  r' ". Lets go back to the teams now. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
-df.add_system_transition(State.TURNPF6S_OP_GOOD4, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "can" $favSysTeamRationale "extremely well"'
+df.add_system_transition(State.TURNPF6S_OP_GOOD4, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "can" $favSysPlayerRationale "extremely well"'
                                                                  r' ". Lets go back to the teams now. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
-df.add_system_transition(State.TURNPF6S_OP_GOOD5, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "are not" $favSysTeamAdj'
+df.add_system_transition(State.TURNPF6S_OP_GOOD5, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "are not" $favSysPlayerAdj'
                                                                  r' ". Lets go back to the teams now. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
-df.add_system_transition(State.TURNPF6S_OP_GOOD6, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "has a really solid" $favSysTeamRationale'
+df.add_system_transition(State.TURNPF6S_OP_GOOD6, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "has a really solid" $favSysPlayerRationale'
                                                                  r' ". Lets go back to the teams now. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
-df.add_system_transition(State.TURNPF6S_OP_GOOD7, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "is a really solid" $favSysTeamRationale'
+df.add_system_transition(State.TURNPF6S_OP_GOOD7, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "is a really solid" $favSysPlayerRationale'
                                                                  r' ". Lets go back to the teams now. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
 # bad opinion responses
 df.add_system_transition(State.TURNPF6S_OP_BAD1, State.TURNTRADE0U, r'[! {Hmm..., What...} "I mean I hear you when you say" $favSysPlayer "has bad" $favSysPlayerRationale ", but hes also extremely clutch!"'
@@ -1056,9 +1056,9 @@ df.add_system_transition(State.TURNPF6S_OP_BAD2, State.TURNTRADE0U, r'[! {Hmm...
                                                                  r' ". Lets go back to the teams for now though. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
 df.add_system_transition(State.TURNPF6S_OP_BAD3, State.TURNTRADE0U, r'[! {Hmm..., What...} "I actually dont agree with you." $favSysPlayer "is not" $favSysPlayerAdj ". Hes actually really clutch in the games"'
                                                                  r' ". Lets go back to the teams for now though. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
-df.add_system_transition(State.TURNPF6S_OP_BAD4, State.TURNTRADE0U, r'[! {Hmm..., What...} "I actually dont think that the" $favSysPlayer $favSysTeamRationale "badly. Hes actually really clutch in games!"'
+df.add_system_transition(State.TURNPF6S_OP_BAD4, State.TURNTRADE0U, r'[! {Hmm..., What...} "I actually dont think that the" $favSysPlayer $favSysPlayerRationale "badly. Hes actually really clutch in games!"'
                                                                  r' ". Lets go back to the teams for now though. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
-df.add_system_transition(State.TURNPF6S_OP_BAD5, State.TURNTRADE0U, r'[! {Hmm..., What...} "No I completely disagree with you when you say that" $favSysPlayer "are not" $favSysTeamAdj ". Hes actually super clutch in games!"'
+df.add_system_transition(State.TURNPF6S_OP_BAD5, State.TURNTRADE0U, r'[! {Hmm..., What...} "No I completely disagree with you when you say that" $favSysPlayer "are not" $favSysPlayerAdj ". Hes actually super clutch in games!"'
                                                                  r' ". Lets go back to the teams for now though. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
 df.add_system_transition(State.TURNPF6S_OP_BAD6, State.TURNTRADE0U, r'[! {Hmm..., What...} "No I completely disagree with you when you say that" $favSysPlayer "always" $favSysPlayerRationale ". Hes actually really clutch in games!"'
                                                                  r' ". Lets go back to the teams for now though. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
