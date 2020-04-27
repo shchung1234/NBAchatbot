@@ -954,8 +954,8 @@ df.add_user_transition(State.TURNPF3U, State.TURNPF8FS, "$kawhiOpinion={#ONT(kaw
 df.add_user_transition(State.TURNPF3U, State.TURNPF8GS, "$kawhiOpinion={#ONT(kawhiIsNeg)}") #handles KawhiNeg adj
 df.add_user_transition(State.TURNPF3U, State.TURNPF8HS, "$kawhiOpinion={#ONT(kawhiNeg)}") #handles KawhiNeg verb
 
-df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[$playerRationale={#ONT(rationale)}]")
-df.add_user_transition(State.TURNPF3U, State.TURNTRADE0BS, "{#ONT(agree)}")
+# df.add_user_transition(State.TURNPF3U, State.TURNTRADE0S, "[$playerRationale={#ONT(rationale)}]")
+# df.add_user_transition(State.TURNPF3U, State.TURNTRADE0BS, "{#ONT(agree)}")
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S, '[{why,[what makes you {think,say,believe}],[whats {your,the} reason]}]') #todo *** there is a bug here ***
 
 df.add_system_transition(State.TURNPF8AS, State.TURNTRADE0U, r'[! "You might think that " [{he, Butler} $butlerOpinion]" but I think he always comes out clutch in playoffs. Speaking of playoffs, I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]') #handles situation with butlerNeg verb
