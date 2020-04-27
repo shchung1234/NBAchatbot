@@ -1913,11 +1913,9 @@
       "playstyle",
       "defense",
       "offence",
-
       "efficiency",
       "stamina",
       "prime",
-
       "field goals",
       "points",
       "shooting",
@@ -1986,7 +1984,6 @@
       "nice",
       "outstanding",
       "solid",
-      "crazy",
       "strong",
       "stable",
       "healthy",
@@ -2316,6 +2313,7 @@
       "injury prone",
       "too fragile",
       "fragile",
+      "not reliable",
       "not funny",
       "too quiet",
       "inconsistent with health"
