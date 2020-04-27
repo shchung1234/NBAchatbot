@@ -480,7 +480,7 @@ class nextYearPlayoffImpact(Macro):
         player = Player(playerid)
         playerBirthDate = player.birth_date
         playerBirthYear = int(playerBirthDate.strftime("%Y"))
-        if playerBirthYear <= 1994:
+        if playerBirthYear <= 1993:
             str = "I do not think he will play a big role. I think he is past his prime."
         else:
             str = "I think he is young enough to carry the team."
