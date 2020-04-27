@@ -883,11 +883,6 @@ df.add_system_transition(State.TURNPF4S_OP_GEN, State.TURNPF5U, r'[! #sentiAnaly
 df.set_error_successor(State.TURNPF3AU, State.TURNPF3AERR)
 df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good opinion. Personally, I think " $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 
-# dead code
-##df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1, '[$teamRationale={#ONT(rationaletwo)}]') # can change it to pick up a specific player too but again, needs to make sure player is actually on that team
-##df.add_system_transition(State.TURNPF2BS1, State.TURNPF2BU1, r'[! "Having good" $teamRationale "could be critical to win.'
-##                                                             r' Do you think there is a player that is integral to the " $favUserTeam "?"]')
-
 # Playoff Turn 2 (not idk scenario)
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think the" $favUserTeam "will win?"]')
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD1, '[$favUserTeamAdj={#ONT(adjPositive)}, $favUserTeamRationale={#ONT(rationale)}]') # they have a solid playstyle
@@ -904,27 +899,28 @@ df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(p
 
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
 df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF2BU1, r'[! {Hmm..., I dont know., What...} "Personally, I do not think that the" $favUserTeam "are that good. '
-                                                                 r' Do you think there is a player that is" {integral,important} "to" $favUserTeam "?"]') #todo make sure this transition goes into the correct user transition
+                                                                 r' Which player do you think is most" {integral,important} "to the" $favUserTeam "?"]') #todo make sure this transition goes into the correct user transition
 
 df.add_system_transition(State.TURNPF2BS1_OP_GOOD1, State.TURNPF2BU1, r'[! "Okay, having a really solid the" $favUserTeamRationale "is really important for" $favUserTeam'
-                                                                 r' ". Do you think there is a player that is" {really,super,extremely,exceptionally} {integral,important} "to" $favUserTeam "?"]')
+                                                                 r' ". Which player do you think is most" {super,extremely,exceptionally} {integral,important} "to the" $favUserTeam "?"]')
 df.add_system_transition(State.TURNPF2BS1_OP_GOOD2, State.TURNPF2BU1, r'[! "Okay, Ive heard that the" $favUserTeam "has a really solid" $favUserTeamRationale'
-                                                                 r' ". Do you think there is a player that is" {really,super,extremely,exceptionally} {integral,important} "to" $favUserTeam "?"]')
+                                                                 r' ". Which player do you think is most" {really,super,extremely,exceptionally} {integral,important} "to the" $favUserTeam "?"]')
 df.add_system_transition(State.TURNPF2BS1_OP_GOOD3, State.TURNPF2BU1, r'[! "Okay, Ive also heard that the" $favUserTeam "are really" $favUserTeamAdj'
-                                                                 r' ". Do you think there is a player that is" {really,super,extremely,exceptionally} {integral,important} "to" $favUserTeam "?"]')
+                                                                 r' ". Which player do you think is most" {super,extremely,exceptionally} {integral,important} "to the" $favUserTeam "?"]')
 df.add_system_transition(State.TURNPF2BS1_OP_GOOD4, State.TURNPF2BU1, r'[! "Okay, Ive also heard that the" $favUserTeam "can" $favUserTeamRationale "extremely well"'
-                                                                 r' ". Do you think there is a player that is" {really,super,extremely,exceptionally} {integral,important} "to" $favUserTeam "?"]')
+                                                                 r' ". Which player do you think is most" {really,super,extremely,exceptionally} {integral,important} "to the" $favUserTeam "?"]')
 df.add_system_transition(State.TURNPF2BS1_OP_GOOD5, State.TURNPF2BU1, r'[! "Okay, Ive also heard that the" $favUserTeam "are not" $favUserTeamAdj'
-                                                                 r' ". Do you think there is a player that is" {really,super,extremely,exceptionally} {integral,important} "to" $favUserTeam "?"]')
+                                                                 r' ". Which player do you think is most" {super,extremely,exceptionally} {integral,important} "to the" $favUserTeam "?"]')
 df.add_system_transition(State.TURNPF2BS1_OP_GOOD6, State.TURNPF2BU1, r'[! "Okay, Ive also heard that the" $favUserTeam "have really solid" $favUserTeamRationale'
-                                                                 r' ". Do you think there is a player that is" {really,super,extremely,exceptionally} {integral,important} "to" $favUserTeam "?"]')
+                                                                 r' ". Which player do you think is most" {really,super,extremely,exceptionally} {integral,important} "to the" $favUserTeam "?"]')
 df.add_system_transition(State.TURNPF2BS1_OP_GOOD7, State.TURNPF2BU1, r'[! "Okay, Ive also heard that the" $favUserTeam "have really solid" $favUserTeamRationale'
-                                                                 r' ". Do you think there is a player that is" {really,super,extremely,exceptionally} {integral,important} "to" $favUserTeam "?"]')
+                                                                 r' ". Which player do you think is most" {super,extremely,exceptionally} {integral,important} "to the" $favUserTeam "?"]')
 
 #ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
 
 
-df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer={#ONT(playoffteams),#ONT(nonplayoffteams)}]') #todo make ontology for players who are in and not in playoffs and need to match it to make sure the player is actually on the team, add in if the user says no or yes. For yes, needs to make sure it catches, "yes <<user name>>
+df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer={#ONT(playoffteams),#ONT(nonplayoffteams)}]')
+#df.add_user_transition(State.TURNPF2BU1, State.TURNPF3DS, '[#ONT(agree)]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3ES, '[{#NER(person)} #NOT(#ONT(playoffteams),#ONT(nonplayoffteams))]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF5AS, '[#ONT(disagree) #NOT(#ONT(playoffteams),#ONT(nonplayoffteams),#NER(person))]')
 
@@ -1071,7 +1067,7 @@ df.add_system_transition(State.TURNPF6S_OP_GEN, State.TURNTRADE0U, r'[! #sentiAn
 
 
 # PF6S: System makes a claim why it thinks favSysPlayer is integral to team
-df.add_system_transition(State.TURNPF6S, State.TURNPF6U, r'[! "Mostly because" $favSysPlayer "is really" {integral to,important to} $favSysTeam ". He"'
+df.add_system_transition(State.TURNPF6S, State.TURNPF6U, r'[! "Mostly because" $favSysPlayer "is really" {integral to the,important to the, key to the} $favSysTeam ". He"'
                                                          r'{is super clutch,is always making ridiculous shots,is such a great team player}{especially at important moments in the game,especially at the end of games}. "Do you think there is someone on the " $favSysTeam "who is better?"]')
 
 # PF6U takes a disagreement or any statement, then goes to PF7
@@ -1108,14 +1104,14 @@ df.add_user_transition(State.TURNTRADE0AU, State.TURN0DK1S, dont_know)
 
 df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S_GEN, '[$userOpinionTradePlayerGen=[/.*/] #NOT(#ONT(adjPositive),#ONT(adjNegative))]')
 df.add_user_transition(State.TURNTRADE0AU, State.TURNTRADE1S_GEN, '[$userOpinionTradePlayerGen=[/.*/] #NOT(#ONT(adjPositive),#ONT(adjNegative))]')
-df.add_system_transition(State.TURNTRADE1S_GEN, State.TURNTRADE2U, r'[! #sentiAnalyserTradePlayer "." #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
+df.add_system_transition(State.TURNTRADE1S_GEN, State.TURNTRADE2U, r'[! #sentiAnalyserTradePlayer "." #playerRating() ". Do you think that trade influenced how the " $receivingTeam " performed this season?"]')
 # Error succ for 0U
 df.set_error_successor(State.TURNTRADE0U, State.TURNTRADE0ERR)
-df.add_system_transition(State.TURNTRADE0ERR, State.TURNTRADE2U, r'[! "I have heard that from my robot uncle too. Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
+df.add_system_transition(State.TURNTRADE0ERR, State.TURNTRADE2U, r'[! "I have heard that from my robot uncle too. Do you think that trade influenced how the " $receivingTeam " performed this season?"]')
 
 # transitions from 1S-esque
-df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is aight. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
-df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
+df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is aight. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " performed this season?"]') #todo add onto Macro to indicate the bot agrees/disagrees
+df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " performed this season?"]')
 df.add_system_transition(State.TURN0DK1S, State.TURNTRADE2U, r'[! "No worries, if you are not sure I can" {just talk about,give,talk to you about} "my opinions! I think " #playerRating() ". Do you think that trade affected how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3BS, '[$playerImpact=#ONT(disagree)]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3AS, '[$playerImpact=#ONT(agree)]')
@@ -1208,4 +1204,4 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 """
 
 if __name__ == '__main__':
-    df.run(debugging=False)
+    df.run(debugging=True)
