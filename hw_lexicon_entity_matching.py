@@ -720,7 +720,6 @@ class sentiAnalyserFavSysPlayer(Macro):
 
         scores = sid.polarity_scores(text)
 
-
         if scores['neg'] < scores['pos']:
             return "Right! I can tell that you like {}, just like me!".format(vars['favSysPlayer'])
         elif scores['pos'] < scores['neg']:
@@ -728,7 +727,7 @@ class sentiAnalyserFavSysPlayer(Macro):
             return "Hmmm... okay I see you dont really like {}".format(vars['favSysPlayer'])
         else:
 
-            return "Thats a very interesting take on {}. I also think that they will win because of {}. What do you think of him?".format(vars['favSysPlayer'] )
+            return "Thats a very interesting take on {}".format(vars['favSysPlayer'] )
 
 class sentiAnalyserTradePlayer(Macro):
     def run (self, ngrams, vars, args):
@@ -1061,7 +1060,7 @@ df.add_system_transition(State.TURNPF6S_OP_BAD6, State.TURNTRADE0U, r'[! {Hmm...
 df.add_system_transition(State.TURNPF6S_OP_BAD7, State.TURNTRADE0U, r'[! {Hmm..., What...} "No I completely disagree with you when you say that" $favSysPlayer "is a bad" $favSysPlayerRationale ". Hes actually really clutch in games too!"'
                                                                  r' ". Lets go back to the teams for now though. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
 # generic opinion response
-df.add_system_transition(State.TURNPF6S_OP_GEN, State.TURNTRADE0U, r'[! #sentiAnalyserFavSysPlayer()'
+df.add_system_transition(State.TURNPF6S_OP_GEN, State.TURNTRADE0U, r'[! #sentiAnalyserFavSysPlayer() '
                                                                    r'". Lets go back to the teams for now though. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
 
 
