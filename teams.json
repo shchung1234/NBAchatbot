@@ -1917,7 +1917,6 @@
       "efficiency",
       "stamina",
       "prime",
-      "clutch",
 
       "field goals",
       "points",
@@ -1929,10 +1928,7 @@
       "stealing",
       "blocking",
       "three",
-      "dribbling",
-
-      "ballhog",
-      "ball hog"
+      "dribbling"
     ],
     "rationalePerson": [
       "leader",
@@ -1975,7 +1971,9 @@
       "choke",
       "chokes",
       "underachieve",
-      "underachieves"
+      "underachieves",
+      "ballhogs",
+      "ballhog"
     ],
     "adjPositive": [
       "good",
@@ -2002,12 +2000,42 @@
       "superb",
       "efficient",
       "reliable",
-      "resilient"
+      "resilient",
+      "clutch",
+      "alright",
+      "okay",
+      "impressive",
+      "monster",
+      "beast",
+      "strong",
+      "fast",
+      "efficient",
+      "well rounded",
+      "well-rounded",
+      "superior"
     ],
     "adjNegative": [
       "mediocre",
       "bad",
-      "weak"
+      "weak",
+      "worst",
+      "terrible",
+      "inefficient",
+      "horrible",
+      "inferior",
+      "poor",
+      "awful",
+      "worthless",
+      "hopeless",
+      "atrocious",
+      "shoddy",
+      "amateurish",
+      "miserable",
+      "laughable",
+      "incompetent",
+      "inept",
+      "pathetic",
+      "useless"
     ],
     "adjAmbiguous": [
       "aggresive",

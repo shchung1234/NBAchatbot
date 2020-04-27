@@ -29,6 +29,7 @@ class State(Enum):
     TURN0DK1U = auto()
     TURNTRADE0ERR = auto()
     TURNTRADE1S = auto()
+    TURNTRADE1S_GEN = auto()
     TURNTRADE1S1 = auto()
     TURNTRADE1S3 = auto()
     TURNTRADE1U = auto()
@@ -109,12 +110,14 @@ class State(Enum):
     TURNPF4S_OP_GOOD4 = auto()
     TURNPF4S_OP_GOOD5 = auto()
     TURNPF4S_OP_GOOD6 = auto()
+    TURNPF4S_OP_GOOD7 = auto()
     TURNPF4S_OP_BAD1 = auto()
     TURNPF4S_OP_BAD2 = auto()
     TURNPF4S_OP_BAD3 = auto()
     TURNPF4S_OP_BAD4 = auto()
     TURNPF4S_OP_BAD5 = auto()
     TURNPF4S_OP_BAD6 = auto()
+    TURNPF4S_OP_BAD7 = auto()
     TURNPF4S_OP_GEN = auto()
     TURNPF5S = auto()
     TURNPF5U = auto()
@@ -565,9 +568,9 @@ class playerRating(Macro):
                 else:
                     str += "He is not that great with his assists even though he is a point guard. "
             else:
-                str += "he is not bad but he is not a big impact player."
+                str += "I dont think he is too terrible but he doesnt seem to have a huge impact to the game."
             if (player('2019-20').minutes_played / player('2019-20').games_played < 12 or player('2019-20').minutes_played == None):
-                str += "Besides, who is this player anyways?"
+                str += "Also, he barely has any games played this season!"
             else:
                 if (C_PTS >= 15):
                     str + "He had a decent career though."
@@ -703,10 +706,10 @@ class sentiAnalyserFavSysTeam(Macro):
         if scores['neg'] < scores['pos']:
             return "Yes, I can tell that you have a very high opinion about the {}. I also think that they will win because of {}. What do you think of him?".format(vars['favSysTeam'], vars['favSysPlayer'])
         elif scores['pos'] < scores['neg']:
-            print(scores)
+
             return "Hmmm... I can tell you dont have a very high opinion about the {}, and I cant say I agree with your assessment. Even if youre right, I still think they can win because of {}. What do you think of him?".format(vars['favSysTeam'], vars['favSysPlayer'])
         else:
-            print(scores)
+
             return "Thats a very interesting opinion about the {}. I also think that they will win because of {}. What do you think of him?".format(vars['favSysTeam'],vars['favSysPlayer'])
 
 class sentiAnalyserFavSysPlayer(Macro):
@@ -717,15 +720,31 @@ class sentiAnalyserFavSysPlayer(Macro):
 
         scores = sid.polarity_scores(text)
 
-
         if scores['neg'] < scores['pos']:
             return "Right! I can tell that you like {}, just like me!".format(vars['favSysPlayer'])
         elif scores['pos'] < scores['neg']:
-            print(scores)
+
             return "Hmmm... okay I see you dont really like {}".format(vars['favSysPlayer'])
         else:
-            print(scores)
-            return "Thats a very interesting take on {}. I also think that they will win because of {}. What do you think of him?".format(vars['favSysPlayer'] )
+
+            return "Thats a very interesting take on {}".format(vars['favSysPlayer'] )
+
+class sentiAnalyserTradePlayer(Macro):
+    def run (self, ngrams, vars, args):
+        sid = SentimentIntensityAnalyzer()
+
+        text = vars["userOpinionTradePlayerGen"]
+
+        scores = sid.polarity_scores(text)
+
+
+        if scores['neg'] < scores['pos']:
+            return "I can tell that you like {}".format(vars['player'])
+        elif scores['pos'] < scores['neg']:
+
+            return "Okay, I can tell that you dont like {}".format(vars['player'])
+        else:
+            return "Okay, I can tell youre pretty neutral about {}".format(vars['player'])
 
 
 knowledge = KnowledgeBase()
@@ -738,7 +757,8 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
                                                                                                   'negativeSeedingImpact' : negativeSeedingImpact(),
                                                                                                   'teamPlayerCheck': teamPlayerCheck(), 'sentiAnalyserFavSysTeam': sentiAnalyserFavSysTeam(),
                                                                                                   'nicknameToPlayer': nicknameToPlayer(), 'nextYearPlayoffImpact': nextYearPlayoffImpact(),
-                                                                                                  'sentiAnalyserFavSysPlayer': sentiAnalyserFavSysPlayer()})
+                                                                                                  'sentiAnalyserFavSysPlayer': sentiAnalyserFavSysPlayer(),
+                                                                                                  'sentiAnalyserTradePlayer':sentiAnalyserTradePlayer()})
 
 #########################
 # THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
@@ -812,21 +832,23 @@ df.add_system_transition(State.TURNPF2A_DK, State.TURNPF5U, r'[! "Oh, are you no
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GOOD1, '[$favSysTeamAdj={#ONT(adjPositive)}, $favSysTeamRationale={#ONT(rationale)}]') # they have a solid playstyle
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GOOD2, '[$favSysTeamRationale={#ONT(rationale)}, $favSysTeamAdj={#ONT(adjPositive)}]') # their playstyle is very solid
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GOOD3, '[#NOT(#ONT(not)) $favSysTeamAdj={#ONT(adjPositive)}]') # they are very reliable
-df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GOOD4, '[$favSysTeamRationale={#ONT(rationaleVerb)}, $favSysTeamAdv={#ONT(advPositive}]') # they steal really well (verb + adv)
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GOOD4, '[$favSysTeamRationale={#ONT(rationaleVerb)}, $favSysTeamAdv={#ONT(advPositive)}]') # they steal really well (verb + adv)
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GOOD5, '[$not={#ONT(not)}, $favSysTeamAdj={#ONT(adjNegative)}]') # they arent bad
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GOOD6, '[$favSysTeamRationale={#ONT(rationale)}]') # because of their efficiency
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GOOD7, '[$favSysTeamAdj={#ONT(adjPositive)}, $favSysTeamRationale={#ONT(rationalePerson)}]')
 # bad opinions
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD1, '[$favSysTeamAdj={#ONT(adjNegative)}, $favSysTeamRationale={#ONT(rationale)}]')
-df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD2, '[$favSysTeamRationale={#ONT(rationale)}, $favSysTeamAdj={#ONT(adjPositive)}]')
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD2, '[$favSysTeamRationale={#ONT(rationale)}, $favSysTeamAdj={#ONT(adjNegative)}]')
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD3, '[#NOT(#ONT(not)) $favSysTeamAdj={#ONT(adjNegative)}]')
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD4, '[$favSysTeamRationale={#ONT(rationaleVerb)}, $favSysTeamAdv={#ONT(advNegative}]') # they steal really poorly
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD5, '[$not={#ONT(not)}, $favSysTeamAdj={#ONT(adjPositive)}]') # they arent good
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD6, '[$favSysTeamRationale={#ONT(rationaleVerbNegative)}]') # they choke/underperform
+df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_BAD7, '[$favSysTeamAdj={#ONT(adjNegative)}, $favSysTeamRationale={#ONT(rationalePerson)}]')
 # generic error catcher
 df.add_user_transition(State.TURNPF3AU, State.TURNPF4S_OP_GEN, '[$userOpinionSysTeamGen=[/.*/] #NOT(#ONT(rationaleVerbNegative)},#ONT(rationale),#ONT(adjPositive),#ONT(adjNegative))]')
 
 
-#this state throws an error because comparePlayers (or new Macro) needs to be able to work without having user input
+# 4S good opinion system
 df.add_system_transition(State.TURNPF4S_OP_GOOD1, State.TURNPF5U, r'[! "Yes! I whole heartedly agree that the" $favSysTeam "has a really solid" $favSysTeamRationale'
                                                                  r' ". In addition, I also think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 df.add_system_transition(State.TURNPF4S_OP_GOOD2, State.TURNPF5U, r'[! "Yes! I whole heartedly agree that the" $favSysTeam "has a really solid" $favSysTeamRationale'
@@ -837,8 +859,11 @@ df.add_system_transition(State.TURNPF4S_OP_GOOD4, State.TURNPF5U, r'[! "Yes! I a
                                                                  r' ". In addition, I also think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 df.add_system_transition(State.TURNPF4S_OP_GOOD5, State.TURNPF5U, r'[! "Yes! I also agree that the" $favSysTeam "are not" $favSysTeamAdj'
                                                                  r' ". In addition, I also think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
-df.add_system_transition(State.TURNPF4S_OP_GOOD6, State.TURNPF5U, r'[! "Yes! I whole heartedly agree that the" $favSysTeam "has a really solid" $favSysTeamRationale'
+df.add_system_transition(State.TURNPF4S_OP_GOOD6, State.TURNPF5U, r'[! "Yes! I whole heartedly agree that the" $favSysTeam "have a really solid" $favSysTeamRationale'
                                                                  r' ". In addition, I also think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
+df.add_system_transition(State.TURNPF4S_OP_GOOD7, State.TURNPF5U, r'[! "Yes! I whole heartedly agree that the" $favSysTeam "have really solid" $favSysTeamRationale'
+                                                                 r' ". In addition, I also think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
+# 4S bad opinion system
 df.add_system_transition(State.TURNPF4S_OP_BAD1, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I mean maybe youre right that the" $favSysTeam "might not win because of their mediocre" '
                                                                 r'$favSysTeamRationale ". I still think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 df.add_system_transition(State.TURNPF4S_OP_BAD2, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I mean maybe youre right that the" $favSysTeam "might have poor" '
@@ -850,6 +875,8 @@ df.add_system_transition(State.TURNPF4S_OP_BAD4, State.TURNPF5U, r'[! {Hmm..., I
 df.add_system_transition(State.TURNPF4S_OP_BAD5, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I actually dont agree with you when you say that the" $favSysTeam "are not" $favSysTeamAdj'
                                                                  r' ". In addition, I also think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 df.add_system_transition(State.TURNPF4S_OP_BAD6, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I actually dont agree with you on your assessment that the" $favSysTeam "always" '
+                                                                r'$favSysTeamRationale ". I still think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
+df.add_system_transition(State.TURNPF4S_OP_BAD7, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I actually dont agree with you on your assessment that the" $favSysTeam "have poor" $favSysTeamRationale '
                                                                 r'$favSysTeamRationale ". I still think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 
 df.add_system_transition(State.TURNPF4S_OP_GEN, State.TURNPF5U, r'[! #sentiAnalyserFavSysTeam()]')
@@ -865,11 +892,12 @@ df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think the" $favUserTeam "will win?"]')
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD1, '[$favUserTeamAdj={#ONT(adjPositive)}, $favUserTeamRationale={#ONT(rationale)}]') # they have a solid playstyle
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD2, '[$favUserTeamRationale={#ONT(rationale)}, $favUserTeamAdj={#ONT(adjPositive)}]') # their playstyle is very solid
-df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD3, '[#NOT(#ONT(not)) $favUserTeamAdj={#ONT(adjPositive)}]') # they are very reliable
+df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD3, '[#NOT(#ONT(not),#ONT(rationale),#ONT(rationalePerson)) $favUserTeamAdj={#ONT(adjPositive)}]') # they are very reliable
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD4, '[$favUserTeamRationale={#ONT(rationaleVerb)}, $favUserTeamAdv={#ONT(advPositive)}]') # they steal really well (verb + adv)
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD5, '[$not={#ONT(not)}, $favUserTeamAdj={#ONT(adjNegative)}]') # they arent bad
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD6, '[$favUserTeamRationale={#ONT(rationale)}]') # because of their efficiency
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD7, '[$favUserTeamAdj={#ONT(adjPositive)}, $favUserTeamRationale={#ONT(rationalePerson)}]')
+
 
 # 2BU if they give a player name
 df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(playoffteams),#ONT(nonplayoffteams)}]') #todo change this to check if player is on the team
@@ -912,9 +940,9 @@ df.add_system_transition(State.TURNPF2BU_ERR3, State.TURNPF5U, r'[! "Thats a fai
 
 # Playoff Turn 3
 
-df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #nicknameToPlayer #teamPlayerCheck #GATE(sameTeam:yes) #comparePlayers {[! "What do you think"],[! "Whats your opinion"]} {of him, $favSysPlayer}"?"]')
+df.add_system_transition(State.TURNPF3CS, State.TURNPF3U, r'[! #nicknameToPlayer #teamPlayerCheck #GATE(sameTeam:yes) #comparePlayers {[! ". What do you think"],[! ". Whats your opinion"]} {of him,of $favSysPlayer}"?"]')
 df.add_system_transition(State.TURNPF3CS, State.TURNPF5U, r'[! #nicknameToPlayer #teamPlayerCheck #GATE(sameTeam:no) "Huh, I dont think thats a player on the" $favUserTeam'
-                                                          r'", but" #comparePlayers {[! ". What do you think"],[! ". Whats your opinion"]} {of him, $favSysPlayer}"?"]')
+                                                          r'", but" #comparePlayers {[! ". What do you think"],[! ". Whats your opinion"]} {of him,of $favSysPlayer}"?"]')
 # todo: revise this to also be able to catch "I guess i can agree with you" and similar phrasing
 
 df.add_user_transition(State.TURNPF3U, State.TURNPF8AS, "$butlerOpinion={#ONT(butlerNeg)}") #handles situation with butlerNeg verb
@@ -943,20 +971,20 @@ df.add_system_transition(State.TURNPF8HS, State.TURNTRADE0U, r'[! "I actually ag
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_GOOD1, '[$favSysPlayerAdj={#ONT(adjPositive)}, $favSysPlayerRationale={#ONT(rationale)}]') # they have a solid playstyle
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_GOOD2, '[$favSysPlayerRationale={#ONT(rationale)}, $favSysPlayerAdj={#ONT(adjPositive)}]') # their playstyle is very solid
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_GOOD3, '[#NOT(#ONT(not)) $favSysPlayerAdj={#ONT(adjPositive)}]') # they are very reliable
-df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_GOOD4, '[$favSysPlayerRationale={#ONT(rationaleVerb)}, $favSysPlayerAdv={#ONT(advPositive}]') # they steal really well (verb + adv)
+df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_GOOD4, '[$favSysPlayerRationale={#ONT(rationaleVerb)}, $favSysPlayerAdv={#ONT(advPositive)}]') # they steal really well (verb + adv)
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_GOOD5, '[$not={#ONT(not)}, $favSysPlayerAdj={#ONT(adjNegative)}]') # they arent bad
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_GOOD6, '[$favSysPlayerRationale={#ONT(rationale)}]') # because of their efficiency
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_GOOD7, '[$favSysPlayerAdj={#ONT(adjPositive)}, $favSysPlayerRationale={#ONT(rationalePerson)}]')
 # bad opinions
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_BAD1, '[$favSysPlayerAdj={#ONT(adjNegative)}, $favSysPlayerRationale={#ONT(rationale)}]') # he has poor shooting
-df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_BAD2, '[$favSysPlayerRationale={#ONT(rationale)}, $favSysPlayerAdj={#ONT(adjPositive)}]')
+df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_BAD2, '[$favSysPlayerRationale={#ONT(rationale)}, $favSysPlayerAdj={#ONT(adjNegative)}]')
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_BAD3, '[#NOT(#ONT(not)) $favSysPlayerAdj={#ONT(adjNegative)}]')
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_BAD4, '[$favSysPlayerRationale={#ONT(rationaleVerb)}, $favSysPlayerAdv={#ONT(advNegative}]') # they steal really poorly
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_BAD5, '[$not={#ONT(not)}, $favSysPlayerAdj={#ONT(adjPositive)}]') # they arent good
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_BAD6, '[$favSysPlayerRationale={#ONT(rationaleVerbNegative)}]') # they choke/underperform
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_BAD7, '[$favSysPlayerAdj={#ONT(adjNegative)}, $favSysPlayerRationale={#ONT(rationalePerson)}]')
 # generic error catcher that throws to a sentiment analyzer
-df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_GEN, '[$userOpinionSysPlayerGen=[/.*/] #NOT(#ONT(rationaleVerb)},#ONT(rationale),#ONT(adjPositive),#ONT(adjNegative), #ONT(questionWords))]')
+df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_GEN, '[$userOpinionSysPlayerGen=[/.*/] #NOT(#ONT(rationaleVerbNegative)},#ONT(rationale),#ONT(adjPositive),#ONT(adjNegative), #ONT(questionWords))]')
 
 # Error succ for PF3U
 df.set_error_successor(State.TURNPF3U, State.TURNPF3U_ERR)
@@ -985,20 +1013,20 @@ df.add_system_transition(State.TURNPF5U_ERR, State.TURNTRADE0U, r'[! "I see, tha
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_GOOD1, '[$favSysPlayerAdj={#ONT(adjPositive)}, $favSysPlayerRationale={#ONT(rationale)}]') # they have a solid playstyle
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_GOOD2, '[$favSysPlayerRationale={#ONT(rationale)}, $favSysPlayerAdj={#ONT(adjPositive)}]') # their playstyle is very solid
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_GOOD3, '[#NOT(#ONT(not)) $favSysPlayerAdj={#ONT(adjPositive)}]') # they are very reliable
-df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_GOOD4, '[$favSysPlayerRationale={#ONT(rationaleVerb)}, $favSysPlayerAdv={#ONT(advPositive}]') # they steal really well (verb + adv)
+df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_GOOD4, '[$favSysPlayerRationale={#ONT(rationaleVerb)}, $favSysPlayerAdv={#ONT(advPositive)}]') # they steal really well (verb + adv)
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_GOOD5, '[$not={#ONT(not)}, $favSysPlayerAdj={#ONT(adjNegative)}]') # they arent bad
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_GOOD6, '[$favSysPlayerRationale={#ONT(rationale)}]') # because of their efficiency
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_GOOD7, '[$favSysPlayerAdj={#ONT(adjPositive)}, $favSysPlayerRationale={#ONT(rationalePerson)}]')
 # bad opinions
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_BAD1, '[$favSysPlayerAdj={#ONT(adjNegative)}, $favSysPlayerRationale={#ONT(rationale)}]') # he has poor shooting
-df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_BAD2, '[$favSysPlayerRationale={#ONT(rationale)}, $favSysPlayerAdj={#ONT(adjPositive)}]')
+df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_BAD2, '[$favSysPlayerRationale={#ONT(rationale)}, $favSysPlayerAdj={#ONT(adjNegative)}]')
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_BAD3, '[#NOT(#ONT(not)) $favSysPlayerAdj={#ONT(adjNegative)}]')
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_BAD4, '[$favSysPlayerRationale={#ONT(rationaleVerb)}, $favSysPlayerAdv={#ONT(advNegative}]') # they steal really poorly
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_BAD5, '[$not={#ONT(not)}, $favSysPlayerAdj={#ONT(adjPositive)}]') # they arent good
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_BAD6, '[$favSysPlayerRationale={#ONT(rationaleVerbNegative)}]') # they choke/underperform
 df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_BAD7, '[$favSysPlayerAdj={#ONT(adjNegative)}, $favSysPlayerRationale={#ONT(rationalePerson)}]')
 # generic error catcher that throws to a sentiment analyzer
-df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_GEN, '[$userOpinionSysPlayerGen=[/.*/] #NOT(#ONT(rationaleVerb)},#ONT(rationale),#ONT(adjPositive),#ONT(adjNegative), #ONT(questionWords))]')
+df.add_user_transition(State.TURNPF5U, State.TURNPF6S_OP_GEN, '[$userOpinionSysPlayerGen=[/.*/] #NOT(#ONT(rationaleVerbNegative)},#ONT(rationale),#ONT(adjPositive),#ONT(adjNegative), #ONT(questionWords))]')
 
 
 # good opinion responses
@@ -1032,7 +1060,7 @@ df.add_system_transition(State.TURNPF6S_OP_BAD6, State.TURNTRADE0U, r'[! {Hmm...
 df.add_system_transition(State.TURNPF6S_OP_BAD7, State.TURNTRADE0U, r'[! {Hmm..., What...} "No I completely disagree with you when you say that" $favSysPlayer "is a bad" $favSysPlayerRationale ". Hes actually really clutch in games too!"'
                                                                  r' ". Lets go back to the teams for now though. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
 # generic opinion response
-df.add_system_transition(State.TURNPF6S_OP_GEN, State.TURNTRADE0U, r'[! #sentiAnalyserFavSysPlayer()'
+df.add_system_transition(State.TURNPF6S_OP_GEN, State.TURNTRADE0U, r'[! #sentiAnalyserFavSysPlayer() '
                                                                    r'". Lets go back to the teams for now though. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
 
 
@@ -1065,21 +1093,24 @@ df.add_system_transition(State.TURNPF7BS, State.TURNTRADE0U, r'[! "There certain
 df.add_system_transition(State.TURNTRADE0AS, State.TURNTRADE0U, r'[! "I see. Speaking about the teams, earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]') #I heard that" $receivingTeam "had traded for " $player ". Do you think that trade had repercussions for playoffs?"]')
 df.add_system_transition(State.TURNTRADE0S, State.TURNTRADE0U, r'[! "I have also heard my robot uncle say that about his " $playerRationale ". Speaking about the teams, earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about "$player "?"]')
 df.add_system_transition(State.TURNTRADE0BS, State.TURNTRADE0U, r'[! "Great minds think alike!. Speaking about the teams, earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
-df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S, "[$userTradePlayerOpinion=#ONT(goodplayer)]") #todo insert rationale here
-df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S1, "[$userTradePlayerOpinion=#ONT(badplayer)]") #todo insert rationale here
+df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S, "[$userTradePlayerOpinion=#ONT(adjPositive)]") #todo insert rationale here
+df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S1, "[$userTradePlayerOpinion=#ONT(adjNegative)]") #todo insert rationale here
 df.add_user_transition(State.TURNTRADE0U, State.TURN0DK1S, dont_know)
 #have these duplicate TRADE0AU so the Gate macro in 6PF can function properly - Anthony
-df.add_user_transition(State.TURNTRADE0AU, State.TURNTRADE1S, "[$userTradePlayerOpinion=#ONT(goodplayer)]") #todo insert rationale here
-df.add_user_transition(State.TURNTRADE0AU, State.TURNTRADE1S1, "[$userTradePlayerOpinion=#ONT(badplayer)]") #todo insert rationale here
+df.add_user_transition(State.TURNTRADE0AU, State.TURNTRADE1S, "[$userTradePlayerOpinion=#ONT(adjPositive)]") #todo insert rationale here
+df.add_user_transition(State.TURNTRADE0AU, State.TURNTRADE1S1, "[$userTradePlayerOpinion=#ONT(adjNegative)]") #todo insert rationale here
 df.add_user_transition(State.TURNTRADE0AU, State.TURN0DK1S, dont_know)
 
+df.add_user_transition(State.TURNTRADE0U, State.TURNTRADE1S_GEN, '[$userOpinionTradePlayerGen=[/.*/] #NOT(#ONT(adjPositive),#ONT(adjNegative))]')
+df.add_user_transition(State.TURNTRADE0AU, State.TURNTRADE1S_GEN, '[$userOpinionTradePlayerGen=[/.*/] #NOT(#ONT(adjPositive),#ONT(adjNegative))]')
+df.add_system_transition(State.TURNTRADE1S_GEN, State.TURNTRADE2U, r'[! #sentiAnalyserTradePlayer "." #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
 # Error succ for 0U
 df.set_error_successor(State.TURNTRADE0U, State.TURNTRADE0ERR)
 df.add_system_transition(State.TURNTRADE0ERR, State.TURNTRADE2U, r'[! "I have heard that from my robot uncle too. Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
 
 # transitions from 1S-esque
-df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is aight. I think " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
-df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. I think " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
+df.add_system_transition(State.TURNTRADE1S, State.TURNTRADE2U, r'[! "So you think " $player " is aight. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]') #todo add onto Macro to indicate the bot agrees/disagrees
+df.add_system_transition(State.TURNTRADE1S1, State.TURNTRADE2U, r'[! "So you think " $player " is bad. " #playerRating() ". Do you think that trade influenced how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
 df.add_system_transition(State.TURN0DK1S, State.TURNTRADE2U, r'[! "No worries, if you are not sure I can" {just talk about,give,talk to you about} "my opinions! I think " #playerRating() ". Do you think that trade affected how the " $tradeTeamInPlayoffs " seeded into playoffs?"]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3BS, '[$playerImpact=#ONT(disagree)]')
 df.add_user_transition(State.TURNTRADE2U, State.TURNTRADE3AS, '[$playerImpact=#ONT(agree)]')
