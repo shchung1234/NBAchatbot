@@ -1039,7 +1039,7 @@ df.add_system_transition(State.TURNPF6S_OP_GOOD1, State.TURNTRADE0U, r'[! {Exact
                                                                  r' ". Lets go back to the teams now. I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
 df.add_system_transition(State.TURNPF6S_OP_GOOD2, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "has a really solid" $favSysTeamRationale'
                                                                  r' ". Lets go back to the teams now. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
-df.add_system_transition(State.TURNPF6S_OP_GOOD3, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I also agree that" $favSysPlayer "is really" $favSysTeamAdj'
+df.add_system_transition(State.TURNPF6S_OP_GOOD3, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I also agree that" $favSysPlayer "is really" $favSysPlayerAdj'
                                                                  r' ". Lets go back to the teams now. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
 df.add_system_transition(State.TURNPF6S_OP_GOOD4, State.TURNTRADE0U, r'[! {Exactly,Yes,Right,Wow} "! I completely agree with you that" $favSysPlayer "can" $favSysTeamRationale "extremely well"'
                                                                  r' ". Lets go back to the teams now. Earlier in the season I heard that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]')
