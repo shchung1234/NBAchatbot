@@ -524,57 +524,57 @@ class playerRating(Macro):
         # TW_PT = player.two_point_percentage
         AST = player('2019-20').assists / player('2019-20').games_played
         PER = player('2019-20').player_efficiency_rating
-        str = ''
-        if (PER > 17):
+        response = ''
+        if (PER > 14):
             vars['goodBadPlayer'] = 'good'
             if (exp < 246):
-                str = str + "As an unexperienced player, I think " + player.name
+                response = response + "As an unexperienced player, I think " + player.name
                 if (C_PTS >= 16 or C_AST >= 5 or C_REB >= 9):
-                    str += " had a great career so far."
+                    response += " had a great career so far."
             elif (exp < 500):
-                str = str + "As a player who have some experience, I think " + player.name
+                response = response + "As a player who have some experience, I think " + player.name
                 if (C_PTS >= 16 or C_AST >= 5 or C_REB >= 9):
-                    str += " had a great career so far."
+                    response += " had a great career so far."
             else:
-                str = str + "As a veteran player, I think " + player.name
+                response = response + "As a veteran player, I think " + player.name
                 if (C_PTS >= 16 or C_AST >= 5 or C_REB >= 9):
-                    str += " is one of exceptional players that ever played the game."
+                    response += " is one of exceptional players that ever played the game."
                 else:
-                    str += " had a stable career."
+                    response += " had a stable career."
             if (REB > 7 and PTS > 15 and AST > 5):
-                str = str + vars['receivingTeam'] + ", " + "I think he became the core of the team. And his points, rebounds, and assists reflect that."
+                response = response + vars['receivingTeam'] + ", " + "I think he became the core of the team. And his points, rebounds, and assists reflect that."
             elif (REB > 7):
-                str = str + "With his rebounding skills, I think the team has really benefited from receiving " + player.name + "."
+                response = response + "With his rebounding skills, I think the team has really benefited from receiving " + player.name + "."
             elif (PTS > 15):
-                str = str + "He has been scoring really well making a good contribution to " + vars['receivingTeam']
+                response = response + "He has been scoring really well making a good contribution to " + vars['receivingTeam']
             elif (AST > 5):
-                str = str + "His distribution of ball has really lifted " + vars['receivingTeam']
+                response = response + "His distribution of ball has really lifted " + vars['receivingTeam']
             else:
-                str += "He has been making stable contribution to the team even though his stats don't stand out."
-            str += "And I think his contribution can get even better if playoff was to start."
-            return str
+                response += "He has been making stable contribution to the team even though his stats don't stand out."
+            response += "And I think his contribution can get even better if playoff was to start."
+            return response
         else:
             vars['goodBadPlayer'] = 'bad'
-            if (PTS <= 5): #it prints this part all the time
-                str += "for this season, he's not contributing enough to the team especially with scoring "
-            if (position == "C" or position == "PF" and REB <= 4):
-                if (PTS <= 5):
-                    str += "and rebounds"
+            if (PTS <= 3): #it prints this part all the time
+                response += "for this season, he's not contributing enough to the team especially with scoring "
+            elif (position == "C" or position == "PF" and REB <= 3):
+                if (PTS <= 3):
+                    response += "and rebounds"
                 else:
-                    str += "in the current season, He's not a good rebounder for his position. "
-            if (position == "PG" and AST <= 3):
-                if(PTS <= 5):
-                    str += "and assists even though he is a point guard."
+                    response += "in the current season, He's not a good rebounder for his position. "
+            elif (position == "PG" and AST <= 2):
+                if(PTS <= 3):
+                    response += "and assists even though he is a point guard."
                 else:
-                    str += "He is not that great with his assists even though he is a point guard. "
+                    response += "He is not that great with his assists even though he is a point guard. "
             else:
-                str += "I dont think he is too terrible but he doesnt seem to have a huge impact to the game."
+                response += "I dont think he is too terrible but he doesnt seem to have a huge impact to the game."
             if (player('2019-20').minutes_played / player('2019-20').games_played < 12 or player('2019-20').minutes_played == None):
-                str += "Also, he barely has any games played this season!"
+                response += "Also, he barely has any games played this season!"
             else:
                 if (C_PTS >= 15):
-                    str + "He had a decent career though."
-            return str
+                    response + "He had a decent career though."
+            return response
 
 class comparePlayers(Macro):
     def run (self, ngrams, vars, args):
@@ -869,7 +869,7 @@ df.add_system_transition(State.TURNPF4S_OP_BAD1, State.TURNPF5U, r'[! {Hmm..., I
 df.add_system_transition(State.TURNPF4S_OP_BAD2, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I mean maybe youre right that the" $favSysTeam "might have poor" '
                                                                 r'$favSysTeamRationale ". I still think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 df.add_system_transition(State.TURNPF4S_OP_BAD3, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I actually dont agree with you that the" $favSysTeam "are" '
-                                                                r'$favSysTeamRationale ". I still think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
+                                                                r'$favSysTeamAdj ". I still think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 df.add_system_transition(State.TURNPF4S_OP_BAD4, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I actually dont think that the" $favSysTeam $favSysTeamRationale "badly"'
                                                                  r' ". In addition, I also think that the" $favSysTeam "will win because of " $favSysPlayer ". " {What do you think of,Do you have any opinions about} $favSysPlayer "?"]')
 df.add_system_transition(State.TURNPF4S_OP_BAD5, State.TURNPF5U, r'[! {Hmm..., I dont know., What...} "I actually dont agree with you when you say that the" $favSysTeam "are not" $favSysTeamAdj'
