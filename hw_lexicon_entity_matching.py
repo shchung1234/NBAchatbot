@@ -1208,4 +1208,4 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 """
 
 if __name__ == '__main__':
-    df.run(debugging=True)
+    df.run(debugging=False)
