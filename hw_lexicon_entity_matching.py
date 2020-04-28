@@ -484,7 +484,7 @@ class nextYearPlayoffImpact(Macro):
         if playerBirthYear <= 1993:
             str = "I do not think he will play a big role. I think he is past his prime."
         else:
-            str = "I think he is young enough to carry the team."
+            str = "I think he is young enough to get better in the future."
 
         return str
 
@@ -521,6 +521,7 @@ class playerRating(Macro): #*** *** *** ***
         REB = player('2019-20').total_rebounds / player('2019-20').games_played
         # BLK = player.shots_blocked / player.minutes_played * 40
         PTS = player('2019-20').points / player('2019-20').games_played
+        time = player('2019-20').minutes_played / player('2019-20').games_played
         # FLD_GOAL = player.field_goal_percentage
         # THR_PT = player.three_point_percentage
         # TW_PT = player.two_point_percentage
@@ -544,7 +545,7 @@ class playerRating(Macro): #*** *** *** ***
                 else:
                     response += " had a stable career."
             if (REB > 7 and PTS > 15 and AST > 5):
-                response = response + vars['receivingTeam'] + ", " + "I think he became the core of the team. And his points, rebounds, and assists reflect that."
+                response = response + "I think he became the core of the team. And his points, rebounds, and assists reflect that."
             elif (REB > 7):
                 response = response + "With his rebounding skills, I think the team has really benefited from receiving " + player.name + "."
             elif (PTS > 15):
@@ -553,19 +554,19 @@ class playerRating(Macro): #*** *** *** ***
                 response = response + "His distribution of ball has really lifted " + vars['receivingTeam']
             else:
                 response += "He has been making stable contribution to the team even though his stats don't stand out."
-            response += "And I think his contribution can get even better if playoff was to start."
+            response += " And I think his contribution can get even better if playoff was to start."
             return response
         else:
             vars['goodBadPlayer'] = 'bad'
-            if (PTS <= 3): #it prints this part all the time
+            if (PTS <= 8): #it prints this part all the time
                 response += "for this season, he's not contributing enough to the team especially with scoring "
-            elif (position == "C" or position == "PF" and REB <= 3):
-                if (PTS <= 3):
+            elif (position == "C" or position == "PF" and REB <= 4):
+                if (PTS <= 8):
                     response += "and rebounds"
                 else:
                     response += "in the current season, He's not a good rebounder for his position. "
-            elif (position == "PG" and AST <= 2):
-                if(PTS <= 3):
+            elif (position == "PG" and AST <= 3):
+                if(PTS <= 8):
                     response += "and assists even though he is a point guard."
                 else:
                     response += "He is not that great with his assists even though he is a point guard. "
@@ -653,7 +654,7 @@ class positiveSeedingImpact(Macro):
         #trade = trades[n]['TRANSACTION_DESCRIPTION']
         vars['date'] = trades[n]["TRANSACTION_DATE"].split('-')[1]
         if int(vars['date']) >=2 and int(vars['date']) < 9:
-            return "he was traded quite recently before covid shutdown so I am wondering if he will continue to perform as well as he has so far"
+            return "he was traded quite recently before covid shutdown so maybe the stats wont be the same but who knows?"
         else:
             return "It certainly seems like he meshes well with the team"
 
