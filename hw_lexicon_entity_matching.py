@@ -1,3 +1,8 @@
+"""*** *** *** *** ***"""
+"""*** *** *** *** ***"""
+""" ReadMe.txt has many best practices for this conversation """
+"""*** *** *** *** ***"""
+"""*** *** *** *** ***"""
 from emora_stdm import KnowledgeBase, DialogueFlow, Macro
 from enum import Enum, auto
 import requests
