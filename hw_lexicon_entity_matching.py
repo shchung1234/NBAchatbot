@@ -101,6 +101,7 @@ class State(Enum):
     TURNPF3CS = auto()
     TURNPF3DS = auto()
     TURNPF3ES = auto()
+    TURNPF3FS = auto()
     TURNPF3AU = auto()
     TURNPF3U = auto()
     TURNPF3U_ERR = auto()
@@ -885,6 +886,8 @@ df.add_system_transition(State.TURNPF3AERR, State.TURNPF5U, r'[! "That is a good
 
 # Playoff Turn 2 (not idk scenario)
 df.add_system_transition(State.TURNPF2BS, State.TURNPF2BU, r'[! #botFavTeam "Why do you think the" $favUserTeam "will win?"]')
+df.add_user_transition(State.TURNPF2BU, State.TURNPF3FS, dont_know)
+df.add_system_transition(State.TURNPF3FS, State.TURNPF3U, r'[! #botFavTeam{Its okay to be unsure, it can be hard to tell} "the " $favUserTeam "certainly have many strengths. I think that" $favSysTeam "can win" {if we were to play today,given the available data} " because of" $favSysPlayer ". What do you think of him?"]')
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD1, '[$favUserTeamAdj={#ONT(adjPositive)}, $favUserTeamRationale={#ONT(rationale)}]') # they have a solid playstyle
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD2, '[$favUserTeamRationale={#ONT(rationale)}, $favUserTeamAdj={#ONT(adjPositive)}]') # their playstyle is very solid
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD3, '[#NOT(#ONT(not),#ONT(rationale),#ONT(rationalePerson)) $favUserTeamAdj={#ONT(adjPositive)}]') # they are very reliable
@@ -893,9 +896,8 @@ df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD5, '[$not={#ONT(
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD6, '[$favUserTeamRationale={#ONT(rationale)}]') # because of their efficiency
 df.add_user_transition(State.TURNPF2BU, State.TURNPF2BS1_OP_GOOD7, '[$favUserTeamAdj={#ONT(adjPositive)}, $favUserTeamRationale={#ONT(rationalePerson)}]')
 
-
 # 2BU if they give a player name
-df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(playoffteams),#ONT(nonplayoffteams)}]') #todo change this to check if player is on the team
+df.add_user_transition(State.TURNPF2BU, State.TURNPF3CS,'[$favUserPlayer={#ONT(playoffteams),#ONT(nonplayoffteams)}]')
 
 df.set_error_successor(State.TURNPF2BU, State.TURNPF2BU_ERR2)
 df.add_system_transition(State.TURNPF2BU_ERR2, State.TURNPF2BU1, r'[! {Hmm..., I dont know., What...} "Personally, I do not think that the" $favUserTeam "are that good. '
@@ -960,8 +962,8 @@ df.add_system_transition(State.TURNPF8CS, State.TURNTRADE0U, r'[! "I agree that"
 df.add_system_transition(State.TURNPF8DS, State.TURNTRADE0U, r'[! "I agree that" {he, Butler} $butlerOpinion ". It is those intangibles that make him a " {superstar, top player, allstar} ". Earlier in the season, I saw that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]') #handles situation with butlerPos verb verb
 df.add_system_transition(State.TURNPF8ES, State.TURNTRADE0U, r'[! "Yeah," {he, Kawhi} "definitely has" $kawhiOpinion ". They have helped him be a " {superstar, top player, allstar} " year after year. Earlier in the season, I saw that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]') #handles situation with butlerPos verb verb
 df.add_system_transition(State.TURNPF8FS, State.TURNTRADE0U, r'[! "Yeah," {he, Kawhi} "definitely is a" $kawhiOpinion ". But he " {shows up, steps up, performs} " very well in playoffs. Earlier in the season, I saw that" {#tradeNewsByTeam()} ". What do you think about " $player "?"]') #handles situation with butlerPos verb verb
-df.add_system_transition(State.TURNPF8GS, State.TURNTRADE0U, r'[! "Even though" {he, Kawhi} "is" $kawhiOpinion " he always " {shows up, overperforms} ". In playoffs. Anyways, I saw that" {#tradeNewsByTeam()} ". What are your thoughts about " $player "?"]') #handles situation with Kawhi neg adj
-df.add_system_transition(State.TURNPF8HS, State.TURNTRADE0U, r'[! "I actually agree with you that" {he, Kawhi} $kawhiOpinion "but he always " {shows up, overperforms} " In playoffs. Anyways, I saw that" {#tradeNewsByTeam()} ". What are your thoughts about " $player "?"]') #handles situation with Kawhi neg verb
+df.add_system_transition(State.TURNPF8GS, State.TURNTRADE0U, r'[! "Even though" {he, Kawhi} "is" $kawhiOpinion " he always " {shows up, overperforms} " in playoffs. Anyways, I saw that" {#tradeNewsByTeam()} ". What are your thoughts about " $player "?"]') #handles situation with Kawhi neg adj
+df.add_system_transition(State.TURNPF8HS, State.TURNTRADE0U, r'[! "I actually agree with you that" {he, Kawhi} $kawhiOpinion "but he always " {shows up, overperforms} " in playoffs. Anyways, I saw that" {#tradeNewsByTeam()} ". What are your thoughts about " $player "?"]') #handles situation with Kawhi neg verb
 
 # good opinions
 df.add_user_transition(State.TURNPF3U, State.TURNPF6S_OP_GOOD1, '[$favSysPlayerAdj={#ONT(adjPositive)}, $favSysPlayerRationale={#ONT(rationale)}]') # they have a solid playstyle
@@ -1204,4 +1206,4 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 """
 
 if __name__ == '__main__':
-    df.run(debugging=False)
+    df.run(debugging=True)
