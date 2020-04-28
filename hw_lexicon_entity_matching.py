@@ -688,7 +688,7 @@ class teamPlayerCheck(Macro):
 
         if 'favUserPlayer' in vars and 'favUserTeam' in vars:
             temp_dict = { key:value for (key,value) in new_dict.items() if vars['favUserPlayer'] in value}
-
+            print(temp_dict)
             if vars['favUserTeam'] in list(temp_dict.keys()):
                 vars['sameTeam'] = "yes"
             else:
@@ -1208,4 +1208,4 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 """
 
 if __name__ == '__main__':
-    df.run(debugging=False)
+    df.run(debugging=True)
