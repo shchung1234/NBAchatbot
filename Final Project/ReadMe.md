@@ -1,6 +1,6 @@
 ﻿# NBAchatbot
 
-NBAchatbot is a chatbot designed to talk with the user about the NBA.
+NBAchatbot is a chatbot designed to talk with the user about the NBA. Checkout our [paper](final_paper.pdf)!
 
 ## Installation
 
