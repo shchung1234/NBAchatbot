@@ -1,8 +1,6 @@
-"""*** *** *** *** ***"""
-"""*** *** *** *** ***"""
-""" ReadMe.txt has many best practices for this conversation """
-"""*** *** *** *** ***"""
-"""*** *** *** *** ***"""
+"""
+The readme has some sample conversations
+"""
 from emora_stdm import KnowledgeBase, DialogueFlow, Macro
 from enum import Enum, auto
 import requests
@@ -15,11 +13,6 @@ nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 
-
-
-
-
-# TODO: Update the State enum as needed
 class State(Enum):
   #states for trade conversation
     START = auto()
@@ -175,8 +168,6 @@ ontology = {
 
 class news(Macro):
     def run (self, ngrams, vars, args):
-        #andrew- im just gonna assume that the input is the team name and only the team name, eg "Atlanta Hawks"
-
         endpoint = "Lakers sign guard dion waiters".replace(" ", "%20")
         endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&apiKey=d50b19bb1c7445b588bb694ecc2a119f"
         news = requests.get(endpoint)
@@ -192,8 +183,6 @@ class news(Macro):
 
 class newsPlayer(Macro):
     def run (self, ngrams, vars, args):
-        #andrew- im just gonna assume that the input is the team name and only the team name, eg "Atlanta Hawks"
-
         endpoint = vars['player'].replace(" ", "%20")
         endpoint = "http://newsapi.org/v2/everything?q="+endpoint+"&apiKey=d50b19bb1c7445b588bb694ecc2a119f"
         news = requests.get(endpoint)
@@ -339,12 +328,6 @@ class tradeNewsOld(Macro):
         vars['receivingTeam'] = receivingTeam
         vars['givingTeam'] = givingTeam
         vars['player'] = player
-        
-        #print(trade)
-        #print('recieving team', receivingTeam)
-        #print('givingTeam', givingTeam)
-        #print(player)
-        #print(role)
 
         return "I found this most recent trade news that {} from {} is going to {}".format(player, givingTeam, receivingTeam)
 
@@ -371,12 +354,6 @@ class tradeNews(Macro):
         vars['givingTeam'] = givingTeam
         vars['player'] = player
         vars['tradeTeamInPlayoffs'] = receivingTeam
-        
-        #print(trade)
-        #print('recieving team', receivingTeam)
-        #print('givingTeam', givingTeam)
-        #print(player)
-        #print(role)
 
         return "{} from {} is going to {}".format(player, givingTeam, receivingTeam)
 
@@ -393,11 +370,7 @@ class tradeNewsByTeam(Macro):
                 trades = [x for x in all_trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
         else: 
             trades = [x for x in all_trades if vars['favSysTeam'].lower() in x['TRANSACTION_DESCRIPTION'].lower()]
-            # print('favSysTeam: ', vars['favSysTeam'])
-            # print('*** going with favSysTeam ***')
 
-
-        # print("*** TRADES *** ", trades)
         trade = trades[randrange(len(trades))]['TRANSACTION_DESCRIPTION']
         receivingTeam = trade.split(' received')[0]
         givingTeam = trade.split('from ')[1]
@@ -417,12 +390,6 @@ class tradeNewsByTeam(Macro):
         vars['receivingTeam'] = receivingTeam
         vars['givingTeam'] = givingTeam
         vars['player'] = player
-        
-        #print(trade)
-        #print('recieving team', receivingTeam)
-        #print('givingTeam', givingTeam)
-        #print(player)
-        #print(role)
 
         return "{} from {} went to {}".format(player, givingTeam, receivingTeam)
 
@@ -635,7 +602,6 @@ class playerRationale(Macro): #*** *** *** ***
 class negativeSeedingImpact(Macro):
     def run (self, ngrams, vars, args):
         test = vars['playerImpact']
-        #print('*** test ***', test)
         with open('trades.json') as f:
             data = json.load(f)
         trades = data['trades']
@@ -650,7 +616,6 @@ class negativeSeedingImpact(Macro):
 class positiveSeedingImpact(Macro):
     def run (self, ngrams, vars, args):
         test = vars['playerImpact']
-        #print('*** test ***', test)
         with open('trades.json') as f:
             data = json.load(f)
         trades = data['trades']
@@ -766,10 +731,6 @@ df = DialogueFlow(State.START, initial_speaker=DialogueFlow.Speaker.SYSTEM, kb=k
                                                                                                   'nicknameToPlayer': nicknameToPlayer(), 'nextYearPlayoffImpact': nextYearPlayoffImpact(),
                                                                                                   'sentiAnalyserFavSysPlayer': sentiAnalyserFavSysPlayer(),
                                                                                                   'sentiAnalyserTradePlayer':sentiAnalyserTradePlayer()})
-
-#########################
-# THIS DOCUMENT IS THE SOURCE OF TRUTH FOR WHAT WE ARE DOING: https://docs.google.com/document/d/15N6Xo60IipqOknUGHxXt-A17JFOXOhMCZSMcOAyUEzo/edit
-##########################
 
 # natex expressions
 dont_know = '[{' \
@@ -925,9 +886,6 @@ df.add_system_transition(State.TURNPF2BS1_OP_GOOD6, State.TURNPF2BU1, r'[! "Okay
                                                                  r' ". Do you think there is a player that is" {really,super,extremely,exceptionally} {integral,important} "to the" $favUserTeam "?"]')
 df.add_system_transition(State.TURNPF2BS1_OP_GOOD7, State.TURNPF2BU1, r'[! "Okay, Ive also heard that the" $favUserTeam "have really solid" $favUserTeamRationale'
                                                                  r' ". Do you think there is a player that is" {super,extremely,exceptionally} {integral,important} "to the" $favUserTeam "?"]')
-
-#ANDREW - System dosen't ask question, as a user idk how to respond to "Thats fair. Personally, I think that Bucks has the best chance of winning because of Giannis Antetokounmpo"
-
 
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3CS, '[$favUserPlayer={#ONT(playoffteams),#ONT(nonplayoffteams)}]')
 df.add_user_transition(State.TURNPF2BU1, State.TURNPF3DS, '[#ONT(agree) #NOT(#ONT(playoffteams),#ONT(nonplayoffteams),#NER(person))]')
@@ -1168,10 +1126,7 @@ df.add_system_transition(State.TURNTRADE1AS, State.TURNTRADE1U , r'[! {[! "How a
 df.set_error_successor(State.TURNTRADE1U, State.TURNTRADE1U_ERR)
 df.add_system_transition(State.TURNTRADE1U_ERR, State.TURNTRADE0U, r'[! "Okay, I think this trade should be interesting to talk about! What do you think about" $player "?"]')
 
-"""
-we still need to work on errors and more macros, and idks
-"""
-
+# TODO: work on errors and more macros, and idks
 
 """
 #turn 1
@@ -1217,4 +1172,5 @@ df.add_user_transition(State.TURNTRADE5U, State.END, '[$watching={#ONT(agree)}]'
 """
 
 if __name__ == '__main__':
-    df.run(debugging=True)
+    # set this flag to true if you would like more verbose debugging
+    df.run(debugging=False)
