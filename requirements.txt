@@ -1,0 +1,3 @@
+emora-stdm==1.95
+nltk==3.5
+sportsreference==0.5.2
