@@ -22,6 +22,13 @@ After first install, `make run` will be sufficient to start the chatbot. Happy c
 
 `make clean` will delete the venv.
 
+## Debugging
+
+To enable debugging, manually run `chatbotNba.py` with the `--debug` flag set to `true`
+```bash
+python3 chatbotNba.py --debug true
+```
+
 ## Features
 
 1. Player specific rationale: Our bot has two favorite players. Kawhi Leonard and Jimmy Butler. The bot is able to respond to critiques which are specific to the two players. 
