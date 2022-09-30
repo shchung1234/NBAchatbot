@@ -9,7 +9,7 @@ dill==0.3.2
 emora-stdm==1.95
 idna==2.10
 importlib-resources==3.0.0
-joblib==0.16.0
+joblib==1.2.0
 lark-parser==0.9.0
 lxml==4.5.2
 multiprocess==0.70.10
